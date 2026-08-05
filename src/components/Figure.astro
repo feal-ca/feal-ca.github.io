@@ -1,0 +1,65 @@
+---
+/**
+ * Inlines a generated schematic from src/assets/figures.
+ *
+ * These are inlined rather than served as <img> so the SVG's
+ * `var(--fig-*)` colours resolve against the current theme — an <img>
+ * would be an isolated document and would render them as invalid.
+ *
+ * The figures are illustrations, not results. See CLAUDE.md §7.
+ */
+const figures = import.meta.glob("../assets/figures/*.svg", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+
+interface Props {
+  /** Basename without extension, e.g. "vortex-pinn". */
+  name: string;
+  /** Describes what the figure shows. Empty string only if truly decorative. */
+  alt: string;
+  ratio?: string;
+  class?: string;
+}
+
+const { name, alt, ratio = "8 / 5", class: className = "" } = Astro.props;
+
+const key = `../assets/figures/${name}.svg`;
+const svg = figures[key] as string | undefined;
+
+if (!svg) {
+  throw new Error(
+    `Figure "${name}" not found. Available: ${Object.keys(figures)
+      .map((k) => k.split("/").pop()?.replace(".svg", ""))
+      .join(", ")}. Run: python3 scripts/make_figures.py`
+  );
+}
+---
+
+<figure
+  class:list={["fig", className]}
+  style={`--ratio: ${ratio}`}
+  role="img"
+  aria-label={alt}
+>
+  <div class="fig__inner" set:html={svg} />
+</figure>
+
+<style>
+  .fig {
+    position: relative;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+    background: var(--bg-sunk);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+  }
+
+  .fig__inner,
+  .fig__inner :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>

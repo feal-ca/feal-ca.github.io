@@ -1,119 +1,294 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import PhotoBand from "../components/PhotoBand.astro";
+import { profile } from "../data/profile.js";
+import { photos } from "../data/photos.js";
 
-// First-pass copy, written from your CV. Rewrite freely, this is a
-// starting point, not your actual voice.
-const experience = [
-  {
-    when: "2026 —",
-    what: "Virtual instrumentation intern, Physics of Life, TU Dresden",
-  },
-  {
-    when: "2026 —",
-    what: "Contributor, Towards Data Science",
-  },
-  {
-    when: "Jun – Aug 2025",
-    what: "ML engineering intern, MLCode — RAG evaluation and benchmarking framework",
-  },
-  {
-    when: "2022 —",
-    what: "Volunteer mentor, Computer Science / Robotics workshops",
-  },
-  {
-    when: "2022 – 2023",
-    what: "Robotics teacher, Punt Multimèdia",
-  },
-];
+const band = photos.filter((p) =>
+  ["Canal at dusk", "Moon over the stairs", "Split pomegranates"].includes(p.title)
+);
+
+const period = (item: { start: string; end: string | null }) =>
+  item.end === null
+    ? `${item.start} —`
+    : item.end === item.start
+      ? item.start
+      : `${item.start} – ${item.end}`;
 ---
 
-<Layout title="About" description="Data science and physical engineering, briefly.">
-  <section class="about">
-    <h1>About</h1>
+<Layout
+  title="About"
+  description="Data science and physical engineering undergraduate at UPC, on the CFIS programme."
+>
+  <header class="u-page page-head">
+    <p class="u-label">About</p>
+    <h1 class="page-head__title">{profile.name}</h1>
+  </header>
 
-    <p>
-      I'm a fourth-year student on the CFIS program at Universitat
-      Politècnica de Catalunya, reading Data Science &amp; Engineering and
-      Physical Engineering at the same time. Most of what's on the work
-      page sits somewhere between the two: fluid simulation, machine
-      learning applied to physical systems, and the high-performance
-      computing needed to make either one run.
-    </p>
-    <p>
-      Right now I'm at TU Dresden's Physics of Life cluster, working on
-      virtual instrumentation. Before that, an internship building
-      evaluation and benchmarking tools for retrieval-augmented generation
-      systems, and before that, teaching robotics and mentoring students
-      in programming and 3D printing.
-    </p>
+  <section class="u-page bio u-cols">
+    <p class="u-label">Briefly</p>
+    <div class="u-prose">
+      <p>
+        I'm reading two degrees at once at the Universitat Politècnica de
+        Catalunya — Data Science &amp; Engineering, and Physical Engineering —
+        on the CFIS grant, which exists to let a small number of students do
+        exactly that. I'm heading into my fourth year.
+      </p>
+      <p>
+        The two halves feed each other more than the timetable suggests. The
+        physics side gives me systems worth simulating: fluids, gravitating
+        bodies, quantum statistics. The data science side gives me the tools
+        to make those simulations tractable — surrogate models where a full
+        solve is too expensive, physics-informed networks where data is thin,
+        and parallel code where the only answer is more cores.
+      </p>
+      <p>
+        Outside of coursework I write for <a
+          class="u-link"
+          href={profile.links.tds}
+          target="_blank"
+          rel="noopener noreferrer">Towards Data Science</a
+        >, mostly long explanations of things I had to understand properly
+        before I could use them. I've also taught robotics to school students
+        and mentored at Linux and 3D-printing workshops, which I'd recommend
+        to anyone who thinks they understand a topic.
+      </p>
+      <p>
+        Right now — {profile.now.text}
+      </p>
+    </div>
+  </section>
 
-    <h2>Experience</h2>
-    <ul class="timeline">
-      {experience.map((item) => (
-        <li>
-          <span class="when">{item.when}</span>
-          <span class="what">{item.what}</span>
-        </li>
-      ))}
+  <PhotoBand photos={band} height="clamp(11rem, 20vw, 18rem)" />
+
+  <section class="u-page section u-cols" aria-labelledby="experience">
+    <h2 id="experience" class="u-label section__label">Experience</h2>
+    <ol class="timeline">
+      {
+        profile.timeline.map((item) => (
+          <li class="timeline__item">
+            <p class="u-label timeline__when">{period(item)}</p>
+            <div>
+              <h3 class="timeline__title">{item.title}</h3>
+              <p class="timeline__detail">{item.detail}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="u-page section u-cols" aria-labelledby="skills">
+    <h2 id="skills" class="u-label section__label">Skills</h2>
+    <dl class="skills">
+      {
+        profile.skills.map((group) => (
+          <div class="skills__row">
+            <dt class="skills__group">{group.group}</dt>
+            <dd class="skills__items">
+              <ul>
+                {group.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="u-page section u-cols" aria-labelledby="awards">
+    <h2 id="awards" class="u-label section__label">Selected awards</h2>
+    <ul class="awards">
+      {
+        profile.awards.map((award) => (
+          <li class="awards__item">
+            <span class="u-label awards__when">{award.when}</span>
+            <span>{award.what}</span>
+          </li>
+        ))
+      }
     </ul>
+  </section>
 
-    <h2>Elsewhere</h2>
-    <p>
-      <a class="text-link" href="https://github.com/Georgiou1226" target="_blank" rel="noopener noreferrer">GitHub</a>
-      &nbsp;·&nbsp;
-      <a class="text-link" href="https://www.linkedin.com/in/ferran-alca/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-      &nbsp;·&nbsp;
-      <a class="text-link" href="mailto:ferran.alia@estudiantat.upc.edu">Email</a>
-    </p>
+  <section class="u-page section u-cols" aria-labelledby="contact">
+    <h2 id="contact" class="u-label section__label">Contact</h2>
+    <div>
+      <p class="u-prose">
+        Email is the surest way to reach me. The CV below has the full detail,
+        including coursework and grades.
+      </p>
+      <ul class="contact">
+        <li><a class="u-link" href={`mailto:${profile.links.email}`}>{profile.links.email}</a></li>
+        <li><a class="u-link" href={profile.links.github} target="_blank" rel="noopener noreferrer">github.com/Feal-ca</a></li>
+        <li><a class="u-link" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        <li><a class="u-link" href={profile.links.cv}>Curriculum vitae (PDF)</a></li>
+      </ul>
+    </div>
   </section>
 </Layout>
 
 <style>
-  h1 {
-    font-size: 28px;
-    margin-bottom: 24px;
+  .page-head {
+    margin-bottom: var(--space-xl);
   }
 
-  h2 {
-    font-size: 18px;
-    margin-top: 48px;
-    margin-bottom: 16px;
+  .page-head__title {
+    font-size: var(--step-4);
+    margin-top: var(--space-xs);
   }
 
-  .about p {
-    max-width: 560px;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    margin-bottom: 16px;
+  .section {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--rule);
   }
 
+  .section__label {
+    font-size: var(--step--2);
+  }
+
+  .bio {
+    margin-top: var(--space-l);
+  }
+
+  /* --- Timeline ----------------------------------------------------------- */
   .timeline {
     list-style: none;
     padding: 0;
-    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
   }
 
-  .timeline li {
-    display: flex;
-    gap: 20px;
-    font-size: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
+  .timeline__item {
+    display: grid;
+    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+    gap: var(--space-s) var(--space-m);
+    padding-block: var(--space-m);
+    border-bottom: 1px solid var(--rule);
   }
 
-  .when {
+  .timeline__item:first-child {
+    padding-top: 0;
+  }
+
+  .timeline__when {
+    padding-top: 0.25em;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timeline__title {
+    font-size: var(--step-0);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .timeline__detail {
+    margin-top: var(--space-2xs);
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    max-width: 56ch;
+  }
+
+  @media (max-width: 40rem) {
+    .timeline__item {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2xs);
+    }
+
+    .timeline__when {
+      padding-top: 0;
+    }
+  }
+
+  /* --- Skills ------------------------------------------------------------- */
+  .skills {
+    margin: 0;
+  }
+
+  .skills__row {
+    display: grid;
+    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+    gap: var(--space-s) var(--space-m);
+    padding-block: var(--space-s);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .skills__row:first-child {
+    padding-top: 0;
+  }
+
+  .skills__group {
     font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text-muted);
-    min-width: 110px;
-    flex-shrink: 0;
-    padding-top: 2px;
+    font-size: var(--step--2);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: 0.3em;
   }
 
-  .what {
-    color: var(--text);
+  .skills__items {
+    margin: 0;
+  }
+
+  .skills__items ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.45rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .skills__items li {
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.1rem 0.5rem;
+  }
+
+  @media (max-width: 40rem) {
+    .skills__row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-xs);
+    }
+
+    .skills__group {
+      padding-top: 0;
+    }
+  }
+
+  /* --- Awards, contact ---------------------------------------------------- */
+  .awards {
+    list-style: none;
+    padding: 0;
+  }
+
+  .awards__item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-m);
+    padding-block: var(--space-xs);
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .awards__when {
+    min-width: 3.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .contact {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: var(--step--1);
   }
 </style>

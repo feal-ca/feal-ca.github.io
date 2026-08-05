@@ -1,22 +1,22 @@
-## Development
+# Agent instructions
 
-When starting the dev server, use background mode:
+The full guidance for this project — design principles, accessibility and
+performance requirements, structure, and how to add content — is in
+[CLAUDE.md](./CLAUDE.md). Read it before changing anything.
+
+Quick reference:
 
 ```
-astro dev --background
+astro dev --background     # dev server (stop / status / logs to manage it)
+npm run build              # static build into dist/
+python3 scripts/make_figures.py   # regenerate project figures
+python3 scripts/fetch_fonts.py    # re-download self-hosted fonts
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Three rules that are easy to get wrong here:
 
-## Documentation
-
-Full documentation: https://docs.astro.build
-
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+1. Photography and technical figures never share a grid or a section.
+2. Photos are imported from `src/assets/` and rendered with `astro:assets` —
+   never referenced from `public/`, and always `-auto-orient` when processing.
+3. Nothing goes on a page unless it is true. Unverified details get a
+   `TODO(ferran):` comment in the source, not a plausible guess on the page.

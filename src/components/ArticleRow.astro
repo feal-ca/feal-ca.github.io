@@ -1,0 +1,126 @@
+---
+interface Props {
+  article: {
+    title: string;
+    date: string;
+    url: string;
+    blurb: string;
+    topics?: string[];
+  };
+}
+
+const { article } = Astro.props;
+const date = new Date(article.date);
+const formatted = date.toLocaleDateString("en-GB", {
+  month: "short",
+  year: "numeric",
+});
+---
+
+<article class="row">
+  <p class="u-label row__date">
+    <time datetime={article.date}>{formatted}</time>
+  </p>
+
+  <div class="row__body">
+    <h3 class="row__title">
+      <a href={article.url} target="_blank" rel="noopener noreferrer">
+        {article.title}
+      </a>
+    </h3>
+    <p class="row__blurb">{article.blurb}</p>
+    {
+      article.topics && (
+        <p class="u-label row__topics">{article.topics.join(" · ")}</p>
+      )
+    }
+  </div>
+
+  <p class="row__where u-label">
+    Towards Data Science
+    <span aria-hidden="true" class="row__arrow">↗</span>
+  </p>
+</article>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr) minmax(0, 12rem);
+    gap: var(--space-s) var(--space-l);
+    align-items: start;
+    padding-block: var(--space-m);
+    border-top: 1px solid var(--rule);
+  }
+
+  .row:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .row__date {
+    padding-top: 0.45em;
+    white-space: nowrap;
+  }
+
+  .row__title {
+    font-size: var(--step-1);
+    line-height: 1.22;
+  }
+
+  .row__title a {
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .row:hover .row__title a,
+  .row__title a:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  .row__blurb {
+    margin-top: var(--space-xs);
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+
+  .row__topics {
+    margin-top: var(--space-xs);
+  }
+
+  .row__where {
+    padding-top: 0.45em;
+    text-align: right;
+  }
+
+  .row__arrow {
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .row:hover .row__arrow {
+    transform: translate(0.15em, -0.15em);
+    color: var(--accent);
+  }
+
+  @media (max-width: 56rem) {
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2xs);
+    }
+
+    .row__date,
+    .row__where {
+      padding-top: 0;
+      text-align: left;
+    }
+
+    .row__where {
+      order: -1;
+    }
+  }
+</style>

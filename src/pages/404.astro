@@ -1,0 +1,47 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Figure from "../components/Figure.astro";
+---
+
+<Layout title="Page not found" description="That page does not exist.">
+  <div class="u-page wrap">
+    <p class="u-label">404</p>
+    <h1 class="title">This page shed off somewhere.</h1>
+    <p class="u-prose lede">
+      The address does not match anything on the site. The work, the writing
+      and the photographs are all still where they were.
+    </p>
+    <p class="actions">
+      <a class="u-action" href="/">Back to the homepage</a>
+    </p>
+  </div>
+
+  <div class="u-wide art" aria-hidden="true">
+    <Figure name="vortex-pinn" alt="" ratio="16 / 6" />
+  </div>
+</Layout>
+
+<style>
+  .wrap {
+    padding-block: var(--space-xl) 0;
+  }
+
+  .title {
+    font-size: var(--step-4);
+    max-width: 16ch;
+    margin-top: var(--space-xs);
+  }
+
+  .lede {
+    margin-top: var(--space-m);
+  }
+
+  .actions {
+    margin-top: var(--space-l);
+  }
+
+  .art {
+    margin-top: var(--space-2xl);
+    opacity: 0.7;
+  }
+</style>

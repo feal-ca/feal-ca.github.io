@@ -1,0 +1,97 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ArticleRow from "../components/ArticleRow.astro";
+import { articles } from "../data/writing.js";
+import { profile } from "../data/profile.js";
+
+const byYear = articles.reduce<Record<string, typeof articles>>((acc, article) => {
+  const year = article.date.slice(0, 4);
+  (acc[year] ??= []).push(article);
+  return acc;
+}, {});
+
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<Layout
+  title="Writing"
+  description="Articles on simulation, high-performance computing and machine learning, published in Towards Data Science."
+>
+  <header class="u-page page-head">
+    <p class="u-label">Writing</p>
+    <h1 class="page-head__title">
+      Explanations of things I had to work out myself.
+    </h1>
+    <p class="u-prose page-head__lede">
+      I write for <a
+        class="u-link"
+        href={profile.links.tds}
+        target="_blank"
+        rel="noopener noreferrer">Towards Data Science</a
+      >, generally about the point where a physical problem meets the machine
+      that has to solve it. Every article is free to read.
+    </p>
+  </header>
+
+  {
+    years.map((year) => (
+      <section class="u-page year" aria-label={`Articles from ${year}`}>
+        <h2 class="year__label u-label">{year}</h2>
+        <div>
+          {byYear[year].map((article) => (
+            <ArticleRow article={article} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  <div class="u-page cta">
+    <a class="u-action" href={profile.links.tds} target="_blank" rel="noopener noreferrer">
+      Author profile on Towards Data Science
+    </a>
+  </div>
+</Layout>
+
+<style>
+  .page-head {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .page-head__title {
+    font-size: var(--step-4);
+    max-width: 17ch;
+    margin-top: var(--space-xs);
+  }
+
+  .page-head__lede {
+    margin-top: var(--space-m);
+  }
+
+  .year {
+    display: grid;
+    grid-template-columns: minmax(0, 6rem) minmax(0, 1fr);
+    gap: var(--space-l);
+    margin-bottom: var(--space-xl);
+  }
+
+  .year__label {
+    padding-top: var(--space-m);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 56rem) {
+    .year {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-xs);
+    }
+
+    .year__label {
+      padding-top: 0;
+    }
+  }
+
+  .cta {
+    margin-top: var(--space-l);
+  }
+</style>

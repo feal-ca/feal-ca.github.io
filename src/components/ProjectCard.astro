@@ -1,70 +1,146 @@
 ---
-const { project } = Astro.props;
-const { title, category, blurb, tier, image, link } = project;
+import Figure from "./Figure.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+  /** Large treatment for flagship projects. */
+  wide?: boolean;
+}
+
+const { project, wide = false } = Astro.props;
+const { title, summary, year, categories, figure, figureAlt, stack } = project.data;
+const href = `/work/${project.id}/`;
 ---
 
-<article class="card">
-  <div class="card-image">
-    {image
-      ? <img src={image} alt="" loading="lazy" />
-      : <span class="placeholder-label">{category}</span>}
+<article class:list={["card", wide && "card--wide"]}>
+  <a class="card__hit" href={href}>
+    <span class="u-visually-hidden">Read about {title}</span>
+  </a>
+
+  <Figure
+    name={figure}
+    alt={figureAlt}
+    ratio={wide ? "16 / 9" : "8 / 5"}
+    class="card__fig"
+  />
+
+  <div class="card__body">
+    <p class="u-label card__meta">
+      <span>{categories.join(" · ")}</span><span class="card__year">{year}</span>
+    </p>
+    <h3 class="card__title">{title}</h3>
+    <p class="card__summary">{summary}</p>
+    {
+      stack.length > 0 && (
+        <ul class="card__stack" aria-label="Tools used">
+          {stack.slice(0, 4).map((tool) => (
+            <li>{tool}</li>
+          ))}
+        </ul>
+      )
+    }
   </div>
-  <p class="tag">{category}</p>
-  <h3 class="card-title">{title}</h3>
-  {tier !== "minor" && <p class="card-blurb">{blurb}</p>}
-  {link?.url && (
-    <a class="text-link card-link" href={link.url} target={link.type === "onsite" ? "_self" : "_blank"} rel="noopener noreferrer">
-      {link.type === "tds" ? "Read the writeup" : link.type === "github" ? "View on GitHub" : "More detail"} &rarr;
-    </a>
-  )}
 </article>
 
 <style>
   .card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-s);
+    isolation: isolate;
   }
 
-  .card-image {
-    aspect-ratio: 4 / 3;
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+  /* One stretched hit area so the whole card is clickable, without nesting
+     interactive elements inside each other. */
+  .card__hit {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .card__hit:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  .card :global(.card__fig) {
+    transition:
+      border-color 0.3s ease,
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .card:hover :global(.card__fig) {
+    border-color: var(--rule-strong);
+    transform: translateY(-2px);
+  }
+
+  .card__meta {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    margin-bottom: 2px;
+    justify-content: space-between;
+    gap: var(--space-s);
   }
 
-  .card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .card__year {
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
   }
 
-  .placeholder-label {
+  .card__title {
+    font-size: var(--step-1);
+    color: var(--ink);
+    margin-top: var(--space-2xs);
+  }
+
+  .card:hover .card__title {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .card__summary {
+    margin-top: var(--space-xs);
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    line-height: 1.6;
+    max-width: 46ch;
+  }
+
+  .card__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-s);
+  }
+
+  .card__stack li {
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: var(--text-muted);
+    font-size: var(--step--2);
+    color: var(--ink-3);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.1rem 0.4rem;
   }
 
-  .card-title {
-    font-size: 17px;
-    line-height: 1.3;
-  }
+  /* Wide variant: figure left, text right. */
+  @media (min-width: 56rem) {
+    .card--wide {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: var(--space-xl);
+      align-items: center;
+    }
 
-  .card-blurb {
-    font-size: 14px;
-    color: var(--text-secondary);
-    line-height: 1.55;
-  }
+    .card--wide .card__summary {
+      font-size: var(--step-0);
+    }
 
-  .card-link {
-    font-size: 13px;
-    margin-top: 2px;
+    .card--wide .card__title {
+      font-size: var(--step-2);
+    }
   }
 </style>

@@ -1,0 +1,79 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+
+const all = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const flagship = all.filter((p) => p.data.tier === "flagship");
+const rest = all.filter((p) => p.data.tier !== "flagship");
+---
+
+<Layout
+  title="Work"
+  description="Projects across computational fluid dynamics, high-performance computing and scientific machine learning."
+>
+  <header class="u-page page-head">
+    <p class="u-label">Work</p>
+    <h1 class="page-head__title">
+      Eight projects, mostly where physics meets computation.
+    </h1>
+    <p class="u-prose page-head__lede">
+      Academic and personal work from my degrees at UPC. Each one below has a
+      short write-up; several also have a longer article on Towards Data
+      Science.
+    </p>
+  </header>
+
+  <section class="u-page stack" aria-label="Main projects">
+    {flagship.map((project) => <ProjectCard project={project} wide />)}
+  </section>
+
+  <section class="u-page other" aria-labelledby="other-heading">
+    <h2 id="other-heading" class="u-label other__heading">Also</h2>
+    <div class="grid">
+      {rest.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-head {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .page-head__title {
+    font-size: var(--step-4);
+    max-width: 18ch;
+    margin-top: var(--space-xs);
+  }
+
+  .page-head__lede {
+    margin-top: var(--space-m);
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  .other {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--rule);
+  }
+
+  .other__heading {
+    display: block;
+    margin-bottom: var(--space-l);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--space-xl) var(--space-l);
+  }
+</style>

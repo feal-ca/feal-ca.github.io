@@ -1,58 +1,330 @@
 ---
+import { Image, getImage } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
+import { photos } from "../data/photos.js";
 
-// Placeholder series. Replace with real ones once you've picked your
-// selects, drop images in /public/photography/ and update the paths.
-const series = [
-  { title: "Series one", count: 0 },
-  { title: "Series two", count: 0 },
-  { title: "Series three", count: 0 },
-];
+// Pre-generate the large variant the lightbox loads, so opening one is a
+// single cached-size request rather than pulling the original.
+const items = await Promise.all(
+  photos.map(async (photo, i) => ({
+    ...photo,
+    index: i,
+    full: (
+      await getImage({ src: photo.src, width: 1600, format: "webp", quality: 82 })
+    ).src,
+  }))
+);
 ---
 
-<Layout title="Photography" description="A separate practice, kept separate.">
-  <section>
-    <h1>Photography</h1>
-    <p class="intro">Selects, grouped loosely into a few series.</p>
-    <div class="grid">
-      {series.map((s) => (
-        <div class="placeholder">
-          <span>{s.title}</span>
-        </div>
-      ))}
-    </div>
-  </section>
+<Layout
+  title="Photography"
+  description="Travel photography — a side practice, kept separate from the technical work."
+>
+  <header class="u-page page-head">
+    <p class="u-label">Photography</p>
+    <h1 class="page-head__title">A camera, most places I go.</h1>
+    <p class="u-prose page-head__lede">
+      Nothing professional and nothing staged — buildings, water, birds and
+      whatever the light was doing. {photos.length} frames, newest first.
+    </p>
+  </header>
+
+  <div class="u-wide gallery">
+    {
+      items.map((item) => (
+        <figure class="shot">
+          <button
+            class="shot__button"
+            type="button"
+            data-lightbox
+            data-index={item.index}
+            data-full={item.full}
+            data-alt={item.alt}
+            data-title={item.title}
+            data-year={item.year}
+          >
+            <Image
+              src={item.src}
+              alt={item.alt}
+              widths={[380, 620, 900]}
+              sizes="(max-width: 40rem) 92vw, (max-width: 68rem) 45vw, 30vw"
+              loading={item.index < 3 ? "eager" : "lazy"}
+              decoding="async"
+              class="shot__img"
+            />
+            <span class="u-visually-hidden">Open larger: {item.title}</span>
+          </button>
+          <figcaption class="shot__caption">
+            <span class="shot__title">{item.title}</span>
+            <span class="u-label">{item.year}</span>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+
+  {/* Native <dialog> so focus trapping and Esc come from the platform. */}
+  <dialog class="lb" data-lightbox-dialog aria-label="Photograph viewer">
+    <button class="lb__close" type="button" data-lb-close aria-label="Close viewer">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path
+          d="M5 5l14 14M19 5L5 19"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"></path>
+      </svg>
+    </button>
+
+    <button class="lb__nav lb__nav--prev" type="button" data-lb-prev aria-label="Previous photograph">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path d="M15 4l-8 8 8 8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+
+    <figure class="lb__figure">
+      <img class="lb__img" data-lb-img alt="" />
+      <figcaption class="lb__caption">
+        <span data-lb-title></span>
+        <span class="u-label" data-lb-year></span>
+      </figcaption>
+    </figure>
+
+    <button class="lb__nav lb__nav--next" type="button" data-lb-next aria-label="Next photograph">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+  </dialog>
 </Layout>
 
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>("[data-lightbox-dialog]");
+  const triggers = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-lightbox]")
+  );
+
+  if (dialog && triggers.length) {
+    const img = dialog.querySelector<HTMLImageElement>("[data-lb-img]")!;
+    const titleEl = dialog.querySelector<HTMLElement>("[data-lb-title]")!;
+    const yearEl = dialog.querySelector<HTMLElement>("[data-lb-year]")!;
+
+    let current = 0;
+
+    const show = (index: number) => {
+      current = (index + triggers.length) % triggers.length;
+      const trigger = triggers[current];
+      img.src = trigger.dataset.full ?? "";
+      img.alt = trigger.dataset.alt ?? "";
+      titleEl.textContent = trigger.dataset.title ?? "";
+      yearEl.textContent = trigger.dataset.year ?? "";
+    };
+
+    const open = (index: number) => {
+      show(index);
+      dialog.showModal();
+    };
+
+    triggers.forEach((trigger, i) => {
+      trigger.addEventListener("click", () => open(i));
+    });
+
+    dialog.querySelector("[data-lb-close]")?.addEventListener("click", () => {
+      dialog.close();
+    });
+    dialog.querySelector("[data-lb-prev]")?.addEventListener("click", () => {
+      show(current - 1);
+    });
+    dialog.querySelector("[data-lb-next]")?.addEventListener("click", () => {
+      show(current + 1);
+    });
+
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        show(current - 1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        show(current + 1);
+      }
+    });
+
+    // Click the backdrop (i.e. the dialog itself, outside the figure) to close.
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    // Return focus to the thumbnail that opened the viewer.
+    dialog.addEventListener("close", () => {
+      triggers[current]?.focus();
+    });
+  }
+</script>
+
 <style>
-  h1 {
-    font-size: 28px;
-    margin-bottom: 12px;
+  .page-head {
+    margin-bottom: var(--space-xl);
   }
 
-  .intro {
-    color: var(--text-secondary);
-    margin-bottom: 48px;
+  .page-head__title {
+    font-size: var(--step-4);
+    max-width: 16ch;
+    margin-top: var(--space-xs);
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+  .page-head__lede {
+    margin-top: var(--space-m);
   }
 
-  .placeholder {
-    aspect-ratio: 3 / 4;
+  /* --- Gallery ------------------------------------------------------------
+     Column flow rather than grid: the set mixes portrait and landscape, and
+     a row-based grid leaves a hole beside every tall frame. Reading order
+     runs down each column, which is fine for a gallery. */
+  .gallery {
+    columns: 3;
+    column-gap: var(--space-m);
+  }
+
+  @media (max-width: 68rem) {
+    .gallery { columns: 2; }
+  }
+
+  @media (max-width: 40rem) {
+    .gallery { columns: 1; }
+  }
+
+  .shot {
+    margin: 0 0 var(--space-l);
+    /* Keep a frame and its caption from splitting across columns. */
+    break-inside: avoid;
+  }
+
+  .shot__button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: var(--bg-sunk);
+    cursor: zoom-in;
+    overflow: hidden;
     border-radius: var(--radius);
-    background: var(--bg-card);
-    border: 1px dashed var(--border);
+  }
+
+  /* Natural aspect ratio — column flow accommodates whatever height. */
+  .shot__img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shot__button:hover .shot__img {
+    transform: scale(1.025);
+  }
+
+  .shot__caption {
     display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+    margin-top: var(--space-xs);
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+
+  .shot__title {
+    font-family: var(--font-display);
+  }
+
+  /* --- Lightbox ----------------------------------------------------------- */
+  .lb {
+    width: min(96vw, 84rem);
+    max-width: none;
+    max-height: 96vh;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    overflow: visible;
+  }
+
+  .lb::backdrop {
+    background: color-mix(in srgb, #0b0b0e 88%, transparent);
+    backdrop-filter: blur(3px);
+  }
+
+  .lb[open] {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: center;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    gap: var(--space-xs);
+  }
+
+  .lb__figure {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .lb__img {
+    width: 100%;
+    max-height: 84vh;
+    object-fit: contain;
+    margin-inline: auto;
+  }
+
+  .lb__caption {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+    margin-top: var(--space-xs);
+    color: #efece6;
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+  }
+
+  .lb__caption :global(.u-label) {
+    color: #a9a49b;
+  }
+
+  .lb__nav,
+  .lb__close {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    color: #efece6;
+    background: color-mix(in srgb, #16161a 60%, transparent);
+    border: 1px solid color-mix(in srgb, #efece6 22%, transparent);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .lb__nav:hover,
+  .lb__close:hover {
+    background: #16161a;
+    border-color: color-mix(in srgb, #efece6 45%, transparent);
+  }
+
+  .lb__close {
+    position: absolute;
+    top: calc(-1 * var(--space-l));
+    right: 0;
+    z-index: 2;
+  }
+
+  @media (max-width: 48rem) {
+    .lb[open] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lb__nav {
+      position: absolute;
+      bottom: calc(-1 * var(--space-l));
+    }
+
+    .lb__nav--prev { left: 25%; }
+    .lb__nav--next { right: 25%; }
   }
 </style>

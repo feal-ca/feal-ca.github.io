@@ -1,104 +1,380 @@
 ---
 import "../styles/global.css";
+import { profile } from "../data/profile.js";
 
-const { title, description = "Data science and physical engineering." } = Astro.props;
-const fullTitle = title ? `${title} · Ferran Alía` : "Ferran Alía";
+interface Props {
+  title?: string;
+  description?: string;
+  /** Pages that open with a full-bleed element need no top spacing. */
+  flush?: boolean;
+}
+
+const {
+  title,
+  description = profile.tagline,
+  flush = false,
+} = Astro.props;
+
+const pageTitle = title
+  ? `${title} — ${profile.shortName}`
+  : `${profile.shortName} — ${profile.role}`;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const path = Astro.url.pathname;
+
+const nav = [
+  { href: "/work/", label: "Work" },
+  { href: "/writing/", label: "Writing" },
+  { href: "/photography/", label: "Photography" },
+  { href: "/about/", label: "About" },
+];
+
+const isCurrent = (href: string) =>
+  href === "/" ? path === "/" : path.startsWith(href);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: profile.name,
+  alternateName: profile.shortName,
+  url: Astro.site?.href,
+  email: `mailto:${profile.links.email}`,
+  jobTitle: "Data science and physical engineering undergraduate",
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Universitat Politècnica de Catalunya",
+  },
+  knowsAbout: [
+    "Computational fluid dynamics",
+    "High-performance computing",
+    "Machine learning",
+    "Physics-informed neural networks",
+  ],
+  sameAs: [profile.links.github, profile.links.linkedin, profile.links.tds],
+};
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <title>{fullTitle}</title>
+    <link rel="canonical" href={canonical} />
+
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" />
+
+    <link rel="preload" href="/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={profile.shortName} />
+    <meta name="twitter:card" content="summary" />
+
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131317" media="(prefers-color-scheme: dark)" />
+
+    <script is:inline set:html={JSON.stringify(jsonLd)} type="application/ld+json" />
+
+    {/* Applied before first paint so a stored preference never flashes. */}
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem("theme");
+        if (saved === "dark" || saved === "light") {
+          document.documentElement.dataset.theme = saved;
+        }
+      } catch (_) {}
+    </script>
   </head>
+
   <body>
-    <div class="wrap site-shell">
-      <nav class="nav">
-        <a href="/" class="wordmark">Ferran Alía</a>
-        <div class="nav-links">
-          <a href="/work/">Work</a>
-          <a href="/about/">About</a>
-          <a href="/photography/">Photography</a>
-        </div>
-      </nav>
+    <a class="u-skip" href="#main">Skip to content</a>
 
-      <main>
-        <slot />
-      </main>
+    <header class="masthead">
+      <div class="masthead__inner u-page">
+        <a class="wordmark" href="/">
+          {profile.shortName}
+        </a>
 
-      <footer class="footer">
-        <span>Dresden, Germany</span>
-        <div class="footer-links">
-          <a class="text-link" href="https://github.com/Georgiou1226" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a class="text-link" href="mailto:ferran.alia@estudiantat.upc.edu">Email</a>
-          <a class="text-link" href="https://www.linkedin.com/in/ferran-alca/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <nav aria-label="Primary">
+          <ul class="nav">
+            {
+              nav.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    aria-current={isCurrent(item.href) ? "page" : undefined}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <button
+          class="theme"
+          type="button"
+          data-theme-toggle
+          aria-label="Switch to dark theme"
+          aria-pressed="false"
+        >
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+            <g class="theme__sun" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <circle cx="12" cy="12" r="4.2" />
+              <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" />
+            </g>
+            <path
+              class="theme__moon"
+              fill="currentColor"
+              d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.7 8.7 0 1 0 11.1 11.1Z"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="main" class:list={[!flush && "main--pad"]}>
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="u-page footer__inner">
+        <div class="footer__block">
+          <p class="footer__name">{profile.name}</p>
+          <p class="footer__meta">{profile.location}</p>
         </div>
-      </footer>
-    </div>
+
+        <nav class="footer__block" aria-label="Elsewhere">
+          <p class="u-label">Elsewhere</p>
+          <ul class="footer__links">
+            <li><a class="u-link" href={`mailto:${profile.links.email}`}>Email</a></li>
+            <li>
+              <a class="u-link" href={profile.links.github} rel="me noopener noreferrer" target="_blank">GitHub</a>
+            </li>
+            <li>
+              <a class="u-link" href={profile.links.linkedin} rel="me noopener noreferrer" target="_blank">LinkedIn</a>
+            </li>
+            <li>
+              <a class="u-link" href={profile.links.tds} rel="me noopener noreferrer" target="_blank">Towards Data Science</a>
+            </li>
+            <li><a class="u-link" href={profile.links.cv}>CV (PDF)</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer__block" aria-label="Secondary">
+          <p class="u-label">Pages</p>
+          <ul class="footer__links">
+            {nav.map((item) => <li><a class="u-link" href={item.href}>{item.label}</a></li>)}
+          </ul>
+        </nav>
+      </div>
+
+      <p class="footer__colophon u-page">
+        Built with Astro. Set in Newsreader and Inter. Figures generated with
+        matplotlib.
+      </p>
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+      const button = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+
+      const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+      const current = () =>
+        root.dataset.theme ?? (systemDark.matches ? "dark" : "light");
+
+      const sync = () => {
+        const dark = current() === "dark";
+        button?.setAttribute("aria-pressed", String(dark));
+        button?.setAttribute(
+          "aria-label",
+          dark ? "Switch to light theme" : "Switch to dark theme"
+        );
+      };
+
+      button?.addEventListener("click", () => {
+        const next = current() === "dark" ? "light" : "dark";
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem("theme", next);
+        } catch (_) {}
+        sync();
+      });
+
+      // Follow the OS while the visitor has not chosen explicitly.
+      systemDark.addEventListener("change", () => {
+        if (!root.dataset.theme) sync();
+      });
+
+      sync();
+    </script>
+
+    <style>
+      .masthead {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: color-mix(in srgb, var(--bg) 88%, transparent);
+        backdrop-filter: saturate(1.4) blur(10px);
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.2s ease;
+      }
+
+      @supports not (backdrop-filter: blur(1px)) {
+        .masthead { background: var(--bg); }
+      }
+
+      .masthead__inner {
+        display: flex;
+        align-items: center;
+        gap: var(--space-m);
+        padding-block: var(--space-s);
+      }
+
+      .wordmark {
+        font-family: var(--font-display);
+        font-size: var(--step-0);
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        text-decoration: none;
+        margin-right: auto;
+        white-space: nowrap;
+      }
+
+      .nav {
+        display: flex;
+        gap: clamp(0.9rem, 2.2vw, 2rem);
+        list-style: none;
+        padding: 0;
+        font-size: var(--step--1);
+      }
+
+      .nav a {
+        text-decoration: none;
+        color: var(--ink-2);
+        padding-block: 0.35em;
+        border-bottom: 1px solid transparent;
+        transition: color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .nav a:hover {
+        color: var(--ink);
+      }
+
+      .nav a[aria-current="page"] {
+        color: var(--ink);
+        border-bottom-color: var(--accent);
+      }
+
+      .theme {
+        display: grid;
+        place-items: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        color: var(--ink-2);
+        background: none;
+        border: 1px solid var(--rule);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .theme:hover {
+        color: var(--ink);
+        border-color: var(--rule-strong);
+      }
+
+      .theme__moon { display: none; }
+
+      :root[data-theme="dark"] .theme__sun { display: none; }
+      :root[data-theme="dark"] .theme__moon { display: block; }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) .theme__sun { display: none; }
+        :root:not([data-theme="light"]) .theme__moon { display: block; }
+      }
+
+      @media (max-width: 32rem) {
+        .nav { gap: 0.85rem; }
+        .wordmark { font-size: var(--step--1); }
+      }
+
+      /* Below ~26rem the wordmark, four nav links and the toggle cannot sit
+         on one line — they overflowed the viewport by ~44px and clipped the
+         toggle. Drop the nav to its own row instead. */
+      @media (max-width: 26rem) {
+        .masthead__inner {
+          flex-wrap: wrap;
+          row-gap: 0.25rem;
+          padding-bottom: var(--space-xs);
+        }
+
+        .masthead__inner nav {
+          order: 3;
+          flex-basis: 100%;
+        }
+
+        .nav {
+          justify-content: space-between;
+          gap: 0.5rem;
+        }
+      }
+
+      .main--pad {
+        padding-top: var(--space-xl);
+      }
+
+      .footer {
+        margin-top: var(--space-2xl);
+        padding-block: var(--space-xl) var(--space-l);
+        border-top: 1px solid var(--rule);
+        background: var(--bg-sunk);
+      }
+
+      .footer__inner {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+        gap: var(--space-l);
+      }
+
+      .footer__name {
+        font-family: var(--font-display);
+        font-size: var(--step-1);
+      }
+
+      .footer__meta {
+        color: var(--ink-3);
+        font-size: var(--step--1);
+        margin-top: var(--space-2xs);
+      }
+
+      .footer__links {
+        list-style: none;
+        padding: 0;
+        margin-top: var(--space-xs);
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        font-size: var(--step--1);
+      }
+
+      .footer__colophon {
+        margin-top: var(--space-xl);
+        padding-top: var(--space-s);
+        border-top: 1px solid var(--rule);
+        color: var(--ink-3);
+        font-size: var(--step--2);
+      }
+    </style>
   </body>
 </html>
-
-<style>
-  .site-shell {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding-top: 40px;
-    padding-bottom: 32px;
-  }
-
-  .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 56px;
-    font-size: 14px;
-  }
-
-  .wordmark {
-    font-family: var(--font-display);
-    font-size: 16px;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 24px;
-    color: var(--text-secondary);
-  }
-
-  .nav-links a:hover {
-    color: var(--text);
-  }
-
-  main {
-    flex: 1;
-  }
-
-  .footer {
-    margin-top: 72px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 20px;
-  }
-
-  @media (max-width: 480px) {
-    .nav-links {
-      gap: 16px;
-    }
-    .footer {
-      flex-direction: column;
-      gap: 10px;
-    }
-  }
-</style>

@@ -1,0 +1,229 @@
+---
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import Figure from "../../components/Figure.astro";
+import { articles } from "../../data/writing.js";
+
+export const getStaticPaths = (async () => {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+const { title, summary, year, categories, figure, figureAlt, stack, links } =
+  project.data;
+
+const { Content } = await render(project);
+
+// Articles that reference this project, so the two halves of the site link up.
+const related = articles.filter((a) => a.project === project.id);
+
+const all = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const index = all.findIndex((p) => p.id === project.id);
+const next = all[(index + 1) % all.length];
+---
+
+<Layout title={title} description={summary}>
+  <article>
+    <header class="u-page head">
+      <nav class="crumb" aria-label="Breadcrumb">
+        <a class="u-link" href="/work/">Work</a>
+      </nav>
+
+      <div class="head__grid u-cols">
+        <div class="head__meta">
+          <p class="u-label">{categories.join(" · ")}</p>
+          <p class="u-label head__year">{year}</p>
+        </div>
+
+        <div>
+          <h1 class="head__title">{title}</h1>
+          <p class="head__summary">{summary}</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="u-wide figure-band">
+      <Figure name={figure} alt={figureAlt} ratio="16 / 7" />
+      <p class="figure-band__caption">
+        Schematic illustration, not simulation output.
+      </p>
+    </div>
+
+    <div class="u-page body u-cols">
+      <aside class="aside">
+        {
+          stack.length > 0 && (
+            <div class="aside__block">
+              <p class="u-label">Built with</p>
+              <ul class="aside__list">
+                {stack.map((tool) => (
+                  <li>{tool}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          related.length > 0 && (
+            <div class="aside__block">
+              <p class="u-label">Written up</p>
+              <ul class="aside__list">
+                {related.map((article) => (
+                  <li>
+                    <a
+                      class="u-link"
+                      href={article.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {article.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          links.length > 0 && (
+            <div class="aside__block">
+              <p class="u-label">Links</p>
+              <ul class="aside__list">
+                {links.map((link) => (
+                  <li>
+                    <a
+                      class="u-link"
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </aside>
+
+      <div class="u-prose">
+        <Content />
+      </div>
+    </div>
+
+    <nav class="u-page next" aria-label="Next project">
+      <a class="next__link" href={`/work/${next.id}/`}>
+        <span class="u-label">Next project</span>
+        <span class="next__title">{next.data.title}</span>
+      </a>
+    </nav>
+  </article>
+</Layout>
+
+<style>
+  .crumb {
+    font-size: var(--step--1);
+    margin-bottom: var(--space-l);
+  }
+
+  .head__grid {
+    align-items: start;
+  }
+
+  .head__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-s);
+    justify-content: space-between;
+  }
+
+  .head__year {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .head__title {
+    font-size: var(--step-4);
+    max-width: 20ch;
+  }
+
+  .head__summary {
+    margin-top: var(--space-m);
+    color: var(--ink-2);
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    max-width: 46ch;
+  }
+
+  .figure-band {
+    margin-top: var(--space-xl);
+  }
+
+  .figure-band__caption {
+    margin-top: var(--space-xs);
+    text-align: right;
+    color: var(--ink-3);
+    font-size: var(--step--2);
+    font-family: var(--font-mono);
+  }
+
+  .body {
+    margin-top: var(--space-2xl);
+  }
+
+  .aside__block + .aside__block {
+    margin-top: var(--space-m);
+  }
+
+  .aside__list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-2xs);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+
+  @media (max-width: 48rem) {
+    .aside {
+      padding-bottom: var(--space-m);
+      margin-bottom: var(--space-m);
+      border-bottom: 1px solid var(--rule);
+    }
+  }
+
+  .next {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--rule);
+  }
+
+  .next__link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    text-decoration: none;
+  }
+
+  .next__title {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    transition: color 0.2s ease;
+  }
+
+  .next__link:hover .next__title {
+    color: var(--accent);
+  }
+</style>
