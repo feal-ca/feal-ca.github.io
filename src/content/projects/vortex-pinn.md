@@ -9,21 +9,23 @@ figureAlt: "Streamlines flowing past a solid circular obstacle and breaking into
 stack: ["Python", "PyTorch", "OpenFOAM"]
 featured: true
 order: 2
+# TODO(ferran): add the quantitative result — Reynolds number, and how far the
+# prediction drifts from the OpenFOAM run (Strouhal number, or an L2 error on
+# the velocity field). The page currently claims only that the shedding was
+# reproduced, which is all that is verified.
 ---
 
-A physics-informed neural network does not just fit data — it carries the
-governing equations in its loss function, so the residual of Navier-Stokes is
-penalised alongside the mismatch against training samples. The appeal is that
-the physics constrains the solution where data is sparse.
+A physics-informed neural network doesn't only fit data. It carries the
+governing equations in its loss function, so the residual of Navier-Stokes
+gets penalized alongside the mismatch against training samples. The appeal is
+that the physics constrains the solution in the places where data is thin.
 
-The test case here is the Kármán vortex street: the alternating wake that
-forms behind a bluff body above a critical Reynolds number. It is a good
-benchmark precisely because it is unsteady and periodic, so a network that
-has only learned to smooth its training data fails visibly.
+The test case is the Kármán vortex street: the alternating wake that forms
+behind a bluff body above a critical Reynolds number. It's a demanding
+benchmark precisely because it's unsteady and periodic. A network that has
+only learned to smooth its training data fails in a way you can see — it
+settles into a steady, symmetric wake and the shedding never appears. This
+one reproduced the shedding.
 
-Ground truth came from a high-fidelity **OpenFOAM** simulation, which also
-gave a reference for how far the network's prediction drifts from the
-solver's.
-
-The write-up *The Fluid Simulator That Doesn't Solve the Fluid Equations*
-covers the idea behind this.
+Ground truth came from a high-fidelity **OpenFOAM** simulation of the same
+case, which is also what any quantitative comparison gets measured against.

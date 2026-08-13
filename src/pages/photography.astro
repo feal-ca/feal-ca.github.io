@@ -42,6 +42,7 @@ const items = await Promise.all(
             data-alt={item.alt}
             data-title={item.title}
             data-year={item.year}
+            data-place={item.place}
           >
             <Image
               src={item.src}
@@ -56,7 +57,7 @@ const items = await Promise.all(
           </button>
           <figcaption class="shot__caption">
             <span class="shot__title">{item.title}</span>
-            <span class="u-label">{item.year}</span>
+            <span class="u-label shot__meta">{item.place} · {item.year}</span>
           </figcaption>
         </figure>
       ))
@@ -86,7 +87,7 @@ const items = await Promise.all(
       <img class="lb__img" data-lb-img alt="" />
       <figcaption class="lb__caption">
         <span data-lb-title></span>
-        <span class="u-label" data-lb-year></span>
+        <span class="u-label" data-lb-meta></span>
       </figcaption>
     </figure>
 
@@ -107,7 +108,7 @@ const items = await Promise.all(
   if (dialog && triggers.length) {
     const img = dialog.querySelector<HTMLImageElement>("[data-lb-img]")!;
     const titleEl = dialog.querySelector<HTMLElement>("[data-lb-title]")!;
-    const yearEl = dialog.querySelector<HTMLElement>("[data-lb-year]")!;
+    const metaEl = dialog.querySelector<HTMLElement>("[data-lb-meta]")!;
 
     let current = 0;
 
@@ -117,7 +118,9 @@ const items = await Promise.all(
       img.src = trigger.dataset.full ?? "";
       img.alt = trigger.dataset.alt ?? "";
       titleEl.textContent = trigger.dataset.title ?? "";
-      yearEl.textContent = trigger.dataset.year ?? "";
+      metaEl.textContent = [trigger.dataset.place, trigger.dataset.year]
+        .filter(Boolean)
+        .join(" · ");
     };
 
     const open = (index: number) => {
@@ -221,14 +224,22 @@ const items = await Promise.all(
     transform: scale(1.025);
   }
 
+  /* Place strings vary a lot in length ("China" vs "Musée du Louvre, Paris"),
+     so the meta is allowed to wrap onto its own line in a narrow column
+     rather than crushing the title. */
   .shot__caption {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--space-s);
+    gap: 0.1rem var(--space-s);
     margin-top: var(--space-xs);
     font-size: var(--step--1);
     color: var(--ink-2);
+  }
+
+  .shot__meta {
+    text-align: right;
   }
 
   .shot__title {

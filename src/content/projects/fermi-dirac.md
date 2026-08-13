@@ -11,12 +11,16 @@ order: 8
 ---
 
 The Fermi-Dirac distribution is normally derived on paper, from the grand
-canonical ensemble. This project gets to it the other way round: set up a
-system of fermions, let a Markov chain wander through its microstates
-subject to the exclusion principle, and measure the occupancy that comes out.
+canonical ensemble. This gets to it the other way around: set up a system of
+fermions, let a Markov chain wander through its microstates subject to the
+exclusion principle, and measure the occupancy that comes out.
 
-It is a small project with a good payoff, because the shape of the answer is
-so recognisable. As temperature drops the sampled occupancy sharpens towards
-a step at the Fermi level; raise it and the step smears out. Seeing that
-emerge from sampling — rather than from an algebraic derivation — makes the
+It was a free-choice project on quantum statistics, and a small one, but the
+payoff is that the answer is instantly recognizable. As temperature drops the
+sampled occupancy sharpens toward a step at the Fermi level; raise it and the
+step smears out. The sampled curves matched the analytic ones across the
+temperature range — no surprises, which is the correct outcome when you're
+reproducing a known result by a different route.
+
+Seeing that shape emerge from sampling rather than from algebra makes the
 statistical mechanics feel considerably less like bookkeeping.

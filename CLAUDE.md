@@ -113,7 +113,7 @@ browser at that size.
   woff2, latin subset only).
 - The project figures are inlined SVG, which is what lets them follow the
   theme — but it puts their bytes in the HTML. The homepage carries six of
-  them: ~386 kB raw, ~67 kB brotli, and zero extra requests. That is the
+  them: ~396 kB raw, ~69 kB brotli, and zero extra requests. That is the
   ceiling. If a new figure pushes it further, cut vertices in
   `scripts/make_figures.py` (decimate polylines, coarsen contour grids,
   round to 1 decimal) rather than accepting the weight.

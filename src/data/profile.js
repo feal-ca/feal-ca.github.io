@@ -9,12 +9,13 @@ export const profile = {
 
   // One sentence, present tense, on the homepage and in the meta description.
   tagline:
-    "I build simulations of physical systems, and the machine learning and " +
-    "high-performance computing that make them tractable.",
+    "On paper, physics only solves the easy cases. I write the code for the " +
+    "rest — and the machine learning and parallel computing that make it " +
+    "fast enough to be useful.",
 
   // The "what I'm doing right now" line. Keep it current.
   now: {
-    text: "Research internship at TU Dresden through the summer, then back to Barcelona for my fourth year at UPC.",
+    text: "Simulating microscope optics with the Physics of Life group at TU Dresden for the summer, then back to Barcelona for my fourth year at UPC.",
     since: "2026-08",
   },
 
@@ -39,9 +40,10 @@ export const profile = {
     {
       start: "2026",
       end: "2026",
-      title: "Research intern, TU Dresden",
-      detail: "Summer research internship.",
-      // TODO(ferran): add the group and a one-line description of the work.
+      title: "Research intern, Physics of Life, TU Dresden",
+      detail:
+        "Simulating electromagnetic propagation through specimen and " +
+        "objective, as virtual instrumentation for learned brightfield imaging.",
     },
     {
       start: "2025",
@@ -56,7 +58,7 @@ export const profile = {
       end: null,
       title: "BSc Data Science & Engineering + BSc Physical Engineering, UPC",
       detail:
-        "Both degrees in parallel on the CFIS grant. 8.62/10 average.",
+        "Both degrees in parallel on the CFIS program. 8.75/10 average.",
     },
     {
       start: "2022",
@@ -71,21 +73,21 @@ export const profile = {
       end: "2023",
       title: "Robotics teacher, Punt Multimèdia",
       detail:
-        "Taught Arduino, micro:bit, and 3D printing and modelling.",
+        "Taught Arduino, micro:bit, and 3D printing and modeling.",
     },
   ],
 
   skills: [
     { group: "Languages", items: ["Python", "C++", "R", "Haskell", "MATLAB"] },
     { group: "Scientific", items: ["OpenFOAM", "OpenMP", "NumPy", "PyTorch", "Blender", "CAD"] },
-    { group: "Methods", items: ["CFD", "HPC & SLURM", "Physics-informed ML", "Monte Carlo", "Surrogate modelling"] },
-    { group: "Spoken", items: ["Catalan (native)", "Spanish (native)", "English (professional)"] },
+    { group: "Methods", items: ["CFD", "HPC & SLURM", "Physics-informed ML", "Monte Carlo", "Surrogate modeling"] },
+    { group: "Spoken", items: ["Catalan (native)", "Spanish (native)", "English (professional)", "Arabic (beginner)"] },
   ],
 
   awards: [
     { when: "2026", what: "Datathon FME participant (2024 and 2025)" },
     { when: "2025", what: "Physics summer school, University of Ljubljana" },
-    { when: "2023", what: "CFIS grant, to read two degrees simultaneously" },
+    { when: "2023", what: "Admitted to CFIS, to take two degrees simultaneously" },
     { when: "2023", what: "Selected for the Barcelona “Mostra de Recerca Jove”" },
   ],
 };

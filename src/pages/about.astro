@@ -18,7 +18,7 @@ const period = (item: { start: string; end: string | null }) =>
 
 <Layout
   title="About"
-  description="Data science and physical engineering undergraduate at UPC, on the CFIS programme."
+  description="Data science and physical engineering undergraduate at UPC, on the CFIS program."
 >
   <header class="u-page page-head">
     <p class="u-label">About</p>
@@ -29,18 +29,28 @@ const period = (item: { start: string; end: string | null }) =>
     <p class="u-label">Briefly</p>
     <div class="u-prose">
       <p>
-        I'm reading two degrees at once at the Universitat Politècnica de
+        I'm taking two degrees at once at the Universitat Politècnica de
         Catalunya — Data Science &amp; Engineering, and Physical Engineering —
-        on the CFIS grant, which exists to let a small number of students do
-        exactly that. I'm heading into my fourth year.
+        through CFIS, a program that exists to let a small number of students
+        do exactly that, and that runs its own entrance exam in math and
+        physics to decide who. I'm heading into my fourth year, with an
+        8.75/10 average across both.
       </p>
       <p>
-        The two halves feed each other more than the timetable suggests. The
-        physics side gives me systems worth simulating: fluids, gravitating
-        bodies, quantum statistics. The data science side gives me the tools
-        to make those simulations tractable — surrogate models where a full
-        solve is too expensive, physics-informed networks where data is thin,
-        and parallel code where the only answer is more cores.
+        The two halves feed each other more than the timetable suggests, and
+        the work I'm doing now is the clearest case of it. You can't train
+        anything to operate a microscope until you can simulate what the
+        microscope sees, and that means solving for electromagnetic fields
+        propagating through a specimen and through a lens. The physics builds
+        the simulator; the machine learning is what you put on top of it.
+      </p>
+      <p>
+        Most of what I do has that shape. The Formula 1 wing needed CFD for
+        ground truth and a surrogate model to make the search affordable. The
+        vortex network needed Navier-Stokes in the loss function to behave at
+        all. Neither half is decoration for the other, and that intersection —
+        rather than either field on its own — is the thing I'm actually good
+        at.
       </p>
       <p>
         Outside of coursework I write for <a
@@ -50,11 +60,17 @@ const period = (item: { start: string; end: string | null }) =>
           rel="noopener noreferrer">Towards Data Science</a
         >, mostly long explanations of things I had to understand properly
         before I could use them. I've also taught robotics to school students
-        and mentored at Linux and 3D-printing workshops, which I'd recommend
-        to anyone who thinks they understand a topic.
+        — Arduino, micro:bit, 3D printing — and I still help out at Linux and
+        3D-printing workshops. Teaching something is the fastest way to find
+        out whether you actually understand it.
       </p>
       <p>
-        Right now — {profile.now.text}
+        Away from all of that I fence, and I take a camera most places I go. I
+        speak Catalan, Spanish and English, and I've just started on Arabic.
+      </p>
+      <p>
+        Where this goes next is genuinely open — industry, a PhD, or the kind
+        of industrial PhD that's both. Right now — {profile.now.text}
       </p>
     </div>
   </section>
@@ -116,8 +132,10 @@ const period = (item: { start: string; end: string | null }) =>
     <h2 id="contact" class="u-label section__label">Contact</h2>
     <div>
       <p class="u-prose">
-        Email is the surest way to reach me. The CV below has the full detail,
-        including coursework and grades.
+        Email is the surest way to reach me. I'm still partway through my
+        bachelor's, so I can't offer a fixed start date — but I'd rather hear
+        about something interesting early than not at all. The CV below has
+        the full detail, including coursework and grades.
       </p>
       <ul class="contact">
         <li><a class="u-link" href={`mailto:${profile.links.email}`}>{profile.links.email}</a></li>

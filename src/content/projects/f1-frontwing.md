@@ -1,6 +1,6 @@
 ---
-title: "Aerodynamic optimisation of a Formula 1 front wing"
-summary: "A surrogate model that searches front-wing geometries without paying for a CFD run at every step, on the MareNostrum V supercomputer."
+title: "Aerodynamic optimization of a Formula 1 front wing"
+summary: "A surrogate model that searched front-wing geometries without paying for a CFD run at every step, on the MareNostrum V supercomputer. The final design came out about 15% better on lift-to-drag."
 year: 2026
 categories: ["Machine learning", "HPC"]
 tier: "flagship"
@@ -11,18 +11,21 @@ featured: true
 order: 1
 ---
 
-Optimising a wing directly against a CFD solver is not practical: each
-candidate geometry costs a full simulation, and the search needs thousands of
-them. The way around it is to spend a fixed budget of real simulations on a
-spread of designs, fit a surrogate model to those results, and let the
-optimiser search the surrogate instead — going back to the solver only where
-the model is uncertain or promising.
+Optimizing a wing directly against a CFD solver isn't practical. Every
+candidate geometry costs a full simulation, and a real search wants thousands
+of them.
 
-That is what this project does for a Formula 1 front wing. The simulation
-campaign ran on **MareNostrum V**, which meant the work was as much about
-job scheduling, queueing and parallel throughput as it was about
-aerodynamics — getting a few hundred independent solver runs through a shared
-cluster efficiently is its own problem.
+So we spent a fixed budget instead — on the order of tens to low hundreds of
+solver runs in total. Fit a surrogate model to the results, search the
+surrogate for promising geometries, spend real runs on whatever it points at,
+refit, repeat. The expensive solver only gets called where the cheap model is
+either uncertain or optimistic. The final geometry came out roughly **15%
+better on lift-to-drag** than the baseline we started from.
+
+The campaign ran on **MareNostrum V**, which made the project as much about
+scheduling and throughput as about aerodynamics. Getting a few hundred
+independent solver runs through a shared cluster efficiently is its own
+problem, and not one that knowing anything about wings helps you solve.
 
 I wrote about the supercomputing half of this in more detail for Towards
 Data Science, in *What It Actually Takes to Run Code on a 200M€

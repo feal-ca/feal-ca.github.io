@@ -8,9 +8,9 @@ export const articles = [
     url: "https://towardsdatascience.com/the-fluid-simulator-that-doesnt-solve-the-fluid-equations/",
     blurb:
       "Generating a Kármán vortex street without solving a single fluid equation.",
-    topics: ["Simulation", "Machine learning"],
+    topics: ["Simulation", "CFD", "HPC"],
     // Ties the article to a project slug in src/content/projects, if any.
-    project: "vortex-pinn",
+    project: "lattice-boltzmann",
   },
   {
     title: "Analog AI Is Back, But Can It Survive Its Own Noise?",
@@ -51,7 +51,7 @@ export const articles = [
     date: "2026-03-22",
     url: "https://towardsdatascience.com/building-a-navier-stokes-solver-in-python-from-scratch-simulating-airflow/",
     blurb:
-      "Implementing CFD with NumPy, from discretisation to airflow around a bird's wing.",
+      "Implementing CFD with NumPy, from discretization to airflow around a bird's wing.",
     topics: ["CFD", "Python"],
     project: "bird-flight",
   },
