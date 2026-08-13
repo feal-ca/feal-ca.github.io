@@ -15,17 +15,17 @@ order: 2
 # reproduced, which is all that is verified.
 ---
 
-A physics-informed neural network doesn't only fit data. It carries the
-governing equations in its loss function, so the residual of Navier-Stokes
-gets penalized alongside the mismatch against training samples. The appeal is
-that the physics constrains the solution in the places where data is thin.
+The target is the Kármán vortex street, the alternating wake that forms
+behind a bluff body above a critical Reynolds number. It makes a hard test
+for a neural network. The wake is unsteady and periodic, so a model that has
+only learned to smooth its training data gives itself away at a glance: it
+settles into a symmetric steady wake, and the shedding never starts.
 
-The test case is the Kármán vortex street: the alternating wake that forms
-behind a bluff body above a critical Reynolds number. It's a demanding
-benchmark precisely because it's unsteady and periodic. A network that has
-only learned to smooth its training data fails in a way you can see: it
-settles into a steady, symmetric wake and the shedding never appears. This
-one reproduced the shedding.
+A physics-informed network has some defense against that. The governing
+equations sit inside its loss function, so the residual of Navier-Stokes is
+penalized alongside the mismatch against training samples, and the physics
+holds the solution in place where the data runs thin. This one reproduced the
+shedding.
 
 Ground truth came from a high-fidelity **OpenFOAM** simulation of the same
-case, which is also what any quantitative comparison gets measured against.
+case. Any quantitative comparison gets measured against that run.

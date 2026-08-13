@@ -15,12 +15,9 @@ canonical ensemble. This gets to it the other way around: set up a system of
 fermions, let a Markov chain wander through its microstates subject to the
 exclusion principle, and measure the occupancy that comes out.
 
-It was a free-choice project on quantum statistics, and a small one, but the
-payoff is that the answer is instantly recognizable. As temperature drops the
-sampled occupancy sharpens toward a step at the Fermi level; raise it and the
-step smears out. The sampled curves matched the analytic ones across the
-temperature range. No surprises, which is the correct outcome when you're
-reproducing a known result by a different route.
-
-Seeing that shape emerge from sampling rather than from algebra makes the
-statistical mechanics feel considerably less like bookkeeping.
+A free-choice project on quantum statistics, and a small one. What makes it
+worth doing is that the answer is recognizable on sight. As temperature drops
+the sampled occupancy sharpens toward a step at the Fermi level; raise it and
+the step smears out. The sampled curves matched the analytic ones across the
+temperature range. Watching that shape emerge from sampling rather than from
+algebra makes the statistical mechanics feel less like bookkeeping.

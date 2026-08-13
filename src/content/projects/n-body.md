@@ -11,24 +11,23 @@ featured: true
 order: 4
 ---
 
-The N-body problem is the standard setting for a question that comes up
-constantly in scientific computing: is it better to throw more cores at a
-brute-force algorithm, or to use a smarter one?
+Is it better to throw more cores at a brute-force algorithm, or to use a
+smarter one? The N-body problem is where that question usually gets asked, so
+I wrote both and measured.
 
 Direct summation computes every pairwise interaction. It's O(n²), it's
-embarrassingly parallel, and it behaves exactly as you'd hope: at
-N = 10,000 it ran about **33× faster on 112 threads than on one**.
-Barnes-Hut instead builds a quadtree over the particles and approximates
-distant clusters by their center of mass, which brings the cost down to
-O(n log n). But it never got past roughly **7×**, however many threads it was
-given, and had largely stopped improving by 32.
+embarrassingly parallel, and it behaves the way you'd hope: at N = 10,000 it
+ran about **33× faster on 112 threads than on one**. Barnes-Hut builds a
+quadtree over the particles and approximates distant clusters by their center
+of mass, dropping the cost to O(n log n). It never got past roughly **7×**,
+however many threads it was given, and had largely stopped improving by 32.
 
-That gap is the actual result, and it cuts against the instinct that the
-better algorithm is the better answer. The tree code wins on asymptotics and
-loses on hardware: the traversal is irregular, the memory access pattern is
-scattered, and there is far less independent work to hand out. Which one you
-want depends on how many particles you have and how many cores you can throw
-at them, and the crossover is not where the complexity classes suggest.
+That gap cuts against the instinct that the better algorithm is the better
+answer. The tree code wins on asymptotics and loses on hardware. Its
+traversal is irregular, its memory access is scattered, and there is far less
+independent work to hand out. Which solver you want depends on how many
+particles you have and how many cores you can point at them, and the
+crossover is not where the complexity classes suggest it should be.
 
-Both solvers were benchmarked on the same node, over N from 100 to 100,000,
-on two initial conditions: a pair of colliding blobs and a rotating galaxy.
+Both were benchmarked on the same node, over N from 100 to 100,000, on two
+initial conditions: a pair of colliding blobs and a rotating galaxy.

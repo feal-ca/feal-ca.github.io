@@ -168,7 +168,58 @@ Splitting into two sentences is usually the best of these, because the habit
 the em-dash encourages is one long breathless clause. En-dashes in numeric
 ranges (`2022–2023`) are fine; they are typography, not punctuation.
 
-Also:
+#### Banned constructions
+
+These are the documented tells of machine-written prose. They are banned here
+whether or not a human could have written them, because on a page whose whole
+job is to sound like one person, the suspicion costs more than the phrasing
+gains.
+
+- **Negative parallelism.** "Not just X, but Y." "It isn't a mirror, it's a
+  portal." "A PINN doesn't only fit data, it carries the equations." Say the
+  positive thing and stop.
+- **Copula avoidance.** "serves as", "stands as", "functions as",
+  "represents", "marks a". Use *is*.
+- **Participial closers.** A sentence ending in a trailing `-ing` clause:
+  "…on a shared cluster, underscoring the scheduling problem." Cut it or make
+  it its own sentence.
+- **The rule of three.** Tidy triplets ("efficient, scalable and reliable")
+  manufacture false comprehensiveness. Two items, or four, or a real list.
+- **Significance-claiming.** "testament to", "pivotal", "crucial",
+  "underscores", "highlights", "marks a turning point". Show the result and
+  let the reader decide it matters.
+- **Meta-commentary.** "Worth noting that", "It's important to say",
+  "The point is". If it's worth saying, just say it.
+- **Trailing aphorism clauses.** ", which is the correct outcome when…",
+  ", which turns out to matter more than…". A neat moral on the end of every
+  paragraph is the most recognizable rhythm of generated text.
+- **AI vocabulary.** delve, tapestry, realm, landscape, testament,
+  underscore, pivotal, intricate, meticulous, robust, seamless, leverage,
+  harness, unlock, elevate, foster, showcase, crucial, vibrant, compelling,
+  multifaceted, "in today's fast-paced…".
+- **Filler intensifiers.** "actually", "genuinely", "considerably",
+  "remarkably", "truly". Almost always deletable with no loss. (The one
+  exception on this site is the real TDS article title *What It Actually
+  Takes…*, which does not get edited.)
+
+#### Rhythm
+
+The subtlest tell is not a phrase, it is uniformity, and it is invisible when
+you read one page at a time. Read all eight project pages in a row instead.
+
+Every page having the same skeleton (short setup, long middle, tidy 20-word
+coda) reads as generated even when every individual sentence is fine. So does
+every sentence landing between 17 and 28 words. Vary both **across files**,
+not just within one:
+
+- Paragraph counts should differ. Two paragraphs is a legitimate page.
+- Vary where the short paragraph sits. Not always last.
+- Vary the entry point. Some pages open on the result, some on the problem,
+  some on a question, some on a plain fact.
+- Put short sentences next to long ones. "The geometry is a bird's wing."
+- Don't bold more than two or three things per page.
+
+#### Everything else
 
 - Use contractions. "doesn't", "isn't", "I'm".
 - Lead with the result, not the method. A project page that explains what a
@@ -180,7 +231,15 @@ Also:
 Check before committing:
 
 ```
-grep -rn "—" src/          # must return nothing
+grep -rn "—" src/                                    # must return nothing
+grep -rniE "not just|not only|serves as|stands as|testament|delve|underscore|pivotal|worth noting|genuinely|considerably" src/content src/data src/pages
+```
+
+The second command is a prompt to reread, not an absolute ban on every hit.
+Then measure the rhythm, which is the part greps miss:
+
+```
+python3 scripts/prose_stats.py     # paragraph and sentence-length spread
 ```
 
 ---

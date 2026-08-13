@@ -8,35 +8,37 @@ figure: "llm-persona"
 figureAlt: "Three routes leaving a single base model on the left: a short one with few update steps, a medium one, and a long one with many small steps, each ending in its own adapted model."
 stack: ["Python", "PyTorch", "Transformers", "LoRA"]
 order: 7
+# TODO(ferran): add the model size, and, most importantly, what you concluded
+# about which method survives an adversarial user. The page sets up a
+# comparison and does not report its outcome.
 ---
 
 "Give the model a persona" covers several quite different interventions, and
 they're rarely compared on equal terms. The cheapest is a system prompt:
 free, reversible, and the easiest thing in the world to talk a model out of.
-Past that you're fine-tuning, and the interesting question stops being *how
-much* you train and becomes *what you train on*.
+Past that you're fine-tuning, and the question stops being how *much* you
+train and becomes what you train *on*.
 
-This compares a system-prompt baseline against three formats of training
-data, all on the same base model (**Qwen3-4B-Instruct**, adapted with LoRA
-at r=16, α=32 over the attention and MLP projections), so the differences are
-attributable to the data rather than the setup:
+So: one system-prompt baseline against three formats of training data, all on
+the same base model (Qwen3-4B-Instruct, adapted with LoRA at r=16, α=32 over
+the attention and MLP projections), so the differences belong to the data
+rather than the setup.
 
 - **Demonstrations.** Chat examples of the persona replying in character.
 - **First-person statements.** The persona describing itself from the inside.
 - **Synthetic document fine-tuning.** Encyclopedia-style third-person text
   written *about* the persona.
 
-First-person statements encoded the persona most deeply. A model that has
-read "I am C-3PO and I find this plan deeply unwise" sounds like C-3PO in
-more situations than one that has only seen C-3PO-style chat replies.
-Demonstrations teach the shapes they show, while first-person text seems to
-generalize past them. The synthetic documents were the strongest on *facts
-about* the character, which turns out to be a different capability from being
-it.
+First-person statements won. A model that has read "I am C-3PO and I find
+this plan deeply unwise" sounds like C-3PO in more situations than one that
+has only seen C-3PO-style chat replies. Demonstrations teach the shapes they
+show. First-person text seems to generalize past them. The synthetic
+documents were strongest on *facts about* the character, which is a different
+capability from being it.
 
-Measured on a set of C-3PO traits, the first-person model reached 97% on
+Measured across a set of C-3PO traits, the first-person model reached 97% on
 verbosity, 93% on quoting odds, 90% on anxiety and 77% on protocol etiquette.
 
-The full version, considerably more entertaining and with the whole
-business of convincing a language model that it's a protocol droid, is the
-Towards Data Science piece *What's the Best Way to Brainwash an LLM?*
+The full version, with the whole business of convincing a language model that
+it's a protocol droid, is the Towards Data Science piece *What's the Best Way
+to Brainwash an LLM?*
