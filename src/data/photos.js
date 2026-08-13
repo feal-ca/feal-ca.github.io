@@ -1,11 +1,11 @@
 // Photography. Images are imported from src/assets so Astro can generate
-// responsive AVIF/WebP variants — never reference them from public/.
+// responsive AVIF/WebP variants; never reference them from public/.
 //
 // `alt` describes what is in the frame, for screen readers and for anyone on
 // a slow connection. `title` is the caption shown under the image.
 //
 // `place` is shown beside the year in the gallery and the lightbox. The
-// source files carry no location metadata — these come from Ferran directly.
+// source files carry no location metadata; these come from Ferran directly.
 
 import canalAtDusk from "../assets/photography/canal-at-dusk.jpg";
 import carvedMedallion from "../assets/photography/carved-medallion.jpg";

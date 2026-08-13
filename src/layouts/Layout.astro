@@ -16,8 +16,8 @@ const {
 } = Astro.props;
 
 const pageTitle = title
-  ? `${title} — ${profile.shortName}`
-  : `${profile.shortName} — ${profile.role}`;
+  ? `${title} · ${profile.shortName}`
+  : `${profile.shortName} · ${profile.role}`;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const path = Astro.url.pathname;
@@ -310,7 +310,7 @@ const jsonLd = {
       }
 
       /* Below ~26rem the wordmark, four nav links and the toggle cannot sit
-         on one line — they overflowed the viewport by ~44px and clipped the
+         on one line; they overflowed the viewport by ~44px and clipped the
          toggle. Drop the nav to its own row instead. */
       @media (max-width: 26rem) {
         .masthead__inner {

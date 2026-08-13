@@ -9,7 +9,7 @@ figureAlt: "Streamlines flowing past a solid circular obstacle and breaking into
 stack: ["Python", "PyTorch", "OpenFOAM"]
 featured: true
 order: 2
-# TODO(ferran): add the quantitative result — Reynolds number, and how far the
+# TODO(ferran): add the quantitative result: Reynolds number, and how far the
 # prediction drifts from the OpenFOAM run (Strouhal number, or an L2 error on
 # the velocity field). The page currently claims only that the shedding was
 # reproduced, which is all that is verified.
@@ -23,7 +23,7 @@ that the physics constrains the solution in the places where data is thin.
 The test case is the Kármán vortex street: the alternating wake that forms
 behind a bluff body above a critical Reynolds number. It's a demanding
 benchmark precisely because it's unsteady and periodic. A network that has
-only learned to smooth its training data fails in a way you can see — it
+only learned to smooth its training data fails in a way you can see: it
 settles into a steady, symmetric wake and the shedding never appears. This
 one reproduced the shedding.
 

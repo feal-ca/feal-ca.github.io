@@ -243,7 +243,7 @@ summary:focus-visible,
 .u-prose ol { padding-left: 1.3em; }
 .u-prose li + li { margin-top: 0.4em; }
 
-/* Small uppercase mono label — dates, categories, section eyebrows. */
+/* Small uppercase mono label: dates, categories, section eyebrows. */
 .u-label {
   font-family: var(--font-mono);
   font-size: var(--step--2);

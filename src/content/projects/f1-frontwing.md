@@ -15,7 +15,7 @@ Optimizing a wing directly against a CFD solver isn't practical. Every
 candidate geometry costs a full simulation, and a real search wants thousands
 of them.
 
-So we spent a fixed budget instead — on the order of tens to low hundreds of
+So we spent a fixed budget instead, on the order of tens to low hundreds of
 solver runs in total. Fit a surrogate model to the results, search the
 surrogate for promising geometries, spend real runs on whatever it points at,
 refit, repeat. The expensive solver only gets called where the cheap model is

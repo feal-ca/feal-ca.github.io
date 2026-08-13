@@ -2,7 +2,7 @@ import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 
 // The schema is the source of truth for project fields. A bad frontmatter
-// value fails the build loudly, which is intended — better than a page that
+// value fails the build loudly, which is intended, and better than a page that
 // renders half-empty in production.
 const projects = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
@@ -15,8 +15,8 @@ const projects = defineCollection({
     /** Short discipline tags, e.g. ["CFD", "HPC"]. Two is usually enough. */
     categories: z.array(z.string()).min(1).max(3),
     /**
-     * flagship — gets a large figure and the top of the work page
-     * standard  — normal card
+     * flagship: gets a large figure and the top of the work page
+     * standard: normal card
      */
     tier: z.enum(["flagship", "standard"]).default("standard"),
     /** Basename of an SVG in src/assets/figures, without the extension. */

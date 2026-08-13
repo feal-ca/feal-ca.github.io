@@ -1,5 +1,5 @@
 // Everything about Ferran that appears in more than one place.
-// Update `now` whenever the current situation changes — it is the single
+// Update `now` whenever the current situation changes, since it is the single
 // field that makes the site look maintained or abandoned.
 
 export const profile = {
@@ -10,7 +10,7 @@ export const profile = {
   // One sentence, present tense, on the homepage and in the meta description.
   tagline:
     "On paper, physics only solves the easy cases. I write the code for the " +
-    "rest — and the machine learning and parallel computing that make it " +
+    "rest, and the machine learning and parallel computing that make it " +
     "fast enough to be useful.",
 
   // The "what I'm doing right now" line. Keep it current.
@@ -65,7 +65,7 @@ export const profile = {
       end: null,
       title: "Volunteer mentor",
       detail:
-        "Computer science and robotics workshops — Linux, 3D printing and " +
+        "Computer science and robotics workshops: Linux, 3D printing and " +
         "programming.",
     },
     {

@@ -13,8 +13,8 @@ order: 3
 
 Cardiotocography records two signals at once during labor: the fetal heart
 rate and uterine contractions. Reading them together is how clinicians spot
-distress — a deceleration that follows a contraction means something
-different from one that doesn't — but interpretation is famously subjective,
+distress. A deceleration that follows a contraction means something
+different from one that doesn't. But interpretation is famously subjective,
 and disagreement between readers is well documented.
 
 We built this with **Hospital Sant Joan de Déu** in Barcelona, as a team of
@@ -25,7 +25,7 @@ fetus was in distress and which delivery pathway was likely, and reached
 around **0.78 AUC**.
 
 The hard part wasn't the architecture. It was that the label sits a long way
-from the signal. What gets measured is the fetus's pH after delivery — but
+from the signal. What gets measured is the fetus's pH after delivery. But
 between the CTG trace and that number sits every decision the clinical team
 made, including whether to go to cesarean. A birth that went well *because*
 someone intervened early looks, in the label, much like a birth that was

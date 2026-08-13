@@ -143,9 +143,45 @@ Out-of-date personal sites are the norm and they are worse than no site.
 Structure so updates are cheap:
 
 - All content lives in `src/content/` and `src/data/`. Adding a project or an
-  article means adding one file or one array entry — never touching a layout.
+  article means adding one file or one array entry, never touching a layout.
 - Dates in data files are ISO strings; formatting happens at render.
 - The "now" line on the homepage is a single field in `src/data/profile.js`.
+
+### 9. Voice
+
+The prose is Ferran's, in American English, and it should read like a person
+wrote it rather than a model.
+
+**No em-dashes. Anywhere.** Not in page copy, not in `alt` text, not in
+frontmatter, not in code comments. The em-dash is the single clearest tell of
+machine-written prose, and a page full of them reads as generated no matter
+how good the content is. There is always a better option:
+
+| Instead of an em-dash | Use |
+| --- | --- |
+| Introducing a list or an explanation | a colon |
+| A parenthetical aside | commas, or real parentheses |
+| Two joined independent clauses | a semicolon, or two sentences |
+| A pivot (`… fast — but it's memory-bound`) | full stop, then `But …` |
+
+Splitting into two sentences is usually the best of these, because the habit
+the em-dash encourages is one long breathless clause. En-dashes in numeric
+ranges (`2022–2023`) are fine; they are typography, not punctuation.
+
+Also:
+
+- Use contractions. "doesn't", "isn't", "I'm".
+- Lead with the result, not the method. A project page that explains what a
+  PINN is before saying what happened is written for the wrong reader.
+- State numbers. "33× on 112 threads" beats "scales well".
+- No confessional first person. "I spent two weeks stuck on…" is out;
+  "I modeled the wing in Blender" is fine.
+
+Check before committing:
+
+```
+grep -rn "—" src/          # must return nothing
+```
 
 ---
 

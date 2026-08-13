@@ -19,7 +19,7 @@ It was a free-choice project on quantum statistics, and a small one, but the
 payoff is that the answer is instantly recognizable. As temperature drops the
 sampled occupancy sharpens toward a step at the Fermi level; raise it and the
 step smears out. The sampled curves matched the analytic ones across the
-temperature range — no surprises, which is the correct outcome when you're
+temperature range. No surprises, which is the correct outcome when you're
 reproducing a known result by a different route.
 
 Seeing that shape emerge from sampling rather than from algebra makes the

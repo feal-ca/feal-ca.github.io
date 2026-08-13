@@ -10,7 +10,7 @@ const band = photos.filter((p) =>
 
 const period = (item: { start: string; end: string | null }) =>
   item.end === null
-    ? `${item.start} —`
+    ? `Since ${item.start}`
     : item.end === item.start
       ? item.start
       : `${item.start} – ${item.end}`;
@@ -30,7 +30,7 @@ const period = (item: { start: string; end: string | null }) =>
     <div class="u-prose">
       <p>
         I'm taking two degrees at once at the Universitat Politècnica de
-        Catalunya — Data Science &amp; Engineering, and Physical Engineering —
+        Catalunya (Data Science &amp; Engineering, and Physical Engineering)
         through CFIS, a program that exists to let a small number of students
         do exactly that, and that runs its own entrance exam in math and
         physics to decide who. I'm heading into my fourth year, with an
@@ -48,8 +48,8 @@ const period = (item: { start: string; end: string | null }) =>
         Most of what I do has that shape. The Formula 1 wing needed CFD for
         ground truth and a surrogate model to make the search affordable. The
         vortex network needed Navier-Stokes in the loss function to behave at
-        all. Neither half is decoration for the other, and that intersection —
-        rather than either field on its own — is the thing I'm actually good
+        all. Neither half is decoration for the other, and that intersection,
+        rather than either field on its own, is the thing I'm actually good
         at.
       </p>
       <p>
@@ -60,7 +60,7 @@ const period = (item: { start: string; end: string | null }) =>
           rel="noopener noreferrer">Towards Data Science</a
         >, mostly long explanations of things I had to understand properly
         before I could use them. I've also taught robotics to school students
-        — Arduino, micro:bit, 3D printing — and I still help out at Linux and
+        (Arduino, micro:bit, 3D printing), and I still help out at Linux and
         3D-printing workshops. Teaching something is the fastest way to find
         out whether you actually understand it.
       </p>
@@ -69,8 +69,8 @@ const period = (item: { start: string; end: string | null }) =>
         speak Catalan, Spanish and English, and I've just started on Arabic.
       </p>
       <p>
-        Where this goes next is genuinely open — industry, a PhD, or the kind
-        of industrial PhD that's both. Right now — {profile.now.text}
+        Where this goes next is genuinely open: industry, a PhD, or the kind
+        of industrial PhD that's both. Right now: {profile.now.text}
       </p>
     </div>
   </section>
@@ -133,7 +133,7 @@ const period = (item: { start: string; end: string | null }) =>
     <div>
       <p class="u-prose">
         Email is the surest way to reach me. I'm still partway through my
-        bachelor's, so I can't offer a fixed start date — but I'd rather hear
+        bachelor's, so I can't offer a fixed start date, but I'd rather hear
         about something interesting early than not at all. The CV below has
         the full detail, including coursework and grades.
       </p>

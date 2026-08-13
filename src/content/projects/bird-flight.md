@@ -15,7 +15,7 @@ order: 5
 
 Writing a Navier-Stokes solver yourself is the fastest way to stop treating
 CFD as a black box. Discretization, the pressure-velocity coupling, boundary
-conditions, the stability limit on the timestep — none of it hides behind a
+conditions, the stability limit on the timestep: none of it hides behind a
 solver flag once you've implemented all of it in NumPy.
 
 The geometry is a bird's wing, which I modeled from a reference in Blender

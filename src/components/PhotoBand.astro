@@ -4,7 +4,7 @@ import type { ImageMetadata } from "astro";
 
 /**
  * A full-bleed photographic band. This is the *only* place photography is
- * allowed outside /photography — see CLAUDE.md §2. It never sits in the same
+ * allowed outside /photography; see CLAUDE.md §2. It never sits in the same
  * grid as a technical figure.
  */
 interface Props {
@@ -70,7 +70,7 @@ const {
     grid-auto-flow: column;
     grid-auto-columns: 1fr;
     /* The implicit row must be pinned to the container height. Left as
-       `auto` it sizes to the tallest image's natural height — a portrait
+       `auto` it sizes to the tallest image's natural height, and a portrait
        frame then paints ~620px out of a 280px band and covers whatever
        section follows. */
     grid-auto-rows: 100%;

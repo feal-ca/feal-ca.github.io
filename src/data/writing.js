@@ -1,5 +1,5 @@
 // Articles published on Towards Data Science. Newest first.
-// Adding one is a single entry — nothing else needs to change.
+// Adding one is a single entry; nothing else needs to change.
 
 export const articles = [
   {
