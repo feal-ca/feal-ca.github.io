@@ -143,10 +143,9 @@ live at `https://feal-ca.github.io`.
 
 ## Still to do
 
-- `src/data/profile.js` — fill in the group and description for the TU
-  Dresden internship (marked `TODO(ferran)`).
-- `src/data/photos.js` — add locations if you want them shown; they were
-  deliberately left out rather than guessed.
+- Close the three open `TODO(ferran)` markers in
+  `src/content/projects/` (`bird-flight.md`, `vortex-pinn.md`,
+  `llm-persona.md`) with the missing quantitative results.
 - Add repo links to the projects that have public code (`links` in the
   frontmatter).
 - Consider a portrait of yourself for the About page.

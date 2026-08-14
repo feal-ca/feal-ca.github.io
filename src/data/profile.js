@@ -86,8 +86,8 @@ export const profile = {
   ],
 
   awards: [
-    { when: "2026", what: "Datathon FME participant (2024 and 2025)" },
     { when: "2025", what: "Physics summer school, University of Ljubljana" },
+    { when: "2024–2025", what: "Datathon FME participant" },
     { when: "2023", what: "Admitted to CFIS, to take two degrees simultaneously" },
     { when: "2023", what: "Selected for the Barcelona “Mostra de Recerca Jove”" },
   ],

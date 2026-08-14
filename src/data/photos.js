@@ -134,7 +134,7 @@ export const photos = [
     title: "Carved medallion",
     year: 2024,
     place: "China",
-    alt: "An intricately carved stone medallion set into a whitewashed wall above glazed roof tiles, partly obscured by leaves in the foreground.",
+    alt: "A finely carved stone medallion set into a whitewashed wall above glazed roof tiles, partly obscured by leaves in the foreground.",
   },
   {
     src: rider,
