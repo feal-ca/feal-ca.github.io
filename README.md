@@ -1,4 +1,4 @@
-# georgiou1226.github.io
+# feal-ca.github.io
 
 Personal site — work, writing and photography. Built with
 [Astro](https://astro.build), no UI framework, plain CSS with design tokens.
@@ -18,7 +18,7 @@ Almost everything is data. You should rarely need to touch a layout.
 | Add or edit a project | a `.md` file in `src/content/projects/` |
 | Add a photo | process it (below), then add to `src/data/photos.js` |
 | Restyle the whole site | the tokens at the top of `src/styles/global.css` |
-| Replace the CV | `public/Ferran_Alia_CV.pdf` |
+| Update the CV | `cv/cv.tex`, then `./cv/build.sh` |
 
 ### Adding a project
 
@@ -70,6 +70,53 @@ They are inlined into the page so their colours follow the light/dark theme.
 When you have a real figure for a project, drop it in and delete the
 corresponding function from the script.
 
+One run writes both `src/assets/figures/*.svg` for the site and
+`cv/figures/*.pdf` for the CV. Rebuild the CV after regenerating, or the two
+drift apart. Re-running churns matplotlib's random element IDs in the SVGs
+with no visual change; `git checkout -- src/assets/figures/` if that is all
+the diff shows.
+
+## The CV
+
+`cv/` holds the LaTeX source for `public/Ferran_Alia_CV.pdf`. It uses the
+site's own palette, type and label/content grid, so the two read as one
+object.
+
+```bash
+./cv/build.sh       # xelatex, then copies both PDFs into public/
+```
+
+It writes two: `Ferran_Alia_CV.pdf` on the light theme, for printing and for
+sending to people, and `Ferran_Alia_CV_dark.pdf` on the dark one, for reading
+on a screen. Same `cv.tex`; the dark cut is built with
+`\PassOptionsToPackage{dark}{cvstyle}` on the command line. Do not print the
+dark one.
+
+- `cv/cv.tex` is content only. Add an entry, rebuild, commit both.
+- `cv/cvstyle.sty` is the print counterpart of `src/styles/global.css`.
+  Colours and sizes change there, never in `cv.tex`. Each kind of list has
+  its own macro, and the point of having several is that no two sections read
+  alike: `\cvitem` for a dated entry, `\cvproject` for one with its
+  schematic, `\cvchiprow` for the bordered skill chips, `\cvlistrow` for a
+  plain list, `\cvblock` for prose with no date beside it. A section
+  boundary is a heavier rule across the full measure; an entry boundary is a
+  hairline over the content column only.
+- `cv/fonts/` holds static TTF cuts of Newsreader and Inter, plus Roboto Mono
+  standing in for the site's `ui-monospace` stack. XeLaTeX cannot read the
+  woff2 files in `public/fonts/`, hence the second copy. Regenerate with
+  `python3 cv/fetch_cv_fonts.py`.
+- `cv/figures/` holds the project schematics as PDF, plus the two wake bands
+  behind the masthead and the last page's foot, with `dark/` alongside it
+  carrying the same drawings in the dark palette. `scripts/make_figures.py`
+  writes both in extra passes with the colours baked in, since a PDF cannot
+  resolve `var(--fig-accent)`. Every pass is seeded identically, so the CV
+  shows the same n-body run as the site and both themes agree with each
+  other.
+
+XeLaTeX is required (`fontspec` loads the TTFs). The facts in `cv.tex` are
+the same ones in `src/data/profile.js`, `src/data/writing.js` and
+`src/content/projects/`. Change one, change the other.
+
 ## Fonts
 
 Self-hosted, not loaded from a CDN. Regenerate with:
@@ -92,7 +139,7 @@ npm run preview    # serve the built site
 `.github/workflows/deploy.yml` builds and deploys on every push to `main`.
 One-time setup: in **Settings → Pages → Build and deployment → Source**,
 choose **GitHub Actions** (not "Deploy from a branch"). The site then goes
-live at `https://georgiou1226.github.io`.
+live at `https://feal-ca.github.io`.
 
 ## Still to do
 

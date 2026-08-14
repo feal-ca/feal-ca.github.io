@@ -1,18 +1,22 @@
 ---
 import "../styles/global.css";
 import { profile } from "../data/profile.js";
+import ogCards from "../data/og.json";
 
 interface Props {
   title?: string;
   description?: string;
   /** Pages that open with a full-bleed element need no top spacing. */
   flush?: boolean;
+  /** Share-card key in src/data/og.json. Defaults to the one matching the route. */
+  ogKey?: string;
 }
 
 const {
   title,
   description = profile.tagline,
   flush = false,
+  ogKey,
 } = Astro.props;
 
 const pageTitle = title
@@ -21,6 +25,16 @@ const pageTitle = title
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const path = Astro.url.pathname;
+
+// Share cards are generated per route by scripts/make_og.py and keyed by the
+// last path segment, which is also the project slug under /work/. Anything
+// without its own card falls back to the homepage one rather than to nothing.
+const cards = ogCards as Record<string, string>;
+const routeKey = path.replace(/^\/|\/$/g, "").split("/").pop() || "default";
+const ogImage = new URL(
+  cards[ogKey ?? routeKey] ?? cards.default,
+  Astro.site
+).href;
 
 const nav = [
   { href: "/work/", label: "Work" },
@@ -75,7 +89,14 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={profile.shortName} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    {/* The card is a typographic rendering of the page title, so it reads as its own alt. */}
+    <meta property="og:image:alt" content={pageTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
 
     <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#131317" media="(prefers-color-scheme: dark)" />

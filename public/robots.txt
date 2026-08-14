@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://feal-ca.github.io/sitemap-index.xml

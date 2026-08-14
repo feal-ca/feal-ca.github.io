@@ -2,9 +2,14 @@
 dist/
 # generated types
 .astro/
+# LaTeX intermediates from cv/build.sh (the PDF itself is committed)
+cv/out/
 
 # dependencies
 node_modules/
+
+# python bytecode from scripts/
+__pycache__/
 
 # logs
 npm-debug.log*

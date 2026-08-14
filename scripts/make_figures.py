@@ -21,8 +21,14 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-OUT = Path(__file__).resolve().parent.parent / "src" / "assets" / "figures"
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "src" / "assets" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
+
+# The CV cannot use CSS variables, so it gets a second pass of the same
+# drawings with the light-theme values baked in. See cv/cvstyle.sty.
+CV_OUT = ROOT / "cv" / "figures"
+CV_OUT.mkdir(parents=True, exist_ok=True)
 
 # Sentinels -> CSS variables. Any colour used below must come from this map.
 ACCENT = "#ff0001"
@@ -37,7 +43,22 @@ SENTINELS = {
     "#ff0004": "var(--fig-faint)",
 }
 
-rng = np.random.default_rng(20260805)
+# The same four roles, resolved against each theme in global.css. The CV
+# ships in both, so the drawings do too.
+#           (--fig-accent, --fig-ink, --fig-muted, --fig-faint, --bg, --bg-sunk)
+THEMES = {
+    "light": ("#97213c", "#17171b", "#a9a294", "#e9e3d8", "#fbfaf7", "#f2efe8"),
+    "dark":  ("#f08ba1", "#eeece7", "#6b675e", "#26262e", "#131317", "#1a1a20"),
+}
+
+PAPER = "#fbfaf7"      # --bg,      rebound per theme
+SUNK = "#f2efe8"       # --bg-sunk, rebound per theme
+
+MODE = "svg"           # flipped to "pdf" for the CV passes
+CV_DEST = None         # set per theme
+SEED = 20260805
+
+rng = np.random.default_rng(SEED)
 
 
 def canvas(w=8.0, h=5.0):
@@ -65,6 +86,15 @@ def _round_numbers(svg, places=1):
 
 
 def save(fig, name):
+    if MODE == "pdf":
+        # Vector, colours already literal, so nothing to rewrite afterwards.
+        path = CV_DEST / f"{name}.pdf"
+        fig.savefig(path, format="pdf", transparent=True,
+                    bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
+        print(f"  {name}.pdf  ({path.stat().st_size // 1024} kB)")
+        return
+
     path = OUT / f"{name}.svg"
     fig.savefig(path, format="svg", transparent=True, bbox_inches="tight", pad_inches=0)
     plt.close(fig)
@@ -407,8 +437,7 @@ def ctg():
     save(fig, "assisted-birth")
 
 
-if __name__ == "__main__":
-    print("Writing figures to", OUT)
+def render_all():
     karman("vortex-pinn", 8.0, 5.0, 46, 1.0)
     karman("hero-flow", 16.0, 4.6, 64, 0.85)
     surrogate()
@@ -418,4 +447,86 @@ if __name__ == "__main__":
     aerofoil()
     persona()
     ctg()
+
+
+def wake_band(name, w, h, stops, x0=0.62, tint=True):
+    """A strip of the site hero for the CV: the same Kármán wake on a
+    --bg-sunk band, under a scrim that dissolves it into the paper.
+
+    Baking the scrim in rather than drawing it in LaTeX keeps the .tex free of
+    shading code, and it is the one place the two would drift apart.
+
+    `stops` are (position, paper-alpha) pairs from the bottom of the band up,
+    so the masthead version fades downward and the foot version upward.
+    """
+    fig, ax = canvas(w, h)
+    if tint:
+        ax.add_patch(plt.Rectangle((-1, -2), 10, 6, facecolor=SUNK,
+                                   edgecolor="none", zorder=0))
+
+    X, Y, U, V = vortex_field(16.0, 4.6, 260, 130)
+    for y0 in np.linspace(-1.0, 1.0, 64):
+        if abs(y0) < 0.055:
+            continue
+        px, py = trace(X, Y, U, V, -0.58, y0)
+        if len(px) < 20:
+            continue
+        px = np.append(px[::4], px[-1])
+        py = np.append(py[::4], py[-1])
+        near = abs(y0) < 0.55
+        ax.plot(px, py,
+                color=ACCENT if near else MUTED,
+                lw=0.85 * (1.0 if near else 0.75),
+                alpha=0.92 if near else 0.6,
+                solid_capstyle="round", zorder=2)
+    # Mirrors the linear-gradient on .hero__scrim in src/pages/index.astro.
+    stops = np.array(stops)
+    rows = 256
+    t = np.linspace(0, 1, rows)
+    alpha = np.interp(t, stops[:, 0], stops[:, 1])[::-1]
+    r, g, b = (int(PAPER[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    scrim = np.zeros((rows, 1, 4))
+    scrim[..., 0], scrim[..., 1], scrim[..., 2] = r, g, b
+    scrim[..., 3] = alpha[:, None]
+    ax.imshow(scrim, extent=(x0, 5.1, -1.05, 1.05), aspect="auto",
+              interpolation="bilinear", zorder=4)
+
+    ax.set_xlim(x0, 5.1)
+    ax.set_ylim(-1.05, 1.05)
+    save(fig, name)
+
+
+def main():
+    global ACCENT, INK, MUTED, FAINT, PAPER, SUNK, MODE, CV_DEST, rng
+
+    print("Writing figures to", OUT)
+    render_all()
+
+    # Then once per theme for the CV. Reseeding matters: the particle clouds
+    # and the noise have to come out identical every time, or the CV would
+    # show a different n-body run from the website, and its two themes would
+    # disagree with each other.
+    MODE = "pdf"
+    for theme, values in THEMES.items():
+        ACCENT, INK, MUTED, FAINT, PAPER, SUNK = values
+        CV_DEST = CV_OUT if theme == "light" else CV_OUT / theme
+        CV_DEST.mkdir(parents=True, exist_ok=True)
+        print(f"Writing {theme} CV figures to", CV_DEST)
+
+        rng = np.random.default_rng(SEED)
+        render_all()
+        # Masthead: opaque at the foot so the name stays legible, open above.
+        wake_band("hero-band", 16.0, 4.6,
+                  [[0.00, 1.00], [0.18, 0.94], [0.56, 0.62], [1.00, 0.28]])
+        # Foot of the last page: a ribbon that clears the running foot below
+        # it and the last line of text above it, taken from far enough
+        # downstream that the wake has spread into something quiet.
+        wake_band("tail-band", 16.0, 1.07,
+                  [[0.00, 1.00], [0.30, 0.94], [0.68, 0.62], [1.00, 0.90]],
+                  x0=2.4, tint=False)
+
     print("done")
+
+
+if __name__ == "__main__":
+    main()

@@ -27,6 +27,7 @@ export const profile = {
     linkedin: "https://www.linkedin.com/in/ferran-alca/",
     tds: "https://towardsdatascience.com/author/ferran-alia/",
     cv: "/Ferran_Alia_CV.pdf",
+    cvDark: "/Ferran_Alia_CV_dark.pdf",
   },
 
   // Reverse chronological. `end: null` means ongoing.

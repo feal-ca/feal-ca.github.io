@@ -1,0 +1,15 @@
+{
+  "about": "/og/about.png",
+  "assisted-birth": "/og/assisted-birth.png",
+  "bird-flight": "/og/bird-flight.png",
+  "default": "/og/default.png",
+  "f1-frontwing": "/og/f1-frontwing.png",
+  "fermi-dirac": "/og/fermi-dirac.png",
+  "lattice-boltzmann": "/og/lattice-boltzmann.png",
+  "llm-persona": "/og/llm-persona.png",
+  "n-body": "/og/n-body.png",
+  "photography": "/og/photography.jpg",
+  "vortex-pinn": "/og/vortex-pinn.png",
+  "work": "/og/work.png",
+  "writing": "/og/writing.png"
+}

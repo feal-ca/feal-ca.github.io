@@ -1,0 +1,166 @@
+% =============================================================================
+%  Ferran Alía Castillejos: curriculum vitae
+%
+%  Content only. Every design decision lives in cvstyle.sty, which carries the
+%  same tokens as the website's src/styles/global.css.
+%
+%  Build:  ./build.sh        (xelatex, twice, output copied to public/)
+%
+%  Facts here must agree with src/data/profile.js, src/data/writing.js and
+%  src/content/projects/. If you change one, change the other.
+% =============================================================================
+
+\documentclass[10pt,a4paper]{article}
+\usepackage{cvstyle}
+
+\setcvfooter{Ferran Alía Castillejos}
+
+\begin{document}
+
+\cvheader
+  {Ferran Alía Castillejos}
+  {Data science and physical engineering, UPC Barcelona}
+  {%
+    \href{mailto:ferran.alia@estudiantat.upc.edu}{ferran.alia@estudiantat.upc.edu}%
+    \cvdot
+    \href{https://feal-ca.github.io}{feal-ca.github.io}%
+    \cvdot
+    \href{https://github.com/Feal-ca}{github.com/Feal-ca}%
+    \cvdot
+    \href{https://www.linkedin.com/in/ferran-alca/}{linkedin.com/in/ferran-alca}%
+  }
+
+% -----------------------------------------------------------------------------
+\begin{cvsection}{Now}
+I simulate microscope optics with the Physics of Life group at TU Dresden
+for the summer, then go back to Barcelona for my fourth year at UPC. I want
+to work where physical modeling and machine learning meet.
+\end{cvsection}
+
+% -----------------------------------------------------------------------------
+\begin{cvsection}{Experience}
+
+\cvitem{Since 2026}{Contributor, \href{https://towardsdatascience.com/author/ferran-alia/}{Towards Data Science}}
+  {Long-form articles since March 2026, on simulation, high-performance
+   computing and machine learning. Most of them come out of the projects
+   below.}
+
+\cvitem{2026}{Research intern, Physics of Life, TU Dresden}
+  {Simulating electromagnetic propagation through specimen and objective, as
+   virtual instrumentation for learned brightfield imaging.}
+
+\cvitem{Jun\,--\,Aug 2025}{Machine learning intern, MLCode}
+  {Built an automated framework for evaluating and benchmarking
+   retrieval-augmented generation systems.}
+
+\cvitem{Since 2022}{Volunteer mentor}
+  {Computer science and robotics workshops: Linux, 3D printing, programming.}
+
+\cvitemlast{2022\,--\,2023}{Robotics teacher, Punt Multimèdia}
+  {Taught Arduino, micro:bit, and 3D printing and modeling.}
+
+\end{cvsection}
+
+% -----------------------------------------------------------------------------
+\begin{cvsection}{Education}
+
+\cvitem{Since 2023}{BSc Data Science \& Engineering, UPC}
+  {Entering the fourth year of five. 8.75/10 average across both degrees.}
+
+\cvitemlast{Since 2023}{BSc Physical Engineering, UPC}
+  {Taken in parallel with the data science degree rather than after it, on
+   the CFIS dual-degree program.}
+
+\end{cvsection}
+
+% -----------------------------------------------------------------------------
+\begin{cvsection}{Selected projects}
+
+\cvproject{2026}{f1-frontwing}{Aerodynamic optimization of a Formula 1 front wing}
+  {A surrogate model searched front-wing geometries on a fixed budget of
+   solver runs rather than calling CFD at every step. The wing came out about
+   15\% better on lift-to-drag.%
+   \cvstack{Python \textperiodcentered\ OpenFOAM \textperiodcentered\ SLURM \textperiodcentered\ MareNostrum V}}
+
+\cvproject{2026}{vortex-pinn}{A physics-informed network for vortex shedding}
+  {A PINN with the Navier-Stokes residual inside its loss, trained against a
+   high-fidelity OpenFOAM run, reproducing Kármán vortex shedding. A model
+   fit to the data alone settles into a steady wake instead.%
+   \cvstack{Python \textperiodcentered\ PyTorch \textperiodcentered\ OpenFOAM}}
+
+\cvproject{2026}{llm-persona}{Persona adaptation in language models}
+  {A system prompt against three formats of fine-tuning data on
+   Qwen3-4B-Instruct, all with LoRA at r=16, so the differences belong to the
+   data.%
+   \cvstack{Python \textperiodcentered\ PyTorch \textperiodcentered\ Transformers \textperiodcentered\ LoRA}}
+
+\cvproject{2025}{assisted-birth}{Predicting fetal distress from cardiotocography}
+  {Built with Hospital Sant Joan de Déu in a team of nine. Separate encoders
+   over CTG traces, tabular clinical context and ultrasound, at around 0.78
+   AUC.%
+   \cvstack{Python \textperiodcentered\ PyTorch}}
+
+\cvproject{2025}{n-body}{Parallel N-body simulation}
+  {Direct O(n²) summation and a Barnes-Hut O(n log n) tree code in C++
+   with OpenMP. At N = 10,000 direct summation ran about 33× faster on
+   112 threads than on one; the tree code never got past roughly 7×.%
+   \cvstack{C++ \textperiodcentered\ OpenMP}}
+
+\cvproject{2025}{lattice-boltzmann}{Parallel lattice Boltzmann solver}
+  {A D2Q9 solver with BGK collision and a Zou-He inlet in around 200 lines of
+   C++: flow past a cylinder on a 400×400 lattice. Memory-bound, so
+   how you move the data dominates the scaling.%
+   \cvstack{C++ \textperiodcentered\ OpenMP \textperiodcentered\ MareNostrum 5}}
+
+\cvproject{2025}{bird-flight}{Fixed-wing bird flight simulation}
+  {A 3D Navier-Stokes solver written from scratch in NumPy, run on a bird's
+   wing modeled in Blender and checked against OpenFOAM's icoFoam.%
+   \cvstack{Python \textperiodcentered\ NumPy \textperiodcentered\ OpenFOAM \textperiodcentered\ Blender}}
+
+\cvprojectlast{2024}{fermi-dirac}{Fermi-Dirac statistics by Monte Carlo}
+  {A Markov chain over the microstates of a fermion system, recovering the
+   Fermi-Dirac occupancy numerically rather than analytically.%
+   \cvstack{Python \textperiodcentered\ NumPy}}
+
+\cvnote{Figures are schematic illustrations of each problem, not results.}
+
+\end{cvsection}
+
+% -----------------------------------------------------------------------------
+\begin{cvsection}{Skills}
+
+\cvchiprow{Languages}{%
+  \cvchip{Python}\cvchip{C++}\cvchip{R}\cvchip{Haskell}\cvchip{MATLAB}}
+
+\cvchiprow{Scientific}{%
+  \cvchip{OpenFOAM}\cvchip{OpenMP}\cvchip{NumPy}\cvchip{PyTorch}%
+  \cvchip{Blender}\cvchip{CAD}}
+
+\cvchiprow{Methods}{%
+  \cvchip{CFD}\cvchip{HPC \& SLURM}\cvchip{Physics-informed ML}%
+  \cvchip{Monte Carlo}\cvchip{Surrogate modeling}}
+
+\cvchiprow{Spoken}{%
+  \cvchip{Catalan (native)}\cvchip{Spanish (native)}%
+  \cvchip{English (professional)}\cvchip{Arabic (beginner)}}
+
+\end{cvsection}
+
+% -----------------------------------------------------------------------------
+\begin{cvsection}{Awards}
+
+\cvlistrow{2024, 2025}{Participant, Datathon FME}
+\cvlistrow{2025}{Physics summer school, University of Ljubljana}
+\cvlistrow{Since 2023}{Cum laude in several subjects}
+\cvlistrow{2023}{Admitted to CFIS on a grant, to read the two degrees at
+  once. It takes a small cohort each year by its own entrance exam in
+  mathematics and physics}
+\cvlistrow{2019\,--\,2023}{Graduated from high school with honors, and
+  represented it at the Barcelona \emph{Mostra de Recerca Jove}, after UPC's
+  summer courses in algorithms and programming}
+
+\end{cvsection}
+
+\cvtail
+\label{cv:last}
+\end{document}

@@ -135,13 +135,17 @@ const period = (item: { start: string; end: string | null }) =>
         Email is the surest way to reach me. I'm still partway through my
         bachelor's, so I can't offer a fixed start date, but I'd rather hear
         about something interesting early than not at all. The CV below has
-        the full detail, including coursework and grades.
+        the full detail.
       </p>
       <ul class="contact">
         <li><a class="u-link" href={`mailto:${profile.links.email}`}>{profile.links.email}</a></li>
         <li><a class="u-link" href={profile.links.github} target="_blank" rel="noopener noreferrer">github.com/Feal-ca</a></li>
         <li><a class="u-link" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-        <li><a class="u-link" href={profile.links.cv}>Curriculum vitae (PDF)</a></li>
+        <li>
+          <a class="u-link" href={profile.links.cv}>Curriculum vitae (PDF)</a>, or
+          the <a class="u-link" href={profile.links.cvDark}>dark version</a> if
+          you're reading on a screen
+        </li>
       </ul>
     </div>
   </section>

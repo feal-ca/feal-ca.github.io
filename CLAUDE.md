@@ -1,7 +1,7 @@
 # Ferran Alía — personal site
 
 Astro 7, zero UI frameworks, plain CSS with design tokens. Static output,
-deployed to GitHub Pages at `https://georgiou1226.github.io`.
+deployed to GitHub Pages at `https://feal-ca.github.io`.
 
 ## Development
 
@@ -258,13 +258,65 @@ src/
   assets/
     photography/       processed photos (auto-oriented, max 2400px) — NOT public/
     figures/           generated project figures (SVG)
+  data/og.json         route key -> share card, written by scripts/make_og.py
   components/          presentational only, no data fetching
   layouts/Layout.astro shared shell: skip link, nav, footer, meta, JSON-LD
   pages/               routes
   styles/global.css    design tokens + resets + shared primitives
+cv/
+  cv.tex               CV content; one \cvitem per entry, no styling
+  cvstyle.sty          the print port of global.css: same palette, type, grid
+  fonts/               static TTF cuts for XeLaTeX (woff2 is unreadable to it)
+  figures/             PDF cuts of the same schematics, colours baked in
+  build.sh             xelatex, twice per theme, then copies into public/
 public/
-  cv.pdf               downloadable CV
+  Ferran_Alia_CV.pdf        downloadable CV, built from cv/
+  Ferran_Alia_CV_dark.pdf   the same document on the dark theme
+  og/                       generated share cards, one per route
+  robots.txt                points at the sitemap the integration emits
 ```
+
+### Share cards
+
+Every link to the site pasted anywhere renders as a card, and without an
+`og:image` that card is a grey rectangle. `scripts/make_og.py` generates one
+1200×630 card per route into `public/og/` and writes `src/data/og.json`, which
+`Layout.astro` reads and keys off the last path segment. Anything without a
+card of its own falls back to the homepage one.
+
+```
+python3 scripts/make_og.py
+```
+
+The cards reuse the schematics from `make_figures.py` by importing it and
+capturing each drawing as a raster, so there is one copy of the drawing code.
+Run `make_figures.py` first if the drawings changed. All the copy is read back
+out of the real sources (page files, `profile.js`, project frontmatter) and a
+source that stops parsing raises rather than shipping the wrong words, so the
+cards cannot drift from the pages they advertise.
+
+The two-language rule applies here too: the photography card carries a
+photograph and no schematic. Rerun the script after changing the accent
+colour, the tagline, a page description, a project title or summary, or the
+`site` value in `astro.config.mjs`.
+
+The CV carries the same two-language rule as the site (see *Design
+principles* 2): schematic figures, never photography. The masthead band and
+the strip at the foot of the last page are the site's homepage hero, and the
+project thumbnails are the same drawings as the cards. They are illustrations
+and the CV says so, in one line under the projects.
+
+The CV is part of the design system, not a separate artifact. Its tokens are
+the light-theme values of `global.css` and its sections use the same
+label-column-and-content grid. If you change the accent colour or the type
+ramp on the site, change `cv/cvstyle.sty` to match and rebuild. Its facts
+must agree with `src/data/`; the CV is the version a recruiter keeps, so a
+stale one is worse than a stale page.
+
+Both themes come out of one `cv.tex`; `\usepackage[dark]{cvstyle}` swaps the
+palette and points the figures at `cv/figures/dark/`. Any colour added to
+`cvstyle.sty` has to exist in both branches, or the dark build silently keeps
+a light value.
 
 ### Adding things
 
