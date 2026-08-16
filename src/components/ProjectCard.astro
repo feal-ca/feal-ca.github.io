@@ -71,9 +71,27 @@ const href = `/work/${project.id}/`;
       transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .card:hover :global(.card__fig) {
+  .card:hover :global(.card__fig),
+  .card:focus-within :global(.card__fig) {
     border-color: var(--rule-strong);
     transform: translateY(-2px);
+  }
+
+  /* Drives Figure's own drift animation: the card's overlay hit-area sits
+     above the figure, so the figure never receives :hover directly. */
+  .card:hover :global(.card__fig .fig__inner svg),
+  .card:focus-within :global(.card__fig .fig__inner svg) {
+    animation: fig-drift 7s ease-in-out infinite;
+  }
+
+  @keyframes fig-drift {
+    0%,
+    100% {
+      transform: scale(1.015) translate(0, 0);
+    }
+    50% {
+      transform: scale(1.045) translate(-1.2%, -0.8%);
+    }
   }
 
   .card__meta {

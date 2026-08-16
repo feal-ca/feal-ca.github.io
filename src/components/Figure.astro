@@ -62,4 +62,28 @@ if (!svg) {
     height: 100%;
     display: block;
   }
+
+  /* A slow drift/zoom on the schematic itself, not just the card around it.
+     Standalone use (the project page) hovers/focuses the figure directly;
+     nested use (ProjectCard) drives the same animation from the card's own
+     hover state, since its overlay link sits above the figure. See
+     ProjectCard's `:global(.card__fig .fig__inner)` rule. */
+  .fig__inner :global(svg) {
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .fig:hover .fig__inner :global(svg),
+  .fig:focus-within .fig__inner :global(svg) {
+    animation: fig-drift 7s ease-in-out infinite;
+  }
+
+  @keyframes fig-drift {
+    0%,
+    100% {
+      transform: scale(1.015) translate(0, 0);
+    }
+    50% {
+      transform: scale(1.045) translate(-1.2%, -0.8%);
+    }
+  }
 </style>

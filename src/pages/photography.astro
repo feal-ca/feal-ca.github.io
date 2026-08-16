@@ -44,15 +44,17 @@ const items = await Promise.all(
             data-year={item.year}
             data-place={item.place}
           >
-            <Image
-              src={item.src}
-              alt={item.alt}
-              widths={[380, 620, 900]}
-              sizes="(max-width: 40rem) 92vw, (max-width: 68rem) 45vw, 30vw"
-              loading={item.index < 3 ? "eager" : "lazy"}
-              decoding="async"
-              class="shot__img"
-            />
+            <span class="shot__clip">
+              <Image
+                src={item.src}
+                alt={item.alt}
+                widths={[380, 620, 900]}
+                sizes="(max-width: 40rem) 92vw, (max-width: 68rem) 45vw, 30vw"
+                loading={item.index < 3 ? "eager" : "lazy"}
+                decoding="async"
+                class="shot__img"
+              />
+            </span>
             <span class="u-visually-hidden">Open larger: {item.title}</span>
           </button>
           <figcaption class="shot__caption">
@@ -209,19 +211,36 @@ const items = await Promise.all(
     border: 0;
     background: var(--bg-sunk);
     cursor: zoom-in;
+    border-radius: var(--radius);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* The clip lives on a wrapper rather than the button itself, so the lift
+     shadow below isn't cropped by the same box that crops the image. */
+  .shot__clip {
+    display: block;
     overflow: hidden;
     border-radius: var(--radius);
+  }
+
+  .shot__button:hover,
+  .shot__button:focus-visible {
+    transform: translateY(-0.3rem);
+    box-shadow: 0 1.25rem 2rem -1rem color-mix(in srgb, var(--ink) 35%, transparent);
   }
 
   /* Natural aspect ratio; column flow accommodates whatever height. */
   .shot__img {
     width: 100%;
     height: auto;
+    display: block;
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .shot__button:hover .shot__img {
-    transform: scale(1.025);
+  .shot__button:hover .shot__img,
+  .shot__button:focus-visible .shot__img {
+    transform: scale(1.06);
   }
 
   /* Place strings vary a lot in length ("China" vs "Musée du Louvre, Paris"),
