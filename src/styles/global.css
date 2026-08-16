@@ -350,9 +350,10 @@ summary:focus-visible,
    and picked up on hover/focus by both components.
    ========================================================================== */
 
-/* Streamlines (vortex-pinn, hero-flow, bird-flight, llm-persona): a marching
-   dash pattern reads as the flow itself moving downstream. -18 is 2x the 5+4
-   dasharray sum so the pattern realigns exactly at loop restart. */
+/* Streamlines (vortex-pinn, hero-flow, llm-persona): a marching dash pattern
+   reads as the flow/steps moving forward. Also reused, with a wider dasharray
+   gap, for bird-flight's dot trail: -18 is 2x either a 5+4 dasharray sum or a
+   0+9 one, so the pattern realigns exactly at loop restart either way. */
 @keyframes fig-flow {
   to { stroke-dashoffset: -18; }
 }
@@ -362,6 +363,15 @@ summary:focus-visible,
    fast current. -16 matches the 10+6 dasharray sum for a clean loop. */
 @keyframes fig-flow-slow {
   to { stroke-dashoffset: -16; }
+}
+
+/* Kármán wake (vortex-pinn, hero-flow): a side-to-side sway layered on top
+   of the marching dashes above, staggered per streamline via nth-of-type so
+   the wake reads as wobbling behind the cylinder rather than every line
+   bobbing in lockstep. */
+@keyframes fig-sway {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }
 
 /* N-body particles: a rigid rotation about the figure's centre. Applied to
@@ -397,4 +407,13 @@ summary:focus-visible,
 @keyframes fig-pulse-opacity {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
+}
+
+/* Fermi-Dirac occupancy curves: a highlight that sweeps hot-to-cold through
+   the four temperature curves via staggered animation-delay, reading as the
+   distribution cooling and sharpening toward the step function rather than
+   sitting there as a static family of overlaid lines. */
+@keyframes fig-sweep {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
 }

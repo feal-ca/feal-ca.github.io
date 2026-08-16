@@ -109,7 +109,9 @@ def save(fig, name):
     # matplotlib's SVG backend, but several artists share one concept (every
     # streamline in a flow field), so ids collide; rewrite them to a class
     # instead, which CSS can target the same way without needing uniqueness.
-    svg = re.sub(r'<g id="(anim-[a-zA-Z0-9_-]+)"', r'<g class="\1"', svg)
+    # A gid can carry more than one space-separated class (an artist that is
+    # both "a flow line" and "the one that also sways").
+    svg = re.sub(r'<g id="(anim-[a-zA-Z0-9_ -]+)"', r'<g class="\1"', svg)
     # Metadata block is a third of the file and serves nothing here.
     svg = re.sub(r"<metadata>.*?</metadata>", "", svg, flags=re.DOTALL)
     # Strip the fixed pixel size so CSS can scale it; keep the viewBox.
@@ -204,7 +206,7 @@ def karman(name, w, h, n_lines, lw):
                 lw=lw * (1.0 if near else 0.75),
                 alpha=0.92 if near else 0.6,
                 solid_capstyle="round",
-                gid="anim-flow-line")
+                gid="anim-flow-line anim-wake-sway")
 
     ax.add_patch(plt.Circle((0.0, 0.0), 0.2, facecolor=INK, edgecolor="none", zorder=5))
     ax.set_xlim(-0.55, 5.1)
@@ -340,7 +342,8 @@ def fermi_dirac():
     e = np.linspace(-3.2, 3.2, 400)
     for i, t in enumerate([0.08, 0.28, 0.62, 1.1]):
         f = 1 / (1 + np.exp(e / t))
-        ax.plot(e, f, color=ACCENT, lw=2.4 - i * 0.42, alpha=1.0 - i * 0.17)
+        ax.plot(e, f, color=ACCENT, lw=2.4 - i * 0.42, alpha=1.0 - i * 0.17,
+                gid=f"anim-fermi-t{i}")
     # Monte Carlo samples scattered around the warmest curve.
     es = rng.uniform(-3.1, 3.1, 90)
     fs = 1 / (1 + np.exp(es / 0.62)) + rng.normal(0, 0.035, 90)
@@ -382,7 +385,7 @@ def aerofoil():
         y = y0 + lift + 0.055 * bump * np.sign(y0 or 1)
         ax.plot(x, y, color=ACCENT if abs(y0) < 0.35 else MUTED,
                 lw=1.15 if abs(y0) < 0.35 else 0.8, alpha=0.9, zorder=2,
-                gid="anim-flow-line")
+                solid_capstyle="round", gid="anim-flow-dots")
     ax.set_xlim(-1.0, 1.3)
     ax.set_ylim(-0.72, 0.72)
     save(fig, "bird-flight")
