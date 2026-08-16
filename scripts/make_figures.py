@@ -104,6 +104,12 @@ def save(fig, name):
     for sentinel, var in SENTINELS.items():
         svg = re.sub(sentinel, var, svg, flags=re.IGNORECASE)
     svg = _round_numbers(svg)
+    # Artists tagged with a gid starting "anim-" are marked for hover motion
+    # in Figure.astro/ProjectCard.astro. `gid` maps to an `id` attribute in
+    # matplotlib's SVG backend, but several artists share one concept (every
+    # streamline in a flow field), so ids collide; rewrite them to a class
+    # instead, which CSS can target the same way without needing uniqueness.
+    svg = re.sub(r'<g id="(anim-[a-zA-Z0-9_-]+)"', r'<g class="\1"', svg)
     # Metadata block is a third of the file and serves nothing here.
     svg = re.sub(r"<metadata>.*?</metadata>", "", svg, flags=re.DOTALL)
     # Strip the fixed pixel size so CSS can scale it; keep the viewBox.
@@ -197,7 +203,8 @@ def karman(name, w, h, n_lines, lw):
                 color=ACCENT if near else MUTED,
                 lw=lw * (1.0 if near else 0.75),
                 alpha=0.92 if near else 0.6,
-                solid_capstyle="round")
+                solid_capstyle="round",
+                gid="anim-flow-line")
 
     ax.add_patch(plt.Circle((0.0, 0.0), 0.2, facecolor=INK, edgecolor="none", zorder=5))
     ax.set_xlim(-0.55, 5.1)
@@ -235,8 +242,10 @@ def surrogate():
         rng.normal([0.68, 0.58], 0.09, (16, 2)),
     ])
     pts = np.clip(pts, 0.03, 0.97)
-    ax.scatter(pts[:, 0], pts[:, 1], s=13, facecolor="none", edgecolor=INK, linewidths=0.85)
-    ax.scatter([0.68], [0.58], s=95, marker="+", color=INK, linewidths=1.7, zorder=6)
+    ax.scatter(pts[:, 0], pts[:, 1], s=13, facecolor="none", edgecolor=INK, linewidths=0.85,
+               gid="anim-jitter")
+    ax.scatter([0.68], [0.58], s=95, marker="+", color=INK, linewidths=1.7, zorder=6,
+               gid="anim-optimum")
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     save(fig, "f1-frontwing")
@@ -279,7 +288,8 @@ def nbody():
     buckets = np.digitize(mass, [0.8, 1.8, 3.2])
     for b, size in enumerate((2.0, 3.4, 5.2, 8.0)):
         sel = buckets == b
-        ax.scatter(p[sel, 0], p[sel, 1], s=size, color=ACCENT, alpha=0.85, linewidths=0)
+        ax.scatter(p[sel, 0], p[sel, 1], s=size, color=ACCENT, alpha=0.85,
+                   linewidths=0, gid=f"anim-nbody-mass-{b}")
     ax.set_xlim(-0.01, 1.01)
     ax.set_ylim(-0.01, 1.01)
     save(fig, "n-body")
@@ -302,13 +312,15 @@ def lattice():
     dirs = [(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (-1, 1), (-1, -1), (1, -1)]
     for k, (dx, dy) in enumerate(dirs):
         w = 1.9 if k < 4 else 1.15
-        ax.annotate(
+        arrow = ax.annotate(
             "", xy=(cx + dx, cy + dy), xytext=(cx, cy),
             arrowprops=dict(arrowstyle="-|>", color=ACCENT, lw=w, shrinkA=5, shrinkB=3,
                             mutation_scale=11),
             zorder=4,
         )
-    ax.plot(cx, cy, marker="o", ms=7.5, color=INK, zorder=5)
+        arrow.arrow_patch.set_gid("anim-lattice-arrow")
+    node, = ax.plot(cx, cy, marker="o", ms=7.5, color=INK, zorder=5)
+    node.set_gid("anim-lattice-arrow")
     # Neighbouring stencil, faint, to show the lattice repeats.
     for gx, gy in ((1, 1), (7, 4)):
         for dx, dy in dirs:
@@ -332,7 +344,8 @@ def fermi_dirac():
     # Monte Carlo samples scattered around the warmest curve.
     es = rng.uniform(-3.1, 3.1, 90)
     fs = 1 / (1 + np.exp(es / 0.62)) + rng.normal(0, 0.035, 90)
-    ax.scatter(es, np.clip(fs, -0.02, 1.02), s=9, facecolor="none", edgecolor=INK, linewidths=0.8)
+    ax.scatter(es, np.clip(fs, -0.02, 1.02), s=9, facecolor="none", edgecolor=INK, linewidths=0.8,
+               gid="anim-jitter")
     ax.axhline(0.5, color=MUTED, lw=0.6, ls=(0, (4, 4)))
     ax.axvline(0.0, color=MUTED, lw=0.6, ls=(0, (4, 4)))
     ax.set_xlim(-3.2, 3.2)
@@ -368,7 +381,8 @@ def aerofoil():
         lift = 0.20 * bump * np.exp(-abs(y0) * 2.3) * (1 if y0 >= 0 else -0.55)
         y = y0 + lift + 0.055 * bump * np.sign(y0 or 1)
         ax.plot(x, y, color=ACCENT if abs(y0) < 0.35 else MUTED,
-                lw=1.15 if abs(y0) < 0.35 else 0.8, alpha=0.9, zorder=2)
+                lw=1.15 if abs(y0) < 0.35 else 0.8, alpha=0.9, zorder=2,
+                gid="anim-flow-line")
     ax.set_xlim(-1.0, 1.3)
     ax.set_ylim(-0.72, 0.72)
     save(fig, "bird-flight")
@@ -392,7 +406,7 @@ def persona():
         blend = np.clip(t / 0.32, 0, 1) ** 2 * (3 - 2 * np.clip(t / 0.32, 0, 1))
         y = base[1] + (lane_y - base[1]) * blend
         ax.plot(x, y, color=ACCENT, lw=1.4, alpha=0.85, zorder=2,
-                solid_capstyle="round")
+                solid_capstyle="round", gid="anim-flow-line")
 
         # Step markers spaced along the flat part of the lane.
         sx = np.linspace(0.34, 0.84, steps)
@@ -424,8 +438,8 @@ def ctg():
     # Uterine contractions, offset below.
     toco = 0.30 + 0.115 * sum(np.exp(-((t - c) ** 2) / 0.28) for c in (1.4, 4.2, 7.0, 8.4, 11.2))
 
-    ax.plot(t, fhr, color=ACCENT, lw=1.35)
-    ax.plot(t, toco, color=MUTED, lw=1.15)
+    ax.plot(t, fhr, color=ACCENT, lw=1.35, gid="anim-ctg-trace")
+    ax.plot(t, toco, color=MUTED, lw=1.15, gid="anim-ctg-trace")
     ax.axhline(0.72, color=MUTED, lw=0.55, ls=(0, (4, 4)), alpha=0.8)
 
     # Flag the two decelerations as the model would.

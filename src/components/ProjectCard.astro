@@ -77,21 +77,64 @@ const href = `/work/${project.id}/`;
     transform: translateY(-2px);
   }
 
-  /* Drives Figure's own drift animation: the card's overlay hit-area sits
-     above the figure, so the figure never receives :hover directly. */
-  .card:hover :global(.card__fig .fig__inner svg),
-  .card:focus-within :global(.card__fig .fig__inner svg) {
-    animation: fig-drift 7s ease-in-out infinite;
+  /* Drives Figure's own content animation (see global.css and
+     scripts/make_figures.py): the card's overlay hit-area sits above the
+     figure, so the figure never receives :hover directly. Mirrors
+     Figure.astro's standalone rules one for one. */
+  .card:hover :global(.card__fig .anim-flow-line),
+  .card:focus-within :global(.card__fig .anim-flow-line) {
+    stroke-dasharray: 5 4;
+    animation: fig-flow 1.1s linear infinite;
   }
 
-  @keyframes fig-drift {
-    0%,
-    100% {
-      transform: scale(1.015) translate(0, 0);
-    }
-    50% {
-      transform: scale(1.045) translate(-1.2%, -0.8%);
-    }
+  .card:hover :global(.card__fig .anim-ctg-trace),
+  .card:focus-within :global(.card__fig .anim-ctg-trace) {
+    stroke-dasharray: 10 6;
+    animation: fig-flow-slow 2.2s linear infinite;
+  }
+
+  .card:hover :global(.card__fig .anim-nbody-mass-0 use),
+  .card:focus-within :global(.card__fig .anim-nbody-mass-0 use) {
+    transform-origin: 288px 180px;
+    animation: fig-orbit 10s linear infinite;
+  }
+
+  .card:hover :global(.card__fig .anim-nbody-mass-1 use),
+  .card:focus-within :global(.card__fig .anim-nbody-mass-1 use) {
+    transform-origin: 288px 180px;
+    animation: fig-orbit-rev 14s linear infinite;
+  }
+
+  .card:hover :global(.card__fig .anim-nbody-mass-2 use),
+  .card:focus-within :global(.card__fig .anim-nbody-mass-2 use) {
+    transform-origin: 288px 180px;
+    animation: fig-orbit 19s linear infinite;
+  }
+
+  .card:hover :global(.card__fig .anim-nbody-mass-3 use),
+  .card:focus-within :global(.card__fig .anim-nbody-mass-3 use) {
+    transform-origin: 288px 180px;
+    animation: fig-orbit-rev 26s linear infinite;
+  }
+
+  .card:hover :global(.card__fig .anim-jitter use),
+  .card:focus-within :global(.card__fig .anim-jitter use) {
+    animation: fig-jitter 1.6s ease-in-out infinite;
+  }
+
+  .card :global(.card__fig .anim-jitter use:nth-of-type(3n+1)) { animation-delay: -0.3s; }
+  .card :global(.card__fig .anim-jitter use:nth-of-type(3n+2)) { animation-delay: -0.9s; }
+
+  .card:hover :global(.card__fig .anim-optimum),
+  .card:focus-within :global(.card__fig .anim-optimum) {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: fig-pulse-scale 1s ease-in-out infinite;
+  }
+
+  .card:hover :global(.card__fig .anim-lattice-arrow),
+  .card:focus-within :global(.card__fig .anim-lattice-arrow) {
+    animation: fig-pulse-opacity 1.3s ease-in-out infinite;
   }
 
   .card__meta {

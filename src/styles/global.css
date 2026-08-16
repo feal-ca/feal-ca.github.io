@@ -340,3 +340,61 @@ summary:focus-visible,
   white-space: nowrap;
   border: 0;
 }
+
+/* ==========================================================================
+   Project figure hover motion
+   Defined once here rather than in Figure.astro/ProjectCard.astro because
+   Astro's per-component CSS scoping would otherwise force a duplicate copy
+   of each @keyframes into both files. The classes these target are set by
+   scripts/make_figures.py (any gid prefixed "anim-" on a matplotlib artist)
+   and picked up on hover/focus by both components.
+   ========================================================================== */
+
+/* Streamlines (vortex-pinn, hero-flow, bird-flight, llm-persona): a marching
+   dash pattern reads as the flow itself moving downstream. -18 is 2x the 5+4
+   dasharray sum so the pattern realigns exactly at loop restart. */
+@keyframes fig-flow {
+  to { stroke-dashoffset: -18; }
+}
+
+/* Cardiotocograph trace (assisted-birth): the same idea, slower and with
+   longer dashes so it reads as a monitor strip scrolling rather than a
+   fast current. -16 matches the 10+6 dasharray sum for a clean loop. */
+@keyframes fig-flow-slow {
+  to { stroke-dashoffset: -16; }
+}
+
+/* N-body particles: a rigid rotation about the figure's centre. Applied to
+   each mass bucket at a different speed/direction, so the cloud reads as
+   orbiting rather than spinning as one flat disc. */
+@keyframes fig-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fig-orbit-rev {
+  to { transform: rotate(-360deg); }
+}
+
+/* MCMC/optimiser sample points (fermi-dirac, f1-frontwing): a small
+   wobble, as if the points were still being resampled. */
+@keyframes fig-jitter {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(0.7px, -0.5px); }
+  50% { transform: translate(-0.5px, 0.6px); }
+  75% { transform: translate(0.5px, 0.4px); }
+}
+
+/* The converged optimum marker (f1-frontwing): a pulse to mark it as the
+   answer the sampling above is converging toward. */
+@keyframes fig-pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+
+/* D2Q9 stencil arrows (lattice-boltzmann): a synchronised blink. Streaming
+   moves populations along every lattice link in the same timestep, so all
+   eight arrows and the centre node fire together rather than in sequence. */
+@keyframes fig-pulse-opacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

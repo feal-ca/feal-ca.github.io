@@ -23,7 +23,7 @@ L 241 123.4
 L 241 41.1 
 L 181.4 41.1 
 z
-" clip-path="url(#pf99405128d)" style="fill: var(--fig-ink); opacity: 0.1; stroke: var(--fig-ink); stroke-width: 0.7; stroke-linejoin: miter"/>
+" clip-path="url(#p6745d405ac)" style="fill: var(--fig-ink); opacity: 0.1; stroke: var(--fig-ink); stroke-width: 0.7; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 383 123.4 
@@ -31,9 +31,9 @@ L 442.6 123.4
 L 442.6 41.1 
 L 383 41.1 
 z
-" clip-path="url(#pf99405128d)" style="fill: var(--fig-ink); opacity: 0.1; stroke: var(--fig-ink); stroke-width: 0.7; stroke-linejoin: miter"/>
+" clip-path="url(#p6745d405ac)" style="fill: var(--fig-ink); opacity: 0.1; stroke: var(--fig-ink); stroke-width: 0.7; stroke-linejoin: miter"/>
    </g>
-   <g id="line2d_1">
+   <g class="anim-ctg-trace">
     <path d="M 0 62.8 
 L 0.4 64.7 
 L 0.8 61.7 
@@ -1344,9 +1344,9 @@ L 575.2 60.3
 L 575.6 58.5 
 L 576 60.4 
 L 576 60.4 
-" clip-path="url(#pf99405128d)" style="fill: none; stroke: var(--fig-accent); stroke-width: 1.4; stroke-linecap: square"/>
+" clip-path="url(#p6745d405ac)" style="fill: none; stroke: var(--fig-accent); stroke-width: 1.4; stroke-linecap: square"/>
    </g>
-   <g id="line2d_2">
+   <g class="anim-ctg-trace">
     <path d="M 0 277.7 
 L 7.8 277.5 
 L 12.4 277.2 
@@ -1585,17 +1585,17 @@ L 571.9 268.1
 L 573.9 270.1 
 L 576 271.7 
 L 576 271.7 
-" clip-path="url(#pf99405128d)" style="fill: none; stroke: var(--fig-muted); stroke-width: 1.1; stroke-linecap: square"/>
+" clip-path="url(#p6745d405ac)" style="fill: none; stroke: var(--fig-muted); stroke-width: 1.1; stroke-linecap: square"/>
    </g>
-   <g id="line2d_3">
+   <g id="line2d_1">
     <path d="M 0 61.7 
 L 576 61.7 
-" clip-path="url(#pf99405128d)" style="fill: none; stroke-dasharray: 2.2,2.2; stroke-dashoffset: 0; stroke: var(--fig-muted); stroke-opacity: 0.8; stroke-width: 0.6"/>
+" clip-path="url(#p6745d405ac)" style="fill: none; stroke-dasharray: 2.2,2.2; stroke-dashoffset: 0; stroke: var(--fig-muted); stroke-opacity: 0.8; stroke-width: 0.6"/>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="pf99405128d">
+  <clipPath id="p6745d405ac">
    <rect x="0" y="0" width="576" height="360"/>
   </clipPath>
  </defs>
