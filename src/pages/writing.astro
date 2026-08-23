@@ -68,10 +68,14 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
     margin-top: var(--space-m);
   }
 
+  /* Same 13rem label column as .u-cols (global.css), so the year lines up
+     with "Selected work" / "Experience" / "Skills" on the other pages
+     instead of drifting to its own left edge. */
   .year {
     display: grid;
-    grid-template-columns: minmax(0, 6rem) minmax(0, 1fr);
-    gap: var(--space-l);
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-m) var(--space-xl);
     margin-bottom: var(--space-xl);
   }
 

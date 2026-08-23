@@ -275,6 +275,12 @@ const items = await Promise.all(
     background: transparent;
     color: var(--ink);
     overflow: visible;
+    /* The lightbox chrome stays dark regardless of site theme, so it needs
+       its own fixed palette rather than var(--ink) etc, which flip with
+       --theme. Defined once here instead of repeated as raw hex below. */
+    --lb-ink: #efece6;
+    --lb-ink-muted: #a9a49b;
+    --lb-chrome: #16161a;
   }
 
   .lb::backdrop {
@@ -307,13 +313,13 @@ const items = await Promise.all(
     justify-content: space-between;
     gap: var(--space-s);
     margin-top: var(--space-xs);
-    color: #efece6;
+    color: var(--lb-ink);
     font-family: var(--font-display);
     font-size: var(--step--1);
   }
 
   .lb__caption :global(.u-label) {
-    color: #a9a49b;
+    color: var(--lb-ink-muted);
   }
 
   .lb__nav,
@@ -323,9 +329,9 @@ const items = await Promise.all(
     width: 2.75rem;
     height: 2.75rem;
     padding: 0;
-    color: #efece6;
-    background: color-mix(in srgb, #16161a 60%, transparent);
-    border: 1px solid color-mix(in srgb, #efece6 22%, transparent);
+    color: var(--lb-ink);
+    background: color-mix(in srgb, var(--lb-chrome) 60%, transparent);
+    border: 1px solid color-mix(in srgb, var(--lb-ink) 22%, transparent);
     border-radius: 999px;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -333,8 +339,17 @@ const items = await Promise.all(
 
   .lb__nav:hover,
   .lb__close:hover {
-    background: #16161a;
-    border-color: color-mix(in srgb, #efece6 45%, transparent);
+    background: var(--lb-chrome);
+    border-color: color-mix(in srgb, var(--lb-ink) 45%, transparent);
+  }
+
+  /* The global :focus-visible rule rings in var(--accent), which in light
+     theme (#97213c) reads under 3:1 against this always-dark chrome and
+     fails WCAG 1.4.11. Ring in the chrome's own ink color instead, which
+     passes in both site themes since the chrome never changes. */
+  .lb__nav:focus-visible,
+  .lb__close:focus-visible {
+    outline-color: var(--lb-ink);
   }
 
   .lb__close {
