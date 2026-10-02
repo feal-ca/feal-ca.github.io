@@ -133,8 +133,11 @@ browser at that size.
   variant. Get `loading="eager"` + `fetchpriority="high"` on the hero image
   only; everything else is `loading="lazy"` with explicit dimensions to
   prevent layout shift.
-- No client-side JS unless it earns its place. Right now only the lightbox
-  and the theme toggle ship JS, both as small inline modules.
+- No client-side JS unless it earns its place. The lightbox and the theme
+  toggle ship JS, and so do the three live simulations on project pages
+  (`src/components/SimPlate.astro`, `src/scripts/sims/`). Each simulation is
+  a dynamic import, so a page fetches only its own (about 2 kB plus a 4 kB
+  runner), and the homepage ships none of it.
 - No webfont CDN. Fonts are self-hosted, latin subset only: 182 kB of woff2
   from `scripts/fetch_fonts.py`. The roman serif and one Barlow weight are
   preloaded; the italic loads only where a publication name appears.
@@ -161,6 +164,13 @@ directly.
 - The generated project figures are **schematic illustrations**, not results.
   Never caption one as if it were output from the project. When a real figure
   exists, swap it in.
+- The live simulations are the same: they run the project's method, not its
+  code, and their captions say so. A readout shows this grid's numbers
+  (Reynolds number, interaction counts), never the project's.
+- Each drawing's animation shows what the project did (the surrogate's run
+  history, the pen crossing the decelerations, the quadtree being rebuilt).
+  The static frame has to be the complete picture, because the CV and share
+  cards use the same drawings with no CSS.
 - Anything unverified gets a `TODO(ferran):` comment in the source rather
   than a plausible-sounding guess on the page.
 

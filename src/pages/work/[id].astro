@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import Figure from "../../components/Figure.astro";
+import SimPlate from "../../components/SimPlate.astro";
 import { articles } from "../../data/writing.js";
 
 export const getStaticPaths = (async () => {
@@ -14,7 +15,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { project } = Astro.props;
-const { title, summary, year, figure, figureAlt, stack, links, team } = project.data;
+const { title, summary, year, figure, figureAlt, stack, links, team, sim } = project.data;
 
 const { Content } = await render(project);
 
@@ -43,13 +44,21 @@ const tools = new Intl.ListFormat("en", { style: "long", type: "conjunction" });
       <p class="head__summary">{summary}</p>
     </header>
 
-    <figure class="u-wide plate">
-      <Figure name={figure} alt={figureAlt} ratio="16 / 7" />
-      <figcaption class="plate__caption">
-        <span class="plate__num">Fig. 1</span>
-        A schematic drawing of the problem, not output from the project.
-      </figcaption>
-    </figure>
+    {
+      sim ? (
+        <div class="plate">
+          <SimPlate sim={sim} figure={figure} figureAlt={figureAlt} />
+        </div>
+      ) : (
+        <figure class="u-wide plate">
+          <Figure name={figure} alt={figureAlt} ratio="16 / 7" autoplay />
+          <figcaption class="plate__caption">
+            <span class="plate__num">Fig. 1</span>
+            A schematic drawing of the problem, not output from the project.
+          </figcaption>
+        </figure>
+      )
+    }
 
     <div class="u-page body">
       <div class="u-prose">

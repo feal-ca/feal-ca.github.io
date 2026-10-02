@@ -21,6 +21,11 @@ const projects = defineCollection({
     tier: z.enum(["flagship", "standard"]).default("standard"),
     /** Basename of an SVG in src/assets/figures, without the extension. */
     figure: z.string(),
+    /**
+     * A live in-browser simulation of the project's method, shown at the top
+     * of its page in place of the drawing. See src/components/SimPlate.astro.
+     */
+    sim: z.enum(["lbm", "nbody", "fermi"]).optional(),
     /** Alt text for the figure. Required: these carry real information. */
     figureAlt: z.string(),
     /**

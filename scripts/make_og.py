@@ -93,7 +93,7 @@ def capture_figures(dest):
     """Run every drawing in make_figures and keep the raster, not the SVG."""
     accent, ink, muted, faint, paper, sunk = mf.THEMES["light"]
     mf.ACCENT, mf.INK, mf.MUTED, mf.FAINT = accent, ink, muted, faint
-    mf.PAPER, mf.SUNK = paper, sunk
+    mf.PAPER, mf.SUNK, mf.PLATE = paper, sunk, sunk
     # The particle clouds are random; reseeding keeps the card and the page
     # showing the same run.
     mf.rng = np.random.default_rng(mf.SEED)

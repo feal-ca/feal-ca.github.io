@@ -5,6 +5,7 @@ year: 2025
 categories: ["HPC", "CFD"]
 tier: "standard"
 figure: "lattice-boltzmann"
+sim: "lbm"
 figureAlt: "The D2Q9 stencil: a lattice node with eight arrows to its neighbors (four along the axes, four diagonal), repeated faintly across a regular grid."
 team: "Group project"
 stack: ["C++", "OpenMP", "MareNostrum 5"]

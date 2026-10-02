@@ -5,6 +5,7 @@ year: 2025
 categories: ["HPC", "C++"]
 tier: "standard"
 figure: "n-body"
+sim: "nbody"
 figureAlt: "A particle cloud with three dense clusters, overlaid with an adaptive quadtree that subdivides finely where particles are concentrated and stays coarse in the empty regions."
 team: "Group project"
 stack: ["C++", "OpenMP"]

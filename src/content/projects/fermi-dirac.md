@@ -5,6 +5,7 @@ year: 2024
 categories: ["Physics", "Monte Carlo"]
 tier: "standard"
 figure: "fermi-dirac"
+sim: "fermi"
 figureAlt: "Fermi-Dirac occupancy curves at four temperatures, sharpening towards a step function as temperature falls, with Monte Carlo samples scattered around the warmest curve."
 stack: ["Python", "NumPy"]
 order: 8

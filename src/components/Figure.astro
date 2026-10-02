@@ -21,9 +21,11 @@ interface Props {
   alt: string;
   ratio?: string;
   class?: string;
+  /** Run the figure's motion continuously instead of on hover. */
+  autoplay?: boolean;
 }
 
-const { name, alt, ratio = "8 / 5", class: className = "" } = Astro.props;
+const { name, alt, ratio = "8 / 5", class: className = "", autoplay = false } = Astro.props;
 
 const key = `../assets/figures/${name}.svg`;
 const svg = figures[key] as string | undefined;
@@ -42,6 +44,7 @@ if (!svg) {
   style={`--ratio: ${ratio}`}
   role="img"
   aria-label={alt}
+  data-autoplay={autoplay || undefined}
 >
   <div class="fig__inner" set:html={svg} />
 </figure>
