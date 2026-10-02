@@ -49,7 +49,7 @@ export const SIMS = {
         options: [{ value: 0, label: "Direct summation" }, { value: 1, label: "Barnes-Hut" }],
       },
       { type: "range", name: "theta", label: "Opening angle θ", min: 0.3, max: 1.2, step: 0.05, value: 0.7 },
-      { type: "toggle", name: "trails", label: "Trails", value: 1 },
+      { type: "toggle", name: "trails", label: "Trails", value: 0 },
     ],
   },
   fermi: {
@@ -66,18 +66,18 @@ export const SIMS = {
   },
   surrogate: {
     caption:
-      "Surrogate-based optimization of a toy lift-to-drag curve over flap angle: a Gaussian process fitted to the runs so far, and expected improvement choosing the next one. Press play to let it spend the budget. It shows the method; the curve is made up and isn't the project's data.",
+      "Each run is one evaluation of a made-up lift-to-drag curve (the stand-in for a CFD run) from a fixed budget. A Gaussian process fitted to the runs so far guesses the rest of the curve, and expected improvement picks the next run. It shows the method; the curve isn't the project's data.",
     canvasLabel: "Interactive Gaussian-process optimization of lift-to-drag against flap angle.",
     hint: "Click the plot to choose the next run yourself.",
-    autoplay: false,
     controls: [
       { type: "button", name: "run", label: "Run CFD", key: "C" },
       { type: "range", name: "budget", label: "Budget", min: 5, max: 20, step: 1, value: 10, unit: "runs" },
     ],
     legend: [
-      { token: "ink", label: "Surrogate mean" },
-      { token: "accent", label: "Uncertainty (±2σ)" },
-      { token: "pencil", label: "Expected improvement" },
+      { token: "ink", label: "The surrogate's guess" },
+      { token: "accent", label: "How unsure it is (±2σ)" },
+      { token: "muted", label: "True curve, hidden from the optimizer" },
+      { token: "pencil", label: "Expected improvement: where to run next" },
     ],
   },
   fluid: {

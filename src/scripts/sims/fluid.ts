@@ -6,14 +6,21 @@
 
 import { clamp, rgba, type Create, type Palette } from "./types";
 
-const NX = 176;
-const NY = 77;                  // 16:7
+const NX = 144;
+const NY = 63;                  // 16:7
 const N = NX * NY;
 const U = 0.9;                  // free stream, cells per step
-const JACOBI = 30;
-const CHORD = 52;               // cells
-const LE_X = 46, LE_Y = 40;     // leading edge
-const SMOKE_EVERY = 7;          // rows between smoke lines
+// The pressure field is kept between steps as the next solve's starting
+// guess, so a few iterations per step are enough once the flow has settled.
+const JACOBI = 12;
+const BUDGET_MS = 8;
+const CHORD = 43;               // cells
+const LE_X = 38, LE_Y = 33;     // leading edge
+const SMOKE_EVERY = 6;          // rows between smoke lines
+
+// Opacity for a dye level, as a table: a pow() per cell per frame showed
+// up in profiles.
+const ALPHA = Uint8Array.from({ length: 256 }, (_, i) => Math.pow(i / 255, 0.7) * 230);
 
 export const create: Create = (params) => {
   let aoa = params.aoa ?? 8;
@@ -101,7 +108,6 @@ export const create: Create = (params) => {
         div[c] = solid[c] ? 0 : -0.5 * (u[c + 1] - u[c - 1] + v[c + NX] - v[c - NX]);
       }
     }
-    p.fill(0);
     for (let it = 0; it < JACOBI; it++) {
       for (let j = 1; j < NY - 1; j++) {
         for (let i = 1; i < NX - 1; i++) {
@@ -153,9 +159,6 @@ export const create: Create = (params) => {
     for (let c = 0; c < N; c++) { smoke[c] *= 0.9995; paint[c] *= 0.996; }
   };
 
-  // Settle the flow around the wing before the first frame.
-  for (let k = 0; k < 120; k++) step();
-
   const off = document.createElement("canvas");
   off.width = NX;
   off.height = NY;
@@ -165,8 +168,9 @@ export const create: Create = (params) => {
 
   return {
     step() {
+      const t0 = performance.now();
       step();
-      step();
+      if (performance.now() - t0 < BUDGET_MS / 2) step();
     },
     set(name, val) {
       if (name === "aoa") { aoa = val; shape(); }
@@ -209,7 +213,7 @@ export const create: Create = (params) => {
           const a = Math.max(s, q);
           const col = q > s ? pal.pencil : pal.accent;
           d[o] = col[0]; d[o + 1] = col[1]; d[o + 2] = col[2];
-          d[o + 3] = Math.pow(a, 0.7) * 230;
+          d[o + 3] = ALPHA[(a * 255) | 0];
         }
       }
       octx.putImageData(img, 0, 0);

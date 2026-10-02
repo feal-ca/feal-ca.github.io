@@ -123,6 +123,5 @@ export function hero(stage: HTMLElement) {
     attributes: true,
     attributeFilter: ["data-theme"],
   });
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", size);
   size();
 }

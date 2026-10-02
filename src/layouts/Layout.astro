@@ -98,8 +98,7 @@ const jsonLd = {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
 
-    <meta name="theme-color" content="#f6f8f6" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0e2236" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f8f6" />
 
     <script is:inline set:html={JSON.stringify(jsonLd)} type="application/ld+json" />
 
@@ -193,13 +192,14 @@ const jsonLd = {
       const root = document.documentElement;
       const button = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
 
-      const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+      const themeColor = document.querySelector('meta[name="theme-color"]');
 
-      const current = () =>
-        root.dataset.theme ?? (systemDark.matches ? "dark" : "light");
+      // Light unless the visitor has chosen the blueprint.
+      const current = () => root.dataset.theme ?? "light";
 
       const sync = () => {
         const dark = current() === "dark";
+        themeColor?.setAttribute("content", dark ? "#0e2236" : "#f6f8f6");
         button?.setAttribute("aria-pressed", String(dark));
         button?.setAttribute(
           "aria-label",
@@ -214,11 +214,6 @@ const jsonLd = {
           localStorage.setItem("theme", next);
         } catch (_) {}
         sync();
-      });
-
-      // Follow the OS while the visitor has not chosen explicitly.
-      systemDark.addEventListener("change", () => {
-        if (!root.dataset.theme) sync();
       });
 
       sync();
@@ -300,11 +295,6 @@ const jsonLd = {
 
       :root[data-theme="dark"] .theme__sun { display: none; }
       :root[data-theme="dark"] .theme__moon { display: block; }
-
-      @media (prefers-color-scheme: dark) {
-        :root:not([data-theme="light"]) .theme__sun { display: none; }
-        :root:not([data-theme="light"]) .theme__moon { display: block; }
-      }
 
       @media (max-width: 32rem) {
         .nav { gap: 0.85rem; font-size: var(--step--1); }

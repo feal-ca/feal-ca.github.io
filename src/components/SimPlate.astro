@@ -4,10 +4,14 @@ import { SIMS, type SimKind } from "../scripts/sims/config";
 
 /**
  * The top plate of a project page, running a small live simulation of the
- * project's method. The schematic stays underneath as the fallback: without
- * JavaScript, or for a reduced-motion visitor who hasn't pressed play, the
- * drawing is what shows. The simulations live in src/scripts/sims/ and are
- * loaded with dynamic imports, so each page fetches only its own.
+ * project's method. The stage and its caption take the page's prose column;
+ * the controls sit in the margin column to the right, the same ruled column
+ * the project notes use further down, so the page keeps one grid.
+ *
+ * The schematic stays underneath as the fallback: without JavaScript, or
+ * under reduced motion until play is pressed, the drawing is what shows.
+ * The simulations live in src/scripts/sims/ and are loaded with dynamic
+ * imports, so each page fetches only its own.
  */
 interface Props {
   sim: SimKind;
@@ -20,42 +24,37 @@ const config = SIMS[sim];
 const id = `sim-${sim}`;
 ---
 
-<figure
-  class="u-wide sim"
-  data-sim={sim}
-  data-autoplay={"autoplay" in config && config.autoplay === false ? "false" : undefined}
-  aria-labelledby={`${id}-caption`}
->
-  <div class="sim__stage">
-    <Figure name={figure} alt={figureAlt} ratio="16 / 7" autoplay class="sim__fallback" />
-    <canvas class="sim__canvas" role="img" aria-label={config.canvasLabel}></canvas>
+<figure class="u-page sim" data-sim={sim} aria-labelledby={`${id}-caption`}>
+  <div class="sim__main">
+    <div class="sim__stage">
+      <Figure name={figure} alt={figureAlt} ratio="16 / 7" autoplay class="sim__fallback" />
+      <canvas class="sim__canvas" role="img" aria-label={config.canvasLabel}></canvas>
+    </div>
+    <figcaption class="sim__caption" id={`${id}-caption`}>
+      <span class="sim__num">Fig. 1</span>
+      {config.caption}
+    </figcaption>
   </div>
 
-  <figcaption class="sim__caption" id={`${id}-caption`}>
-    <span class="sim__num">Fig. 1</span>
-    {config.caption}
-  </figcaption>
-
   <div class="sim__panel" hidden>
-    <div class="sim__row">
-      <div class="sim__buttons">
-        <button class="sim__btn sim__btn--main" type="button" data-sim-play aria-keyshortcuts="Space">Pause</button>
-        {
-          config.controls
-            .filter((c) => c.type === "button")
-            .map((c) => (
-              <button class="sim__btn" type="button" data-sim-action={c.name} aria-keyshortcuts={c.key}>
-                {c.label}
-              </button>
-            ))
-        }
-        <button class="sim__btn" type="button" data-sim-reset aria-keyshortcuts="R">Reset</button>
-        <button class="sim__btn" type="button" data-sim-expand aria-keyshortcuts="F">Expand</button>
-      </div>
-      <output class="sim__readout" aria-live="polite"></output>
+    <output class="sim__readout" aria-live="polite"></output>
+
+    <div class="sim__buttons">
+      <button class="sim__btn sim__btn--main" type="button" data-sim-play aria-keyshortcuts="Space">Pause</button>
+      {
+        config.controls
+          .filter((c) => c.type === "button")
+          .map((c) => (
+            <button class="sim__btn" type="button" data-sim-action={c.name} aria-keyshortcuts={c.key}>
+              {c.label}
+            </button>
+          ))
+      }
+      <button class="sim__btn" type="button" data-sim-reset aria-keyshortcuts="R">Reset</button>
+      <button class="sim__btn" type="button" data-sim-expand aria-keyshortcuts="F">Expand</button>
     </div>
 
-    <div class="sim__row sim__row--controls">
+    <div class="sim__controls">
       {
         config.controls.map((c) => {
           if (c.type === "range") {
@@ -80,7 +79,7 @@ const id = `sim-${sim}`;
           }
           if (c.type === "toggle") {
             return (
-              <label class="sim__field sim__check">
+              <label class="sim__check">
                 <input type="checkbox" data-sim-param={c.name} checked={c.value === 1} />
                 <span>{c.label}</span>
               </label>
@@ -104,21 +103,18 @@ const id = `sim-${sim}`;
       }
     </div>
 
+    {config.hint && <p class="sim__hint">{config.hint}</p>}
+
     {
-      (config.hint || config.legend) && (
-        <div class="sim__row sim__row--notes">
-          {config.hint && <p class="sim__hint">{config.hint}</p>}
-          {config.legend && (
-            <ul class="sim__legend" aria-label="Color key">
-              {config.legend.map((l) => (
-                <li>
-                  <span class={`sim__swatch sim__swatch--${l.token}`} aria-hidden="true" />
-                  {l.label}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+      config.legend && (
+        <ul class="sim__legend" aria-label="Color key">
+          {config.legend.map((l) => (
+            <li>
+              <span class={`sim__swatch sim__swatch--${l.token}`} aria-hidden="true" />
+              {l.label}
+            </li>
+          ))}
+        </ul>
       )
     }
   </div>
@@ -191,15 +187,28 @@ const id = `sim-${sim}`;
 
       const size = () => {
         const r = canvas.getBoundingClientRect();
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        // 1.5 is sharp enough for these drawings and saves a lot of fill.
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
         w = r.width; h = r.height;
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       };
 
-      const render = () => {
-        readout.value = sim.readout();
+      // The readout is an aria-live region: writing it every frame forces a
+      // layout per frame and floods screen readers. Update it only when the
+      // text changes, and at most four times a second.
+      let shown = "", shownAt = 0;
+      const updateReadout = (force = false) => {
+        const now = performance.now();
+        if (!force && now - shownAt < 250) return;
+        const text = sim.readout();
+        if (text !== shown) readout.value = shown = text;
+        shownAt = now;
+      };
+
+      const render = (force = false) => {
+        updateReadout(force);
         if (!(sim.ready?.() ?? true)) return;
         sim.draw(ctx, palette, w, h);
         // The canvas covers the drawing only once it has something to show.
@@ -210,7 +219,8 @@ const id = `sim-${sim}`;
       // pointer, so anything that changes it redraws once. It never starts
       // playback: a reduced-motion visitor chose a still page.
       const touched = () => {
-        if (!raf) render();
+        if (raf) updateReadout(true);
+        else render(true);
       };
 
       const frame = () => {
@@ -233,7 +243,7 @@ const id = `sim-${sim}`;
 
       const reset = () => {
         sim = create(params());
-        render();
+        render(true);
       };
 
       const expand = () => {
@@ -334,10 +344,8 @@ const id = `sim-${sim}`;
         attributes: true,
         attributeFilter: ["data-theme"],
       });
-      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", recolor);
 
       size();
-      readout.value = sim.readout();
       panel.hidden = false;
       // Draw the first frame even when paused: a still frame is fine under
       // reduced motion. A sim still warming up keeps the drawing instead.
@@ -348,6 +356,15 @@ const id = `sim-${sim}`;
 </script>
 
 <style>
+  /* Same columns as the project page body (.body in work/[id].astro): the
+     stage takes the left, the panel the 16rem margin column on the right. */
+  .sim {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 16rem);
+    gap: var(--space-m) var(--space-xl);
+    align-items: start;
+  }
+
   .sim__stage {
     position: relative;
   }
@@ -360,11 +377,6 @@ const id = `sim-${sim}`;
     visibility: hidden;
   }
 
-  .sim__canvas:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-  }
-
   /* Live: hide the drawing (keep its graph paper) and show the canvas. */
   .sim--live .sim__canvas {
     visibility: visible;
@@ -372,6 +384,12 @@ const id = `sim-${sim}`;
 
   .sim--live :global(.sim__fallback .fig__inner) {
     visibility: hidden;
+  }
+
+  /* A hidden drawing's CSS animations still run, and restyling its few
+     hundred SVG groups every frame cost more than the simulation itself. */
+  .sim--live :global(.sim__fallback [class*="anim-"]) {
+    animation: none !important;
   }
 
   .sim__caption {
@@ -388,13 +406,16 @@ const id = `sim-${sim}`;
     margin-right: 0.5em;
   }
 
-  /* --- Control panel: ruled rows under the caption, like an instrument
-     log under a figure. ------------------------------------------------ */
+  /* --- The panel: a margin note, ruled on the left like the project notes. */
   .sim__panel {
-    margin-top: var(--space-s);
-    border-top: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    padding-left: var(--space-m);
+    border-left: 1px solid var(--rule-strong);
     font-family: var(--font-sans);
     font-size: var(--step-0);
+    line-height: 1.4;
     color: var(--ink-2);
   }
 
@@ -402,21 +423,12 @@ const id = `sim-${sim}`;
     display: none;
   }
 
-  .sim__row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-xs) var(--space-l);
-    padding-block: var(--space-xs);
-  }
-
-  .sim__row + .sim__row {
-    border-top: 1px solid var(--rule);
-  }
-
-  .sim__row--controls {
-    justify-content: flex-start;
+  .sim__readout {
+    display: block;
+    min-height: 2.8em;
+    color: var(--ink);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
   }
 
   .sim__buttons {
@@ -426,9 +438,9 @@ const id = `sim-${sim}`;
   }
 
   .sim__btn {
-    padding: 0.25em 0.85em;
+    padding: 0.2em 0.75em;
     font-family: var(--font-sans);
-    font-size: var(--step-0);
+    font-size: var(--step--1);
     font-weight: 500;
     color: var(--ink);
     background: none;
@@ -443,29 +455,38 @@ const id = `sim-${sim}`;
     color: var(--accent);
   }
 
+  .sim__btn:disabled {
+    color: var(--ink-3);
+    border-color: var(--rule);
+    cursor: default;
+  }
+
   .sim__btn--main {
-    min-width: 5.5rem;
+    min-width: 4.75rem;
     border-color: var(--ink);
   }
 
-  .sim__readout {
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
+  .sim__controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding-top: var(--space-s);
+    border-top: 1px solid var(--rule);
   }
 
   .sim__field {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2xs) var(--space-xs);
+    flex-direction: column;
+    gap: 0.1rem;
   }
 
   .sim__label {
     color: var(--ink-3);
+    font-size: var(--step--1);
   }
 
   .sim__range {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.5em;
     font-size: var(--step--1);
@@ -473,12 +494,13 @@ const id = `sim-${sim}`;
     font-variant-numeric: tabular-nums;
   }
 
-  /* The slider: an ink rule with tick marks at the ends and a red-pencil
-     thumb. Drawn by hand for both engines so it matches the plates. */
+  /* The slider: an ink rule with a red-pencil thumb, drawn by hand for both
+     engines so it matches the plates. */
   .sim__range input {
     -webkit-appearance: none;
     appearance: none;
-    width: min(13rem, 42vw);
+    flex: 1;
+    min-width: 0;
     height: 1.5rem;
     margin: 0;
     background: transparent;
@@ -522,9 +544,9 @@ const id = `sim-${sim}`;
 
   .sim__check,
   .sim__choice label {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.35em;
+    gap: 0.4em;
     cursor: pointer;
   }
 
@@ -539,35 +561,31 @@ const id = `sim-${sim}`;
     margin: 0;
   }
 
-  .sim__choice legend {
-    float: left;
-    margin-right: var(--space-2xs);
-  }
-
-  .sim__row--notes {
-    font-size: var(--step--1);
-    color: var(--ink-3);
-  }
-
   .sim__hint {
+    padding-top: var(--space-s);
+    border-top: 1px solid var(--rule);
+    font-size: var(--step--1);
     color: var(--ink-2);
   }
 
   .sim__legend {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem var(--space-m);
+    flex-direction: column;
+    gap: 0.2rem;
     list-style: none;
     padding: 0;
+    font-size: var(--step--1);
+    color: var(--ink-3);
   }
 
   .sim__legend li {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.4em;
+    gap: 0.45em;
   }
 
   .sim__swatch {
+    flex: none;
     width: 0.9em;
     height: 0.9em;
     border-radius: 1px;
@@ -578,30 +596,27 @@ const id = `sim-${sim}`;
   .sim__swatch--ink { background: var(--ink); }
   .sim__swatch--muted { background: var(--fig-muted); }
 
-  /* --- Full screen: the plate fills the screen, controls included. ---- */
+  @media (max-width: 56rem) {
+    .sim {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sim__panel {
+      padding: var(--space-s) 0 0;
+      border-left: 0;
+      border-top: 1px solid var(--ink);
+    }
+  }
+
+  /* --- Full screen: the same two columns, sized to the screen. -------- */
   .sim:fullscreen {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     width: 100%;
     margin: 0;
-    padding: var(--space-m) var(--gutter);
+    padding: var(--space-l) var(--gutter);
     background: var(--bg);
     overflow: auto;
-  }
-
-  .sim:fullscreen .sim__stage {
-    width: min(100%, calc((100vh - 15rem) * 16 / 7));
-    margin-inline: auto;
-  }
-
-  .sim:fullscreen .sim__caption,
-  .sim:fullscreen .sim__panel {
-    width: min(100%, calc((100vh - 15rem) * 16 / 7));
-    margin-inline: auto;
-  }
-
-  .sim:fullscreen .sim__caption {
-    max-width: none;
+    grid-template-columns: minmax(0, calc((100vh - 9rem) * 16 / 7)) minmax(0, 18rem);
+    justify-content: center;
+    align-content: center;
   }
 </style>

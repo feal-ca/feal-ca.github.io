@@ -81,8 +81,9 @@ Full-bleed photo bands still separate sections where photography appears
 `.u-wide` for a hero plate.
 
 The light theme is engineering paper: cool off-white, blue-black ink, and
-blue-ink links and figure lines. The dark theme is a blueprint, the same
-drawings on cyanotype blue. Red pencil (`--pencil`) is reserved for figure
+blue-ink links and figure lines. It is the default whatever the OS prefers.
+The dark theme is a blueprint, the same drawings on cyanotype blue, and
+applies only when chosen with the toggle (which remembers it). Red pencil (`--pencil`) is reserved for figure
 and reference numbers, the date on the homepage "now" entry, and the current
 page in the nav.
 
@@ -139,6 +140,13 @@ browser at that size.
   (`src/components/SimPlate.astro`, `src/scripts/sims/`). Each simulation is
   a dynamic import of 2 to 5 kB, so a project page fetches only its own.
   Everything animated is off under reduced motion and paused off screen.
+- Simulations step on a time budget (about 8 ms of physics a frame) so a
+  slow machine simulates slower rather than dropping frames, and they start
+  drawing at once rather than warming up behind the drawing. Check with the
+  CPU throttled 4x: every one should stay above 30 fps. Two costs that
+  profiles turned up and that are easy to reintroduce: CSS animations on a
+  hidden SVG still restyle every frame, and an `aria-live` readout written
+  every frame forces a layout each time (and floods screen readers).
 - No webfont CDN. Fonts are self-hosted, latin subset only: 182 kB of woff2
   from `scripts/fetch_fonts.py`. The roman serif and one Barlow weight are
   preloaded; the italic loads only where a publication name appears.
@@ -368,7 +376,9 @@ a light value.
 - **A simulation** → a module in `src/scripts/sims/` implementing `Sim` from
   `types.ts`, an entry in `config.ts` (caption, controls, hint, color key)
   and a loader line in `SimPlate.astro`. The runner handles play, reset,
-  full screen, keyboard (Space, R, F), pointer, theme and visibility.
+  full screen, keyboard (Space, R, F), pointer, theme and visibility. The
+  plate takes the page's prose column and its controls the 16rem margin
+  column, the same one the project notes use below it.
 - **A TDS article** → prepend an entry to the array in `src/data/writing.js`.
   Newest first.
 - **Photos** → run the processing step (below), then add an entry to

@@ -68,9 +68,8 @@
   --cell: 18px;             /* graph-paper cell; every fifth line is heavier */
 }
 
-/* Blueprint. Defined twice (explicit choice, and the OS preference when no
-   choice is stored) because CSS has no way to share one block between a
-   selector and a media query. Keep the two in step. */
+/* Blueprint. Light is the default whatever the OS prefers; the blueprint
+   applies only when chosen with the toggle, which remembers it. */
 :root[data-theme="dark"] {
   color-scheme: dark;
 
@@ -92,28 +91,6 @@
   --fig-faint:  #1c3650;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-
-    --bg:          #0e2236;
-    --bg-sunk:     #132b42;
-    --ink:         #e8eef4;
-    --ink-2:       #b5c3d1;
-    --ink-3:       #8fa3b7;
-    --rule:        #24425f;
-    --rule-strong: #3a5f82;
-    --grid:        #1b3a56;
-    --grid-major:  #234865;
-
-    --accent:      #8ec5ff;
-    --accent-ink:  #0e2236;
-    --pencil:      #ff9c8a;
-
-    --fig-muted:  #56769a;
-    --fig-faint:  #1c3650;
-  }
-}
 
 /* ==========================================================================
    Reset

@@ -12,6 +12,7 @@ const M = 1 / START;            // every body has the same mass
 const EPS2 = 0.03 * 0.03;
 const DT = 0.0015;
 const STEPS_PER_FRAME = 2;
+const BUDGET_MS = 8;            // direct summation on 1,200 bodies is heavy
 const RESTART_AFTER = 7000;     // steps; the merger has settled by then
 const VIEW_W = 3.2;             // world units across the plate (16:7)
 const CLUMP = 70;
@@ -30,7 +31,7 @@ const stack = new Int32Array(CAP);
 export const create: Create = (params) => {
   let barnesHut = (params.mode ?? 1) === 1;
   let theta = params.theta ?? 0.7;
-  let trails = (params.trails ?? 1) === 1;
+  let trails = (params.trails ?? 0) === 1;
   const x = new Float64Array(MAX), y = new Float64Array(MAX);
   const vx = new Float64Array(MAX), vy = new Float64Array(MAX);
   const ax = new Float64Array(MAX), ay = new Float64Array(MAX);
@@ -170,7 +171,9 @@ export const create: Create = (params) => {
 
   return {
     step() {
-      for (let k = 0; k < STEPS_PER_FRAME; k++) step();
+      const t0 = performance.now();
+      let k = 0;
+      do { step(); k++; } while (k < STEPS_PER_FRAME && performance.now() - t0 < BUDGET_MS / 2);
     },
     set(name, v) {
       if (name === "mode") barnesHut = v === 1;

@@ -13,11 +13,13 @@ const N = NX * NY;
 const U0 = 0.08;                // inlet speed, lattice units
 const R = 8;                    // cylinder radius; D = 16 cells
 const STEPS_PER_FRAME = 6;
-// The impulsive start sends pressure waves around the box and the street
-// takes a while to form. Run that fast, behind the drawing, before showing
-// anything.
-const WARMUP = 1200;
-const WARMUP_PER_FRAME = 40;
+// The street takes about a thousand steps to form. Those run fast-forward,
+// on screen, as many per frame as fit in the time budget; after that the
+// flow runs at its normal pace. The budget also keeps a slow machine at a
+// steady frame rate: it simulates slower instead of dropping frames.
+const SPIN_UP = 1000;
+const SPIN_UP_PER_FRAME = 40;
+const BUDGET_MS = 8;
 const TRACERS = 700;
 
 const W0 = 4 / 9, W1 = 1 / 9, W2 = 1 / 36;
@@ -30,6 +32,10 @@ function feq(q: number, rho: number, ux: number, uy: number) {
   const eu = EX[q] * ux + EY[q] * uy;
   return W[q] * rho * (1 + 3 * eu + 4.5 * eu * eu - 1.5 * (ux * ux + uy * uy));
 }
+
+// Opacity for a vorticity magnitude, as a table: a pow() per cell per frame
+// showed up in profiles.
+const ALPHA = Uint8Array.from({ length: 256 }, (_, i) => Math.pow(i / 255, 0.75) * 215);
 
 export const create: Create = (params) => {
   let tau = params.tau ?? 0.54;
@@ -52,8 +58,9 @@ export const create: Create = (params) => {
       solid[i] = inside(x, y) ? 1 : 0;
       // A one-sided transverse kick in the near wake. A symmetric start can
       // sit as a steady twin-vortex wake for thousands of steps before
-      // round-off tips it over.
-      const vy = x > cx + R && x < cx + 6 * R ? 0.04 : 0;
+      // round-off tips it over. A smooth blob rather than a box: a box's
+      // edges are shear sheets that drift across the screen as stripes.
+      const vy = 0.08 * Math.exp(-(((x - cx - 2.5 * R) / (1.2 * R)) ** 2) - (((y - cy) / (1.5 * R)) ** 2));
       for (let q = 0; q < 9; q++) f[q * N + i] = feq(q, 1, U0, vy);
     }
   }
@@ -169,13 +176,12 @@ export const create: Create = (params) => {
 
   return {
     step() {
-      const n = steps < WARMUP ? WARMUP_PER_FRAME : STEPS_PER_FRAME;
-      for (let k = 0; k < n; k++) step();
+      const most = steps < SPIN_UP ? SPIN_UP_PER_FRAME : STEPS_PER_FRAME;
+      const t0 = performance.now();
+      let n = 0;
+      do { step(); n++; } while (n < most && performance.now() - t0 < BUDGET_MS);
       steps += n;
-      if (steps > WARMUP) advect(n);
-    },
-    ready() {
-      return steps >= WARMUP;
+      advect(Math.min(n, STEPS_PER_FRAME));
     },
     set(name, v) {
       if (name === "tau") tau = v;
@@ -216,7 +222,7 @@ export const create: Create = (params) => {
           d[o] = c[0];
           d[o + 1] = c[1];
           d[o + 2] = c[2];
-          d[o + 3] = Math.pow(Math.abs(v), 0.75) * 215;
+          d[o + 3] = ALPHA[(Math.abs(v) * 255) | 0];
         }
       }
       octx.putImageData(img, 0, 0);
