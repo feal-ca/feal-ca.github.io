@@ -9,13 +9,13 @@ export const profile = {
 
   // One sentence, present tense, on the homepage and in the meta description.
   tagline:
-    "On paper, physics only solves the easy cases. I write the code for the " +
-    "rest, and the machine learning and parallel computing that make it " +
-    "fast enough to be useful.",
+    "I study data science and physical engineering at UPC in Barcelona. " +
+    "Most of my projects are physics simulations, sped up with machine " +
+    "learning or parallel computing.",
 
   // The "what I'm doing right now" line. Keep it current.
   now: {
-    text: "In my fourth year at UPC in Barcelona, back from a summer simulating microscope optics with the Physics of Life group at TU Dresden.",
+    text: "Fourth year at UPC. This summer I was at TU Dresden with the Physics of Life group, simulating microscope optics.",
     since: "2026-09",
   },
 

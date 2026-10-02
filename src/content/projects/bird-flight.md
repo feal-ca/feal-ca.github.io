@@ -13,17 +13,14 @@ order: 5
 # which norm, how close) and the mesh resolution.
 ---
 
-Writing a Navier-Stokes solver yourself is the fastest way to stop treating
-CFD as a black box. Discretization, the pressure-velocity coupling, boundary
-conditions, the stability limit on the timestep: none of it hides behind a
-solver flag once you've implemented all of it in NumPy.
+A 3D Navier-Stokes solver, written from scratch in NumPy. It handles
+discretization, pressure-velocity coupling, boundary conditions and the
+stability limit on the timestep.
 
-The geometry is a bird's wing. I modeled it from a reference in Blender
-instead of flattening it into a textbook airfoil, which makes for a harder
-and more honest test than a cylinder. Real camber, real taper, and no
-analytic answer waiting at the end to check yourself against. So I ran the
-same case through **icoFoam**, OpenFOAM's incompressible laminar solver, and
-compared.
+The geometry is a bird's wing, which I modeled in Blender from a reference
+instead of using a standard airfoil. It has real camber and taper. There's
+no analytic solution to check against, so I ran the same case in **icoFoam**,
+OpenFOAM's incompressible laminar solver, and compared the two.
 
-That implementation is the subject of my first Towards Data Science article,
-*Building a Navier-Stokes Solver in Python from Scratch*.
+The solver is the subject of my first Towards Data Science article, *Building
+a Navier-Stokes Solver in Python from Scratch*.

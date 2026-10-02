@@ -14,7 +14,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { project } = Astro.props;
-const { title, summary, year, figure, figureAlt, stack, links } = project.data;
+const { title, summary, year, figure, figureAlt, stack, links, team } = project.data;
 
 const { Content } = await render(project);
 
@@ -61,6 +61,14 @@ const tools = new Intl.ListFormat("en", { style: "long", type: "conjunction" });
           <span class="note__head">Year</span>
           {year}
         </p>
+        {
+          team && (
+            <p class="note">
+              <span class="note__head">Team</span>
+              {team}
+            </p>
+          )
+        }
         {
           stack.length > 0 && (
             <p class="note">

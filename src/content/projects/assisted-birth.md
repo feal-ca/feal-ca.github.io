@@ -6,30 +6,30 @@ categories: ["Machine learning", "Healthcare"]
 tier: "flagship"
 figure: "assisted-birth"
 figureAlt: "Schematic cardiotocography traces: a variable fetal heart rate line above a smoother uterine contraction curve, with two dips highlighted as decelerations."
+team: "Team of nine"
 stack: ["Python", "PyTorch"]
 featured: true
 order: 3
 ---
 
-Cardiotocography records two signals at once during labor: the fetal heart
-rate and uterine contractions. Reading them together is how clinicians spot
-distress. A deceleration that follows a contraction means something different
-from one that doesn't. But interpretation is famously subjective, and
-disagreement between readers is well documented.
+We were a team of nine, working with **Hospital Sant Joan de Déu** in
+Barcelona. The model predicts whether the fetus is in distress and which
+delivery pathway is likely, and reached around **0.78 AUC**.
 
-We built this with **Hospital Sant Joan de Déu** in Barcelona, as a team of
-nine. The traces are time series, the clinical context is tabular, the
-ultrasound is imaging, and each needs its own encoder. The model predicted
-whether the fetus was in distress and which delivery pathway was likely, and
-reached around **0.78 AUC**.
+Cardiotocography (CTG) records the fetal heart rate and uterine contractions
+during labor. Clinicians read the two together: a deceleration that follows a
+contraction means something different from one that doesn't. Interpretation
+is subjective, and readers often disagree.
 
-The hard part wasn't the architecture. It was that the label sits a long way
-from the signal. What gets measured is the fetus's pH after delivery, and
-between the CTG trace and that number sits every decision the clinical team
-made, including whether to go to cesarean. A birth that went well *because*
-someone intervened early looks, in the label, much like a birth that was
-never in trouble. Deciding what the model was being trained to predict took
-longer than building it.
+The model takes three kinds of input: CTG time series, tabular clinical
+context, and ultrasound images, each with its own encoder.
 
-This was academic work on retrospective data, not a clinical tool. None of it
-was validated for use on a ward.
+The hardest part was the label. What gets measured is the fetus's pH after
+delivery, and between the CTG trace and that number are all the decisions the
+clinical team made, including whether to do a cesarean. A birth that went
+well because someone intervened early can look, in the label, like a birth
+that was never at risk. We spent longer deciding what to predict than
+building the model.
+
+This was academic work on retrospective data. It isn't a clinical tool and
+wasn't validated for clinical use.

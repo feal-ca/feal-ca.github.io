@@ -23,6 +23,12 @@ const projects = defineCollection({
     figure: z.string(),
     /** Alt text for the figure. Required: these carry real information. */
     figureAlt: z.string(),
+    /**
+     * Who did it, when it wasn't solo: "Group project", "Team of nine".
+     * Shown on the plate and in the project page's notes. Leave unset for
+     * individual work.
+     */
+    team: z.string().optional(),
     /** Tools actually used. Keep honest and short. */
     stack: z.array(z.string()).default([]),
     /** Optional outbound links (repo, write-up, report). */

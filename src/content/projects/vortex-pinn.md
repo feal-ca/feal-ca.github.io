@@ -15,17 +15,15 @@ order: 2
 # reproduced, which is all that is verified.
 ---
 
-The target is the Kármán vortex street, the alternating wake that forms
-behind a bluff body above a critical Reynolds number. It makes a hard test
-for a neural network. The wake is unsteady and periodic, so a model that has
-only learned to smooth its training data gives itself away at a glance: it
-settles into a symmetric steady wake, and the shedding never starts.
+The target is the Kármán vortex street, the alternating wake behind a bluff
+body above a critical Reynolds number. It's a hard case for a neural network
+because the wake is unsteady and periodic. A model fit only to data tends to
+settle into a symmetric steady wake, and the shedding never starts.
 
-A physics-informed network has some defense against that. The governing
-equations sit inside its loss function, so the residual of Navier-Stokes is
-penalized alongside the mismatch against training samples, and the physics
-holds the solution in place where the data runs thin. This one reproduced the
-shedding.
+A physics-informed neural network (PINN) includes the governing equations in
+its loss: the Navier-Stokes residual is penalized along with the error
+against training samples, which constrains the solution where the data is
+sparse. This one reproduced the shedding.
 
-Ground truth came from a high-fidelity **OpenFOAM** simulation of the same
-case. Any quantitative comparison gets measured against that run.
+The ground truth was a high-fidelity **OpenFOAM** simulation of the same
+case.

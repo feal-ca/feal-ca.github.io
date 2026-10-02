@@ -14,12 +14,12 @@ order: 3.5
 <!-- TODO(ferran): add a result (accuracy against the full solver, speedup,
      bead counts) once you're happy to publish one. -->
 
-I built this at TU Dresden in the summer of 2026, alongside the main
-internship work with the Physics of Life group on simulating microscope
+I built this at TU Dresden in the summer of 2026, alongside my main
+internship project with the Physics of Life group on simulating microscope
 optics.
 
-With several beads in the field of a Köhler-illuminated microscope, light
-scattered by one bead reaches its neighbors and scatters again. So each
-bead's image depends on where the others sit. The model is a graph neural
-network. Beads are nodes, their couplings are edges, and it predicts that
-bead-bead coupling fast enough to run in real time.
+When several beads are in the field of view of a Köhler-illuminated
+microscope, light scattered by one bead reaches the others and scatters
+again, so each bead's image depends on where the others are. The model is a
+graph neural network with beads as nodes and their couplings as edges. It
+predicts the bead-bead coupling fast enough to run in real time.

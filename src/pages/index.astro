@@ -7,7 +7,7 @@ import Reference from "../components/Reference.astro";
 import PhotoBand from "../components/PhotoBand.astro";
 import { profile } from "../data/profile.js";
 import { articles } from "../data/writing.js";
-import { featured as featuredPhotos } from "../data/photos.js";
+import { photos, featured as featuredPhotos } from "../data/photos.js";
 
 const all = await getCollection("projects");
 const [lead, ...rest] = all
@@ -64,12 +64,6 @@ const since = new Date(`${profile.now.since}-01T00:00:00Z`).toLocaleDateString(
       <p class="u-meta">{rest.length + 1} of {all.length}</p>
     </div>
 
-    <p class="u-prose section__lede">
-      These all sit between my two degrees: a physical system worth
-      modeling, and the machine learning or parallel computing it takes to
-      model it at a scale anyone would care about.
-    </p>
-
     <Plate project={lead} number={2} layout="side" ratio="16 / 10" />
 
     <div class="plates">
@@ -87,12 +81,6 @@ const since = new Date(`${profile.now.since}-01T00:00:00Z`).toLocaleDateString(
       <p class="u-meta">{articles.length} articles in Towards Data Science</p>
     </div>
 
-    <p class="u-prose section__lede">
-      Mostly explanations of things I had to work out myself: a solver
-      built from nothing, what a supercomputer asks of you, why
-      an old idea in hardware came back. All free to read.
-    </p>
-
     <ol class="refs" role="list">
       {latest.map((article, i) => (
         <Reference article={article} number={articles.length - i} />
@@ -106,9 +94,9 @@ const since = new Date(`${profile.now.since}-01T00:00:00Z`).toLocaleDateString(
 
   <PhotoBand
     photos={featuredPhotos}
-    heading="I take a camera most places I go."
+    heading="Photography"
     href="/photography/"
-    linkLabel="Photographs"
+    linkLabel={`See all ${photos.length}`}
   />
 
   <section class="u-page section section--contact" aria-labelledby="contact-heading">
@@ -117,13 +105,11 @@ const since = new Date(`${profile.now.since}-01T00:00:00Z`).toLocaleDateString(
     </div>
     <div class="u-prose">
       <p>
-        I'm interested in research and internship work on simulation,
-        scientific machine learning and HPC. I'm still partway through my
-        bachelor's, so I can't offer a fixed start date, but I'd rather
-        hear about something interesting early than not at all. Email is the
-        quickest way to reach me:
-        <a href={`mailto:${profile.links.email}`}>{profile.links.email}</a>.
-        The <a href={profile.links.cv}>CV</a> has the full detail.
+        I'm interested in research and internship positions in simulation,
+        scientific machine learning and HPC. I'm still finishing my degrees,
+        so I can't commit to a fixed start date yet. You can email me at
+        <a href={`mailto:${profile.links.email}`}>{profile.links.email}</a>
+        or download my <a href={profile.links.cv}>CV</a>.
       </p>
     </div>
   </section>
@@ -210,10 +196,6 @@ const since = new Date(`${profile.now.since}-01T00:00:00Z`).toLocaleDateString(
   /* --- Sections ----------------------------------------------------------- */
   .section {
     margin-top: var(--space-2xl);
-  }
-
-  .section__lede {
-    margin-bottom: var(--space-l);
   }
 
   .plates {

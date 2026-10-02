@@ -10,14 +10,12 @@ stack: ["Python", "NumPy"]
 order: 8
 ---
 
-The Fermi-Dirac distribution is normally derived on paper, from the grand
-canonical ensemble. This gets to it the other way around: set up a system of
-fermions, let a Markov chain wander through its microstates subject to the
-exclusion principle, and measure the occupancy that comes out.
+The Fermi-Dirac distribution is usually derived analytically from the grand
+canonical ensemble. Here it comes out of a simulation instead: a system of
+fermions, a Markov chain that moves through its microstates while respecting
+the exclusion principle, and a measurement of the resulting occupancy.
 
-A free-choice project on quantum statistics, and a small one. What makes it
-worth doing is that the answer is recognizable on sight. As temperature drops
-the sampled occupancy sharpens toward a step at the Fermi level; raise it and
-the step smears out. The sampled curves matched the analytic ones across the
-temperature range. Watching that shape emerge from sampling rather than from
-algebra makes the statistical mechanics feel less like bookkeeping.
+It was a small free-choice project on quantum statistics. As the temperature
+drops, the sampled occupancy sharpens toward a step at the Fermi level, and
+as it rises the step smooths out. The sampled curves matched the analytic
+ones across the temperature range.

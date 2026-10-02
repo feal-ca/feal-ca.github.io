@@ -36,51 +36,46 @@ const period = ({ start, end }: { start: string; end: string | null }) => {
   </header>
 
   <section class="u-page bio" aria-label="Biography">
-      <div class="u-prose">
+    <div class="u-prose">
       <p>
-        I'm taking two degrees at once at the Universitat Politècnica de
-        Catalunya (Data Science &amp; Engineering, and Physical Engineering)
-        through CFIS, a program that exists to let a small number of students
-        do exactly that, and that runs its own entrance exam in math and
-        physics to decide who. I'm in my fourth year, with an 8.75/10
-        average across both.
+        I'm taking two degrees at the same time at the Universitat Politècnica
+        de Catalunya: Data Science and Engineering, and Physical Engineering.
+        That's possible through CFIS, which admits a small group each year
+        through its own entrance exam in math and physics. I'm in my fourth
+        year, with an 8.75/10 average across both.
       </p>
       <p>
-        The two halves feed each other more than the timetable suggests, and
-        this summer's work at TU Dresden was the clearest case of it. You can't train
-        anything to operate a microscope until you can simulate what the
-        microscope sees, and that means solving for electromagnetic fields
-        propagating through a specimen and through a lens. The physics builds
-        the simulator; the machine learning is what you put on top of it.
+        This summer I was a research intern with the Physics of Life group at
+        TU Dresden. I simulated electromagnetic fields propagating through a
+        specimen and the objective lens, as virtual instrumentation for
+        learned brightfield imaging. On the side, I built a graph neural
+        network for multiple scattering between beads.
       </p>
       <p>
-        Most of what I do has that shape. The Formula 1 wing needed CFD for
-        ground truth and a surrogate model to make the search affordable. The
-        vortex network needed Navier-Stokes in the loss function to behave at
-        all. Neither half is decoration for the other, and that intersection,
-        rather than either field on its own, is the thing I'm good
-        at.
+        Most of my projects use both degrees. For the Formula 1 wing, we used
+        CFD for ground truth and a surrogate model to keep the search
+        affordable. The vortex-shedding network needed the Navier-Stokes
+        equations in its loss function to reproduce the wake.
       </p>
       <p>
-        Outside of coursework I write for <a
+        I also write for <a
           href={profile.links.tds}
           target="_blank"
           rel="noopener noreferrer">Towards Data Science</a
-        >, mostly long explanations of things I had to understand properly
-        before I could use them. I've also taught robotics to school students
-        (Arduino, micro:bit, 3D printing), and I still help out at Linux and
-        3D-printing workshops. Teaching something is the fastest way to find
-        out whether you understand it.
+        >, mostly about simulation and HPC. In 2022–2023 I taught robotics to
+        school students (Arduino, micro:bit, 3D printing), and I still
+        volunteer at Linux and 3D-printing workshops.
       </p>
       <p>
-        Away from all of that I fence, and I take a camera most places I go. I
-        speak Catalan, Spanish and English, and I've just started on Arabic.
+        Outside of that I fence and take photographs. I speak Catalan, Spanish
+        and English, and I'm learning Arabic.
       </p>
       <p>
-        Where this goes next is still open: industry, a PhD, or the kind
-        of industrial PhD that's both.
+        After the degrees I'm considering industry, a PhD, or an industrial
+        PhD.
       </p>
     </div>
+
     <aside class="notes" aria-label="In brief">
       <p class="note">
         <span class="note__head">Now</span>
@@ -157,10 +152,8 @@ const period = ({ start, end }: { start: string; end: string | null }) => {
     </div>
     <div class="u-prose">
       <p>
-        Email is the surest way to reach me. I'm still partway through my
-        bachelor's, so I can't offer a fixed start date, but I'd rather hear
-        about something interesting early than not at all. The CV has the
-        full detail.
+        I'm interested in research and internship positions. I'm still
+        finishing my degrees, so I can't commit to a fixed start date yet.
       </p>
       <ul class="contact" role="list">
         <li><a href={`mailto:${profile.links.email}`}>{profile.links.email}</a></li>

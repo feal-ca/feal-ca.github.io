@@ -1,38 +1,37 @@
 ---
 title: "Parallel lattice Boltzmann solver"
-summary: "A D2Q9 lattice Boltzmann solver in about 200 lines of C++, parallelized with OpenMP and pushed to the memory-bandwidth ceiling on MareNostrum 5."
+summary: "A D2Q9 lattice Boltzmann solver in about 200 lines of C++, parallelized with OpenMP and benchmarked on MareNostrum 5 until memory bandwidth ran out."
 year: 2025
 categories: ["HPC", "CFD"]
 tier: "standard"
 figure: "lattice-boltzmann"
 figureAlt: "The D2Q9 stencil: a lattice node with eight arrows to its neighbors (four along the axes, four diagonal), repeated faintly across a regular grid."
+team: "Group project"
 stack: ["C++", "OpenMP", "MareNostrum 5"]
 order: 6
 ---
 
-Lattice Boltzmann comes at fluid flow from the opposite end to a
-Navier-Stokes solver. Rather than discretizing the macroscopic equations, it
-tracks particle distribution functions hopping between neighboring lattice
-sites and colliding, and the familiar continuum behavior emerges from that.
+A group project with classmates at UPC.
 
-This is a **D2Q9** implementation (two dimensions, nine discrete velocities
-per node) with a BGK collision operator, bounce-back walls, a Zou-He inlet
-and a zero-gradient outlet: flow past a cylinder on a 400×400 lattice, in
-around 200 lines of C++. Relaxation time sets the viscosity and so the
-Reynolds number, and you can change the whole regime by turning that one
-knob. At τ = 0.75 the wake is steady and laminar, Re ≈ 96. Drop it to
-τ = 0.55, Re ≈ 480, and the vortex street appears.
+Lattice Boltzmann simulates fluid flow without solving the Navier-Stokes
+equations directly. It tracks particle distribution functions that stream
+between neighboring lattice sites and collide, and the continuum flow emerges
+from that.
 
-Then the performance question. Streaming and collision are local operations
-on a regular grid with no global pressure solve to synchronize around, so the
-method looks embarrassingly parallel. It isn't, quite. It's memory-bound, and
-how you move the data dominates everything else.
+Ours is a **D2Q9** solver (two dimensions, nine discrete velocities per node)
+with a BGK collision operator, bounce-back walls, a Zou-He inlet and a
+zero-gradient outlet. It simulates flow past a cylinder on a 400×400 lattice
+in about 200 lines of C++. The relaxation time sets the viscosity, and with
+it the Reynolds number. At τ = 0.75 the wake is steady, Re ≈ 96. At
+τ = 0.55, Re ≈ 480, a vortex street forms.
 
-Switching from push streaming (scatter) to pull streaming (gather) took the
-single-threaded run from **113 s to 31.7 s**, a 3.6× win from nothing but the
-access pattern. On a 112-core Xeon Platinum 8480+ node of MareNostrum 5 it
-reached 24.6× at 32 threads, then flattened out around 64, where bandwidth
-saturates and more cores stop buying anything.
+Streaming and collision are local operations with no global pressure solve,
+so the method should parallelize well. In practice it's memory-bound.
+Switching from push streaming (scatter) to pull streaming (gather) cut the
+single-threaded run from **113 s to 31.7 s**, 3.6× faster from the memory
+access pattern alone. On a 112-core Xeon Platinum 8480+ node of MareNostrum 5
+it reached 24.6× at 32 threads and stopped improving around 64, where memory
+bandwidth saturates.
 
-I wrote the whole thing up for Towards Data Science as *The Fluid Simulator
-That Doesn't Solve the Fluid Equations*.
+I wrote it up for Towards Data Science as *The Fluid Simulator That Doesn't
+Solve the Fluid Equations*.

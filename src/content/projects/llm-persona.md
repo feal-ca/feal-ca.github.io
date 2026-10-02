@@ -1,6 +1,6 @@
 ---
-title: "How do you actually give a language model a persona?"
-summary: "A controlled comparison of four ways to give Qwen3-4B a persona: a system prompt, and three different formats of fine-tuning data. What you train on matters more than how much."
+title: "Giving a language model a persona"
+summary: "A comparison of four ways to give Qwen3-4B a persona: a system prompt, and three formats of fine-tuning data. First-person statements worked best."
 year: 2026
 categories: ["Machine learning", "LLMs"]
 tier: "standard"
@@ -13,32 +13,30 @@ order: 7
 # comparison and does not report its outcome.
 ---
 
-"Give the model a persona" covers several quite different interventions, and
-they're rarely compared on equal terms. The cheapest is a system prompt:
-free, reversible, and the easiest thing in the world to talk a model out of.
-Past that you're fine-tuning, and the question stops being how *much* you
-train and becomes what you train *on*.
+There are several ways to give a language model a persona, and they're
+rarely compared under the same conditions. The cheapest is a system prompt,
+which costs nothing and is easy to undo, but is also easy to talk the model
+out of. Beyond that you fine-tune, and then the question is what data to
+train on.
 
-So: one system-prompt baseline against three formats of training data, all on
-the same base model (Qwen3-4B-Instruct, adapted with LoRA at r=16, α=32 over
-the attention and MLP projections), so the differences belong to the data
-rather than the setup.
+The comparison is a system-prompt baseline against three formats of training
+data, all on the same base model (Qwen3-4B-Instruct, adapted with LoRA at
+r=16, α=32 over the attention and MLP projections), so the differences come
+from the data:
 
-- **Demonstrations.** Chat examples of the persona replying in character.
-- **First-person statements.** The persona describing itself from the inside.
-- **Synthetic document fine-tuning.** Encyclopedia-style third-person text
-  written *about* the persona.
+- Demonstrations: chat examples of the persona replying in character.
+- First-person statements: the persona describing itself.
+- Synthetic document fine-tuning: encyclopedia-style text written about the
+  persona.
 
-First-person statements won. A model that has read "I am C-3PO and I find
-this plan deeply unwise" sounds like C-3PO in more situations than one that
-has only seen C-3PO-style chat replies. Demonstrations teach the shapes they
-show. First-person text seems to generalize past them. The synthetic
-documents were strongest on *facts about* the character, which is a different
-capability from being it.
+First-person statements worked best. A model trained on lines like "I am
+C-3PO and I find this plan deeply unwise" stayed in character in more
+situations than one trained only on C-3PO-style chat replies. The synthetic
+documents were best on facts about the character, which didn't carry over to
+behaving like it.
 
-Measured across a set of C-3PO traits, the first-person model reached 97% on
-verbosity, 93% on quoting odds, 90% on anxiety and 77% on protocol etiquette.
+On a set of C-3PO traits, the first-person model scored 97% on verbosity, 93%
+on quoting odds, 90% on anxiety and 77% on protocol etiquette.
 
-The full version, with the whole business of convincing a language model that
-it's a protocol droid, is the Towards Data Science piece *What's the Best Way
+The longer version is the Towards Data Science article *What's the Best Way
 to Brainwash an LLM?*

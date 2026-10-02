@@ -27,7 +27,7 @@ const {
   ratio = "8 / 5",
   level = 3,
 } = Astro.props;
-const { title, summary, year, figure, figureAlt, stack } = project.data;
+const { title, summary, year, figure, figureAlt, stack, team } = project.data;
 const href = `/work/${project.id}/`;
 const Heading = `h${level}`;
 
@@ -49,7 +49,7 @@ const tools = stack.length
     </Heading>
     <p class="plate__summary">{summary}</p>
     <p class="u-meta plate__meta">
-      {year}{tools && <>. {tools}</>}.
+      {year}{team && <>. {team}</>}{tools && <>. {tools}</>}.
     </p>
   </div>
 </article>
