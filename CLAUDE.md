@@ -376,7 +376,7 @@ a light value.
 - **A simulation** → a module in `src/scripts/sims/` implementing `Sim` from
   `types.ts`, an entry in `config.ts` (caption, controls, hint, color key)
   and a loader line in `SimPlate.astro`. The runner handles play, reset,
-  full screen, keyboard (Space, R, F), pointer, theme and visibility. The
+  keyboard (Space, R), pointer, theme and visibility. The
   plate takes the page's prose column and its controls the 16rem margin
   column, the same one the project notes use below it.
 - **A TDS article** → prepend an entry to the array in `src/data/writing.js`.

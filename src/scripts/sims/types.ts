@@ -1,7 +1,7 @@
 // The contract between the runner in SimPlate.astro and each simulation.
 // A simulation owns its physics and its drawing; the runner owns the
 // canvas, the loop, visibility, reduced motion, the theme, the controls,
-// reset (it simply creates the simulation again) and full screen.
+// and reset (it simply creates the simulation again).
 
 export type RGB = [number, number, number];
 
@@ -29,7 +29,7 @@ export interface Sim {
   draw(ctx: CanvasRenderingContext2D, palette: Palette, w: number, h: number): void;
   /** A named control changed. */
   set(name: string, value: number): void;
-  /** A named button was pressed (anything other than play, reset, expand). */
+  /** A named button was pressed (anything other than play and reset). */
   action?(name: string): void;
   /** Pointer input. Return true while the sim is using it (a drag). */
   pointer?(p: SimPointer): boolean;

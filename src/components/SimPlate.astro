@@ -51,7 +51,6 @@ const id = `sim-${sim}`;
           ))
       }
       <button class="sim__btn" type="button" data-sim-reset aria-keyshortcuts="R">Reset</button>
-      <button class="sim__btn" type="button" data-sim-expand aria-keyshortcuts="F">Expand</button>
     </div>
 
     <div class="sim__controls">
@@ -156,7 +155,6 @@ const id = `sim-${sim}`;
     const panel = root.querySelector<HTMLElement>(".sim__panel")!;
     const play = root.querySelector<HTMLButtonElement>("[data-sim-play]")!;
     const resetBtn = root.querySelector<HTMLButtonElement>("[data-sim-reset]")!;
-    const expandBtn = root.querySelector<HTMLButtonElement>("[data-sim-expand]")!;
     const readout = root.querySelector<HTMLOutputElement>(".sim__readout")!;
     const inputs = Array.from(root.querySelectorAll<HTMLInputElement>("[data-sim-param]"));
     const actions = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-sim-action]"));
@@ -246,18 +244,8 @@ const id = `sim-${sim}`;
         render(true);
       };
 
-      const expand = () => {
-        if (document.fullscreenElement === root) document.exitFullscreen();
-        else root.requestFullscreen?.().catch(() => {});
-      };
-
       play.addEventListener("click", toggle);
       resetBtn.addEventListener("click", reset);
-      expandBtn.addEventListener("click", expand);
-      if (!root.requestFullscreen) expandBtn.hidden = true;
-      document.addEventListener("fullscreenchange", () => {
-        expandBtn.textContent = document.fullscreenElement === root ? "Close" : "Expand";
-      });
 
       for (const btn of actions) {
         btn.addEventListener("click", () => {
@@ -273,7 +261,7 @@ const id = `sim-${sim}`;
         });
       }
 
-      // Space, R, F and any button's own key, while focus is in the plate.
+      // Space, R and any button's own key, while focus is in the plate.
       root.addEventListener("keydown", (e) => {
         if (e.altKey || e.ctrlKey || e.metaKey) return;
         const t = e.target as HTMLElement;
@@ -281,7 +269,6 @@ const id = `sim-${sim}`;
         const key = e.key.toUpperCase();
         if (e.key === " ") toggle();
         else if (key === "R") reset();
-        else if (key === "F") expand();
         else {
           const btn = actions.find((b) => b.getAttribute("aria-keyshortcuts") === key);
           if (!btn) return;
@@ -606,17 +593,5 @@ const id = `sim-${sim}`;
       border-left: 0;
       border-top: 1px solid var(--ink);
     }
-  }
-
-  /* --- Full screen: the same two columns, sized to the screen. -------- */
-  .sim:fullscreen {
-    width: 100%;
-    margin: 0;
-    padding: var(--space-l) var(--gutter);
-    background: var(--bg);
-    overflow: auto;
-    grid-template-columns: minmax(0, calc((100vh - 9rem) * 16 / 7)) minmax(0, 18rem);
-    justify-content: center;
-    align-content: center;
   }
 </style>

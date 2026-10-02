@@ -22,7 +22,7 @@ export const profile = {
   location: "Barcelona, Catalonia",
 
   links: {
-    email: "ferran.alia@estudiantat.upc.edu",
+    email: "ferran.alca@gmail.com",
     github: "https://github.com/Feal-ca",
     linkedin: "https://www.linkedin.com/in/ferran-alca/",
     tds: "https://towardsdatascience.com/author/ferran-alia/",
