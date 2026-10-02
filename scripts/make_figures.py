@@ -47,12 +47,12 @@ SENTINELS = {
 # ships in both, so the drawings do too.
 #           (--fig-accent, --fig-ink, --fig-muted, --fig-faint, --bg, --bg-sunk)
 THEMES = {
-    "light": ("#97213c", "#17171b", "#a9a294", "#e9e3d8", "#fbfaf7", "#f2efe8"),
-    "dark":  ("#f08ba1", "#eeece7", "#6b675e", "#26262e", "#131317", "#1a1a20"),
+    "light": ("#1d4e9e", "#18212d", "#93a39a", "#dce5df", "#f6f8f6", "#eaf0ec"),
+    "dark":  ("#8ec5ff", "#e8eef4", "#56769a", "#1c3650", "#0e2236", "#132b42"),
 }
 
-PAPER = "#fbfaf7"      # --bg,      rebound per theme
-SUNK = "#f2efe8"       # --bg-sunk, rebound per theme
+PAPER = "#f6f8f6"      # --bg,      rebound per theme
+SUNK = "#eaf0ec"       # --bg-sunk, rebound per theme
 
 MODE = "svg"           # flipped to "pdf" for the CV passes
 CV_DEST = None         # set per theme
@@ -454,6 +454,51 @@ def ctg():
     save(fig, "assisted-birth")
 
 
+# --------------------------------------------------------------------------
+# 9. Beads joined as a graph under Köhler illumination — GNN multiscattering
+# --------------------------------------------------------------------------
+def gnn():
+    fig, ax = canvas()
+    # Köhler illumination is uniform across the field: parallel rays from
+    # above, drawn faint so the graph reads first. Everything stays between
+    # y = 0.8 and 4.2, the band that survives the 16:7 crop on project pages.
+    for x in np.linspace(0.2, 7.8, 20):
+        ax.plot([x, x], [3.85, 4.25], color=MUTED, lw=0.6, alpha=0.7, zorder=0)
+        ax.annotate("", xy=(x, 3.7), xytext=(x, 3.9),
+                    arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=0.6,
+                                    mutation_scale=6, alpha=0.7))
+
+    # Beads: a loose random packing, rejection-sampled so none overlap.
+    beads = []
+    while len(beads) < 17:
+        p = rng.uniform([0.6, 1.05], [7.4, 3.3])
+        if all(np.hypot(*(p - q)) > 0.8 for q in beads):
+            beads.append(p)
+    beads = np.array(beads)
+
+    # Edges to the nearest neighbours, weight falling off with distance, as
+    # the coupling a GNN would learn.
+    drawn = set()
+    for i, p in enumerate(beads):
+        d = np.hypot(*(beads - p).T)
+        for j in np.argsort(d)[1:4]:
+            key = tuple(sorted((i, j)))
+            if key in drawn or d[j] > 2.2:
+                continue
+            drawn.add(key)
+            q = beads[j]
+            ax.plot([p[0], q[0]], [p[1], q[1]], color=ACCENT,
+                    lw=2.4 / d[j], alpha=0.85, zorder=2,
+                    solid_capstyle="round", gid="anim-flow-line")
+
+    ax.scatter(beads[:, 0], beads[:, 1], s=150, facecolor=FAINT,
+               edgecolor=INK, linewidths=1.3, zorder=3)
+    ax.scatter(beads[:, 0], beads[:, 1], s=14, color=INK, zorder=4)
+    ax.set_xlim(0, 8)
+    ax.set_ylim(0, 5)
+    save(fig, "gnn-multiscattering")
+
+
 def render_all():
     karman("vortex-pinn", 8.0, 5.0, 46, 1.0)
     karman("hero-flow", 16.0, 4.6, 64, 0.85)
@@ -464,6 +509,7 @@ def render_all():
     aerofoil()
     persona()
     ctg()
+    gnn()
 
 
 def wake_band(name, w, h, stops, x0=0.62, tint=True):

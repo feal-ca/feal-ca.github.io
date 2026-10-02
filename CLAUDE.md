@@ -55,23 +55,49 @@ share a section — they compete and both lose.
 
 The seam between them is always a full-width section break, never a column gap.
 
-### 3. Banner-and-column rhythm
+### 3. A lab notebook
 
-The page structure alternates deliberately:
+The site is set like a lab notebook or a thesis, and a new page should read
+as another page of the same document.
 
-```
-full-bleed banner  →  two-column content  →  full-bleed banner  →  ...
-```
+- Figures are numbered plates. A schematic sits on graph paper
+  (`Figure.astro`) under a caption that starts with `Fig. N` in red pencil.
+  Numbering restarts on every page, like chapters.
+- A project is a plate (`Plate.astro`): figure, number, title, summary, then
+  one meta line of year and tools in plain prose ("2026. Python, PyTorch, and
+  OpenFOAM."). No chips or category tags.
+- An article is a reference (`Reference.astro`):
+  `[n] Title. Towards Data Science, date.` Numbering starts from the oldest,
+  so the newest has the highest number and the number doubles as a count.
+- Notes go in the right margin. Project pages and About set the prose at a
+  reading measure on the left and put short notes (year, tools, links) in a
+  ruled column on the right. Below 56rem the notes move above the prose.
+- A section opens with a serif heading over an ink rule (`.u-section-head`),
+  with a count beside it when there is one. Don't put an eyebrow label above
+  a heading.
 
-Two-column sections use an asymmetric grid (label column + content column) so
-the eye has a fixed left edge to return to. The label column carries dates,
-categories, and index numbers in mono type; the content column carries prose.
-Collapse to a single column below 720px.
+Full-bleed photo bands still separate sections where photography appears
+(see §2). Everything else sits in the page column, or in the slightly wider
+`.u-wide` for a hero plate.
+
+The light theme is engineering paper: cool off-white, blue-black ink, and
+blue-ink links and figure lines. The dark theme is a blueprint, the same
+drawings on cyanotype blue. Red pencil (`--pencil`) is reserved for figure
+and reference numbers, the date on the homepage "now" entry, and the current
+page in the nav.
+
+The previous design (dark paper, mono labels, a label column in every
+section) is kept on the `classic-design` branch.
 
 ### 4. Typography
 
-- Display/headings: a serif with real optical sizing. Body: a clean sans.
-  Metadata, dates, categories, figures: mono. Three families, no more.
+- Two families. Source Serif 4 (variable, with optical sizing) sets headings
+  and prose. Barlow Semi Condensed sets captions, dates, navigation and
+  anything that annotates rather than reads; its shapes are close to the
+  lettering on technical drawings. Mono is for code only.
+- No uppercase tracked labels and no `·`-joined metadata. Annotations are
+  sentence case, and lists are joined with commas and "and"
+  (`Intl.ListFormat`).
 - Type scale is a defined ramp in `global.css` (`--step--1` … `--step-5`),
   fluid via `clamp()`. Do not hardcode `font-size` in px in components.
 - Body line-height 1.6–1.7; headings 1.1–1.25. Measure capped at ~68ch for
@@ -109,8 +135,9 @@ browser at that size.
   prevent layout shift.
 - No client-side JS unless it earns its place. Right now only the lightbox
   and the theme toggle ship JS, both as small inline modules.
-- No webfont CDN. Fonts are self-hosted and preloaded (176 kB of variable
-  woff2, latin subset only).
+- No webfont CDN. Fonts are self-hosted, latin subset only: 182 kB of woff2
+  from `scripts/fetch_fonts.py`. The roman serif and one Barlow weight are
+  preloaded; the italic loads only where a publication name appears.
 - The project figures are inlined SVG, which is what lets them follow the
   theme — but it puts their bytes in the HTML. The homepage carries six of
   them: ~396 kB raw, ~69 kB brotli, and zero extra requests. That is the
@@ -205,7 +232,7 @@ gains.
 #### Rhythm
 
 The subtlest tell is not a phrase, it is uniformity, and it is invisible when
-you read one page at a time. Read all eight project pages in a row instead.
+you read one page at a time. Read all the project pages in a row instead.
 
 Every page having the same skeleton (short setup, long middle, tidy 20-word
 coda) reads as generated even when every individual sentence is fine. So does

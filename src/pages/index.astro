@@ -2,253 +2,209 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Figure from "../components/Figure.astro";
-import ProjectCard from "../components/ProjectCard.astro";
-import ArticleRow from "../components/ArticleRow.astro";
+import Plate from "../components/Plate.astro";
+import Reference from "../components/Reference.astro";
 import PhotoBand from "../components/PhotoBand.astro";
 import { profile } from "../data/profile.js";
 import { articles } from "../data/writing.js";
 import { featured as featuredPhotos } from "../data/photos.js";
 
-const projects = (await getCollection("projects"))
+const all = await getCollection("projects");
+const [lead, ...rest] = all
   .filter((p) => p.data.featured)
   .sort((a, b) => a.data.order - b.data.order);
 
 const latest = articles.slice(0, 3);
+
+const since = new Date(`${profile.now.since}-01T00:00:00Z`).toLocaleDateString(
+  "en-US",
+  { month: "long", year: "numeric", timeZone: "UTC" }
+);
 ---
 
-<Layout flush>
-  <section class="hero u-bleed">
-    <div class="hero__art" aria-hidden="true">
-      <Figure
-        name="hero-flow"
-        alt=""
-        ratio="16 / 4.6"
-        class="hero__fig"
-      />
-    </div>
+<Layout>
+  <header class="u-page intro">
+    <h1 class="intro__name">{profile.name}</h1>
 
-    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="intro__grid">
+      <p class="intro__tagline">{profile.tagline}</p>
 
-    <div class="hero__content u-page">
-      <p class="u-label hero__eyebrow">{profile.role}</p>
-      <h1 class="hero__title">{profile.name}</h1>
-      <p class="hero__tagline">{profile.tagline}</p>
-
-      <div class="hero__actions">
-        <a class="btn btn--solid" href="/work/">See the work</a>
-        <a class="btn" href={profile.links.tds} target="_blank" rel="noopener noreferrer">
-          Read on Towards Data Science
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <div class="u-page">
-    <p class="now">
-      <span class="u-label now__label">Now</span>
-      <span class="now__text">{profile.now.text}</span>
-    </p>
-  </div>
-
-  <section class="u-page section" aria-labelledby="work-heading">
-    <div class="section__head u-cols">
-      <p class="u-label">Selected work</p>
-      <div>
-        <h2 id="work-heading" class="section__title">
-          Simulation, and the computing it takes to make it useful.
-        </h2>
-        <p class="section__lede u-prose">
-          These all sit between my two degrees: a physical system worth
-          modeling, and the machine learning or parallel computing it takes to
-          model it at a scale anyone would care about.
+      <div class="intro__side">
+        <p class="intro__now">
+          <time class="intro__date" datetime={profile.now.since}>{since}</time>
+          {profile.now.text}
         </p>
+        <ul class="intro__links">
+          <li><a class="u-link" href={`mailto:${profile.links.email}`}>Email</a></li>
+          <li><a class="u-link" href={profile.links.cv}>CV (PDF)</a></li>
+          <li><a class="u-link" href={profile.links.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a class="u-link" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a class="u-link" href={profile.links.tds} target="_blank" rel="noopener noreferrer">Towards Data Science</a></li>
+        </ul>
       </div>
     </div>
+  </header>
 
-    <div class="grid">
-      {projects.map((project) => <ProjectCard project={project} />)}
+  <figure class="u-wide hero">
+    <Figure
+      name="hero-flow"
+      alt="Streamlines bending into the alternating vortices of a Kármán vortex street."
+      ratio="16 / 4.6"
+    />
+    <figcaption class="hero__caption">
+      <span class="hero__num">Fig. 1</span>
+      Streamlines in a Kármán vortex street, the wake that forms behind a
+      cylinder. A schematic drawing, like every figure on this site.
+    </figcaption>
+  </figure>
+
+  <section class="u-page section" aria-labelledby="projects-heading">
+    <div class="u-section-head">
+      <h2 id="projects-heading">Projects</h2>
+      <p class="u-meta">{rest.length + 1} of {all.length}</p>
+    </div>
+
+    <p class="u-prose section__lede">
+      These all sit between my two degrees: a physical system worth
+      modeling, and the machine learning or parallel computing it takes to
+      model it at a scale anyone would care about.
+    </p>
+
+    <Plate project={lead} number={2} layout="side" ratio="16 / 10" />
+
+    <div class="plates">
+      {rest.map((project, i) => <Plate project={project} number={i + 3} />)}
     </div>
 
     <p class="section__more">
-      <a class="u-action" href="/work/">All projects</a>
+      <a class="u-link" href="/work/">All {all.length} projects</a>
     </p>
   </section>
 
   <section class="u-page section" aria-labelledby="writing-heading">
-    <div class="section__head u-cols">
-      <p class="u-label">Writing</p>
-      <div>
-        <h2 id="writing-heading" class="section__title">
-          I write for Towards Data Science.
-        </h2>
-        <p class="section__lede u-prose">
-          Mostly explanations of things I had to work out myself: a solver
-          built from nothing, what a supercomputer asks of you, why
-          an old idea in hardware came back. All free to read.
-        </p>
-      </div>
+    <div class="u-section-head">
+      <h2 id="writing-heading">Writing</h2>
+      <p class="u-meta">{articles.length} articles in Towards Data Science</p>
     </div>
 
-    <div class="rows">
-      {latest.map((article) => <ArticleRow article={article} />)}
-    </div>
+    <p class="u-prose section__lede">
+      Mostly explanations of things I had to work out myself: a solver
+      built from nothing, what a supercomputer asks of you, why
+      an old idea in hardware came back. All free to read.
+    </p>
+
+    <ol class="refs" role="list">
+      {latest.map((article, i) => (
+        <Reference article={article} number={articles.length - i} />
+      ))}
+    </ol>
 
     <p class="section__more">
-      <a class="u-action" href="/writing/">All {articles.length} articles</a>
+      <a class="u-link" href="/writing/">All {articles.length} articles</a>
     </p>
   </section>
 
   <PhotoBand
     photos={featuredPhotos}
-    eyebrow="Away from the screen"
     heading="I take a camera most places I go."
     href="/photography/"
-    linkLabel="Photography"
+    linkLabel="Photographs"
   />
 
-  <section class="u-page section section--last" aria-labelledby="contact-heading">
-    <div class="u-cols">
-      <p class="u-label">Contact</p>
-      <div>
-        <h2 id="contact-heading" class="section__title">Get in touch.</h2>
-        <p class="section__lede u-prose">
-          I'm interested in research and internship work on simulation,
-          scientific machine learning and HPC. I'm still partway through my
-          bachelor's, so I can't offer a fixed start date, but I'd rather
-          hear about something interesting early than not at all. Email is the
-          quickest way to reach me.
-        </p>
-        <div class="hero__actions">
-          <a class="btn btn--solid" href={`mailto:${profile.links.email}`}>
-            {profile.links.email}
-          </a>
-          <a class="btn" href={profile.links.cv}>Download CV</a>
-        </div>
-      </div>
+  <section class="u-page section section--contact" aria-labelledby="contact-heading">
+    <div class="u-section-head">
+      <h2 id="contact-heading">Contact</h2>
+    </div>
+    <div class="u-prose">
+      <p>
+        I'm interested in research and internship work on simulation,
+        scientific machine learning and HPC. I'm still partway through my
+        bachelor's, so I can't offer a fixed start date, but I'd rather
+        hear about something interesting early than not at all. Email is the
+        quickest way to reach me:
+        <a href={`mailto:${profile.links.email}`}>{profile.links.email}</a>.
+        The <a href={profile.links.cv}>CV</a> has the full detail.
+      </p>
     </div>
   </section>
 </Layout>
 
 <style>
-  /* --- Hero --------------------------------------------------------------- */
-  .hero {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    min-height: clamp(24rem, 62vh, 40rem);
-    padding-block: var(--space-2xl) var(--space-xl);
-    overflow: hidden;
-  }
-
-  .hero__art {
-    position: absolute;
-    inset: auto 0 0 0;
-    top: 0;
-    display: grid;
-    place-items: center;
-  }
-
-  .hero :global(.hero__fig) {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    aspect-ratio: auto;
-  }
-
-  /* Guarantees contrast for the headline regardless of where the streamlines
-     happen to fall, in both themes. */
-  .hero__scrim {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      var(--bg) 12%,
-      color-mix(in srgb, var(--bg) 72%, transparent) 46%,
-      color-mix(in srgb, var(--bg) 30%, transparent) 100%
-    );
-  }
-
-  .hero__content {
-    position: relative;
-    width: min(100% - var(--gutter) * 2, var(--width-page));
-  }
-
-  .hero__title {
+  /* --- Intro -------------------------------------------------------------- */
+  .intro__name {
     font-size: var(--step-5);
-    margin-top: var(--space-xs);
+    font-weight: 600;
+    line-height: 1.02;
     letter-spacing: -0.02em;
+    max-width: 14ch;
   }
 
-  .hero__tagline {
-    margin-top: var(--space-m);
-    max-width: 40ch;
-    font-size: var(--step-1);
-    line-height: 1.5;
-    color: var(--ink-2);
-    font-family: var(--font-display);
-  }
-
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-s);
+  .intro__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: var(--space-m) var(--space-xl);
     margin-top: var(--space-l);
+    align-items: start;
   }
 
-  .btn {
-    display: inline-block;
-    padding: 0.6em 1.15em;
-    font-size: var(--step--1);
-    font-weight: 500;
-    text-decoration: none;
+  .intro__tagline {
+    font-size: var(--step-2);
+    line-height: 1.35;
     color: var(--ink);
-    border: 1px solid var(--rule-strong);
-    border-radius: var(--radius);
-    background: var(--bg);
-    transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease;
+    max-width: 30ch;
   }
 
-  .btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+  .intro__side {
+    padding-top: 0.5em;
   }
 
-  .btn--solid {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--accent-ink);
+  .intro__now {
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.45;
+    color: var(--ink-2);
   }
 
-  .btn--solid:hover {
-    background: color-mix(in srgb, var(--accent) 86%, var(--ink));
-    border-color: transparent;
-    color: var(--accent-ink);
+  .intro__date {
+    display: block;
+    color: var(--pencil);
+    font-weight: 500;
   }
 
-  /* --- Now ---------------------------------------------------------------- */
-  .now {
+  .intro__links {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-xs) var(--space-m);
-    margin-top: var(--space-l);
-    padding-top: var(--space-s);
-    border-top: 1px solid var(--rule);
+    gap: 0.3rem 1rem;
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-m);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
   }
 
-  .now__label {
-    color: var(--accent);
+  @media (max-width: 48rem) {
+    .intro__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
-  .now__text {
-    color: var(--ink-2);
+  /* --- Hero plate --------------------------------------------------------- */
+  .hero {
+    margin-top: var(--space-xl);
+  }
+
+  .hero__caption {
+    margin-top: var(--space-xs);
+    font-family: var(--font-sans);
     font-size: var(--step--1);
-    max-width: 60ch;
+    color: var(--ink-3);
+    max-width: 80ch;
+  }
+
+  .hero__num {
+    color: var(--pencil);
+    font-weight: 500;
+    margin-right: 0.5em;
   }
 
   /* --- Sections ----------------------------------------------------------- */
@@ -256,33 +212,35 @@ const latest = articles.slice(0, 3);
     margin-top: var(--space-2xl);
   }
 
-  .section--last {
-    margin-bottom: var(--space-2xl);
-  }
-
-  .section__head {
+  .section__lede {
     margin-bottom: var(--space-l);
   }
 
-  .section__title {
-    font-size: var(--step-2);
-    max-width: 22ch;
+  .plates {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-xl) var(--space-l);
+    margin-top: var(--space-xl);
   }
 
-  .section__lede {
-    margin-top: var(--space-s);
-    font-size: var(--step--1);
+  @media (max-width: 44rem) {
+    .plates {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .refs {
+    list-style: none;
+    padding: 0;
   }
 
   .section__more {
     margin-top: var(--space-l);
-    padding-top: var(--space-s);
-    border-top: 1px solid var(--rule);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
-    gap: var(--space-xl) var(--space-l);
+  .section--contact {
+    margin-bottom: var(--space-xl);
   }
 </style>

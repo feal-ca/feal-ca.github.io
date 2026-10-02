@@ -1,0 +1,93 @@
+---
+/**
+ * A Towards Data Science article set as an entry in a reference list.
+ * Numbered from the oldest, so the newest carries the highest number and
+ * the number doubles as a running count.
+ */
+interface Props {
+  article: {
+    title: string;
+    date: string;
+    url: string;
+    blurb: string;
+  };
+  number: number;
+}
+
+const { article, number } = Astro.props;
+const formatted = new Date(article.date).toLocaleDateString("en-US", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+// A title that already ends in ? or ! takes no extra full stop.
+const end = /[?!]$/.test(article.title) ? "" : ".";
+---
+
+<li class="ref">
+  <span class="ref__num" aria-hidden="true">[{number}]</span>
+  <div class="ref__body">
+    <p class="ref__cite">
+      <a class="ref__title" href={article.url} target="_blank" rel="noopener noreferrer"
+        >{article.title}</a
+      >{end}{" "}<cite>Towards Data Science</cite>,{" "}<time datetime={article.date}
+        >{formatted}</time
+      >.
+    </p>
+    <p class="ref__blurb">{article.blurb}</p>
+  </div>
+</li>
+
+<style>
+  .ref {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: var(--space-xs);
+    padding-block: var(--space-s);
+  }
+
+  .ref + .ref {
+    border-top: 1px solid var(--rule);
+  }
+
+  .ref__num {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: var(--step-0);
+    color: var(--pencil);
+    font-variant-numeric: tabular-nums;
+    padding-top: 0.12em;
+  }
+
+  .ref__cite {
+    color: var(--ink-2);
+    max-width: 62ch;
+  }
+
+  .ref__title {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--rule-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 0.15s ease;
+  }
+
+  .ref__title:hover {
+    text-decoration-color: var(--accent);
+  }
+
+  cite {
+    font-style: italic;
+  }
+
+  .ref__blurb {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    color: var(--ink-3);
+    max-width: 62ch;
+  }
+</style>

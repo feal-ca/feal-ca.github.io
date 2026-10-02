@@ -52,12 +52,12 @@ DPI = 100
 
 # Light theme only. A share card has no way to know the reader's theme, and
 # the paper background is the one people recognise as this site.
-PAPER = "#fbfaf7"
-INK = "#17171b"
-INK_2 = "#4b4b53"
-INK_3 = "#686871"
-ACCENT = "#97213c"
-RULE = "#ddd7cb"
+PAPER = "#f6f8f6"
+INK = "#18212d"
+INK_2 = "#465262"
+INK_3 = "#5a6676"
+PENCIL = "#b42318"
+RULE = "#cfd9d2"
 
 MARGIN = 76           # px, matches the page gutter at desktop width
 
@@ -81,9 +81,9 @@ FOOT = site_host()
 for ttf in sorted((ROOT / "cv" / "fonts").glob("*.ttf")):
     font_manager.fontManager.addfont(str(ttf))
 
-DISPLAY = FontProperties(family="Newsreader", weight=500)
-BODY = FontProperties(family="Inter", weight=400)
-MONO = FontProperties(family="Roboto Mono", weight=500)
+DISPLAY = FontProperties(family="Source Serif 4", weight=600)
+BODY = FontProperties(family="Source Serif 4", weight=400)
+SANS = FontProperties(family="Barlow Semi Condensed", weight=500)
 
 
 # --------------------------------------------------------------------------
@@ -164,11 +164,11 @@ def read_projects():
         data = yaml.safe_load(raw[1])
         out.append({
             "slug": path.stem,
-            "kicker": " · ".join([str(data["year"]), *data["categories"]]),
+            "kicker": f"Project, {data['year']}",
             "title": data["title"],
             "blurb": data["summary"],
             "figure": data.get("figure"),
-            "foot": f"Ferran Alía · {FOOT}",
+            "foot": f"Ferran Alía, {FOOT}",
         })
     return out
 
@@ -215,7 +215,14 @@ def compress(path, photographic):
         path.unlink()
         return out
 
-    img.quantize(colors=128, method=Image.MEDIANCUT, dither=Image.NONE) \
+    # libimagequant (pngquant's algorithm) where Pillow has it. Median cut
+    # spends the palette on the big areas and folds the small red-pencil
+    # marks into the ink; octree keeps the red but bands the scrim.
+    from PIL import features
+    method = (Image.Quantize.LIBIMAGEQUANT
+              if features.check_feature("libimagequant")
+              else Image.Quantize.MEDIANCUT)
+    img.quantize(colors=128, method=method, dither=Image.Dither.NONE) \
        .save(path, format="PNG", optimize=True)
     return path
 
@@ -253,7 +260,7 @@ def card(spec, figures, wide=False):
 
         # Paper scrim, opaque at the left edge of the panel and clear at the
         # right, so the drawing dissolves into the page instead of sitting in
-        # a box. Mirrors .hero__scrim in src/pages/index.astro.
+        # a box. The site has no scrim now; on a card the type still needs one.
         stops = [[0.0, 1.0], [0.38, 0.86], [0.74, 0.30], [1.0, 0.0]] if wide \
                 else [[0.0, 1.0], [0.30, 0.35], [1.0, 0.0]]
         stops = np.array(stops)
@@ -274,28 +281,29 @@ def card(spec, figures, wide=False):
 
     # --- kicker ----------------------------------------------------------
     if spec.get("kicker"):
-        fig.text(x, y, spec["kicker"].upper(), fontproperties=MONO, size=15,
-                 color=ACCENT, va="top", ha="left")
+        fig.text(x, y, spec["kicker"], fontproperties=SANS, size=22,
+                 color=PENCIL, va="top", ha="left")
         y -= 58 / H
 
     # --- title -----------------------------------------------------------
-    size = spec.get("title_size", 52)
-    lines = wrap(fig, spec["title"], DISPLAY, size, max_px, 3)
+    # The title is never truncated; the blurb gives way to it instead.
+    size = spec.get("title_size", 40)
+    lines = wrap(fig, spec["title"], DISPLAY, size, max_px, 4)
     y = draw_block(fig, lines, DISPLAY, size, INK, x, y, size * 1.22)
 
     # --- blurb -----------------------------------------------------------
     if spec.get("blurb"):
         y -= 20 / H
-        lines = wrap(fig, spec["blurb"], BODY, 21, max_px, 5)
-        draw_block(fig, lines, BODY, 21, INK_2, x, y, 21 * 1.62)
+        lines = wrap(fig, spec["blurb"], BODY, 20, max_px, 7 - len(lines))
+        draw_block(fig, lines, BODY, 20, INK_2, x, y, 20 * 1.55)
 
     # --- foot ------------------------------------------------------------
     rule_y = MARGIN / H + 46 / H
     fig.add_artist(plt.Line2D([x, x + 46 / W], [rule_y, rule_y],
-                              color=ACCENT, lw=2.4,
+                              color=PENCIL, lw=2.4,
                               transform=fig.transFigure))
-    fig.text(x, MARGIN / H, spec.get("foot", FOOT), fontproperties=MONO,
-             size=16, color=INK_3, va="bottom", ha="left")
+    fig.text(x, MARGIN / H, spec.get("foot", FOOT), fontproperties=SANS,
+             size=20, color=INK_3, va="bottom", ha="left")
 
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f"{spec['slug']}.png"

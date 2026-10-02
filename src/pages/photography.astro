@@ -21,7 +21,6 @@ const items = await Promise.all(
   description="Travel photography, a side practice kept separate from the technical work."
 >
   <header class="u-page page-head">
-    <p class="u-label">Photography</p>
     <h1 class="page-head__title">A camera, most places I go.</h1>
     <p class="u-prose page-head__lede">
       Nothing professional and nothing staged. Buildings, water, birds and
@@ -59,7 +58,7 @@ const items = await Promise.all(
           </button>
           <figcaption class="shot__caption">
             <span class="shot__title">{item.title}</span>
-            <span class="u-label shot__meta">{item.place} · {item.year}</span>
+            <span class="u-meta shot__meta">{item.place}, {item.year}</span>
           </figcaption>
         </figure>
       ))
@@ -89,7 +88,7 @@ const items = await Promise.all(
       <img class="lb__img" data-lb-img alt="" />
       <figcaption class="lb__caption">
         <span data-lb-title></span>
-        <span class="u-label" data-lb-meta></span>
+        <span class="lb__meta" data-lb-meta></span>
       </figcaption>
     </figure>
 
@@ -122,7 +121,7 @@ const items = await Promise.all(
       titleEl.textContent = trigger.dataset.title ?? "";
       metaEl.textContent = [trigger.dataset.place, trigger.dataset.year]
         .filter(Boolean)
-        .join(" · ");
+        .join(", ");
     };
 
     const open = (index: number) => {
@@ -174,7 +173,6 @@ const items = await Promise.all(
   .page-head__title {
     font-size: var(--step-4);
     max-width: 16ch;
-    margin-top: var(--space-xs);
   }
 
   .page-head__lede {
@@ -262,7 +260,7 @@ const items = await Promise.all(
   }
 
   .shot__title {
-    font-family: var(--font-display);
+    color: var(--ink);
   }
 
   /* --- Lightbox ----------------------------------------------------------- */
@@ -308,12 +306,12 @@ const items = await Promise.all(
     gap: var(--space-s);
     margin-top: var(--space-xs);
     color: #efece6;
-    font-family: var(--font-display);
     font-size: var(--step--1);
   }
 
-  .lb__caption :global(.u-label) {
-    color: #a9a49b;
+  .lb__meta {
+    font-family: var(--font-sans);
+    color: #b4b0a8;
   }
 
   .lb__nav,

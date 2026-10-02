@@ -15,8 +15,8 @@ export const profile = {
 
   // The "what I'm doing right now" line. Keep it current.
   now: {
-    text: "Simulating microscope optics with the Physics of Life group at TU Dresden for the summer, then back to Barcelona for my fourth year at UPC.",
-    since: "2026-08",
+    text: "In my fourth year at UPC in Barcelona, back from a summer simulating microscope optics with the Physics of Life group at TU Dresden.",
+    since: "2026-09",
   },
 
   location: "Barcelona, Catalonia",
@@ -30,7 +30,8 @@ export const profile = {
     cvDark: "/Ferran_Alia_CV_dark.pdf",
   },
 
-  // Reverse chronological. `end: null` means ongoing.
+  // Reverse chronological. `end: null` means ongoing. Dates are "YYYY" or
+  // "YYYY-MM"; about.astro formats them.
   timeline: [
     {
       start: "2026",
@@ -39,16 +40,17 @@ export const profile = {
       detail: "Long-form writing on simulation, HPC and machine learning.",
     },
     {
-      start: "2026",
-      end: "2026",
+      start: "2026-06",
+      end: "2026-08",
       title: "Research intern, Physics of Life, TU Dresden",
       detail:
         "Simulating electromagnetic propagation through specimen and " +
-        "objective, as virtual instrumentation for learned brightfield imaging.",
+        "objective, as virtual instrumentation for learned brightfield " +
+        "imaging. On the side, a GNN surrogate for multiple scattering.",
     },
     {
-      start: "2025",
-      end: "2025",
+      start: "2025-06",
+      end: "2025-08",
       title: "Machine learning intern, MLCode",
       detail:
         "Built an automated framework for evaluating and benchmarking " +
@@ -56,10 +58,11 @@ export const profile = {
     },
     {
       start: "2023",
-      end: null,
+      end: "2028",
       title: "BSc Data Science & Engineering + BSc Physical Engineering, UPC",
       detail:
-        "Both degrees in parallel on the CFIS program. 8.75/10 average.",
+        "Both degrees in parallel on the CFIS program, now in the fourth " +
+        "year. 8.75/10 average.",
     },
     {
       start: "2022",
@@ -81,15 +84,20 @@ export const profile = {
   skills: [
     { group: "Languages", items: ["Python", "C++", "R", "Haskell", "MATLAB"] },
     { group: "Scientific", items: ["OpenFOAM", "OpenMP", "NumPy", "PyTorch", "Blender", "CAD"] },
+    { group: "Tools", items: ["Linux", "Git"] },
     { group: "Methods", items: ["CFD", "HPC & SLURM", "Physics-informed ML", "Monte Carlo", "Surrogate modeling"] },
     { group: "Spoken", items: ["Catalan (native)", "Spanish (native)", "English (professional)", "Arabic (beginner)"] },
   ],
 
+  // Reverse chronological; `when` is shown as written.
   awards: [
-    { when: "2025", what: "Physics summer school, University of Ljubljana" },
-    { when: "2024–2025", what: "Datathon FME participant" },
+    { when: "Nov 2024, 2025", what: "Datathon FME participant" },
+    { when: "Jun 2025", what: "Physics in Ljubljana, summer school at the University of Ljubljana" },
+    { when: "Since 2023", what: "Cum Laude in several subjects at UPC" },
     { when: "2023", what: "Admitted to CFIS, to take two degrees simultaneously" },
-    { when: "2023", what: "Selected for the Barcelona “Mostra de Recerca Jove”" },
+    { when: "2023", what: "High-school research project selected for the Barcelona “Mostra de Recerca Jove”" },
+    { when: "2022–2023", what: "Graduated from high school with honors" },
+    { when: "2019–2021", what: "Algorithms and Programming summer courses at UPC" },
   ],
 };
 

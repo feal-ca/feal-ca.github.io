@@ -39,7 +39,7 @@ const ogImage = new URL(
 const nav = [
   { href: "/work/", label: "Work" },
   { href: "/writing/", label: "Writing" },
-  { href: "/photography/", label: "Photography" },
+  { href: "/photography/", label: "Photographs" },
   { href: "/about/", label: "About" },
 ];
 
@@ -80,8 +80,8 @@ const jsonLd = {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate icon" href="/favicon.ico" />
 
-    <link rel="preload" href="/fonts/newsreader-var.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/source-serif-4-normal-400-600.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/barlow-semi-condensed-normal-500.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/fonts/fonts.css" />
 
     <meta property="og:type" content="website" />
@@ -98,8 +98,8 @@ const jsonLd = {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
 
-    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#131317" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f8f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e2236" media="(prefers-color-scheme: dark)" />
 
     <script is:inline set:html={JSON.stringify(jsonLd)} type="application/ld+json" />
 
@@ -168,39 +168,24 @@ const jsonLd = {
 
     <footer class="footer">
       <div class="u-page footer__inner">
-        <div class="footer__block">
-          <p class="footer__name">{profile.name}</p>
-          <p class="footer__meta">{profile.location}</p>
-        </div>
+        <p class="footer__name">
+          {profile.name}<span class="u-meta footer__place">{profile.location}</span>
+        </p>
 
-        <nav class="footer__block" aria-label="Elsewhere">
-          <p class="u-label">Elsewhere</p>
+        <nav aria-label="Elsewhere">
           <ul class="footer__links">
             <li><a class="u-link" href={`mailto:${profile.links.email}`}>Email</a></li>
-            <li>
-              <a class="u-link" href={profile.links.github} rel="me noopener noreferrer" target="_blank">GitHub</a>
-            </li>
-            <li>
-              <a class="u-link" href={profile.links.linkedin} rel="me noopener noreferrer" target="_blank">LinkedIn</a>
-            </li>
-            <li>
-              <a class="u-link" href={profile.links.tds} rel="me noopener noreferrer" target="_blank">Towards Data Science</a>
-            </li>
+            <li><a class="u-link" href={profile.links.github} rel="me noopener noreferrer" target="_blank">GitHub</a></li>
+            <li><a class="u-link" href={profile.links.linkedin} rel="me noopener noreferrer" target="_blank">LinkedIn</a></li>
+            <li><a class="u-link" href={profile.links.tds} rel="me noopener noreferrer" target="_blank">Towards Data Science</a></li>
             <li><a class="u-link" href={profile.links.cv}>CV (PDF)</a></li>
-          </ul>
-        </nav>
-
-        <nav class="footer__block" aria-label="Secondary">
-          <p class="u-label">Pages</p>
-          <ul class="footer__links">
-            {nav.map((item) => <li><a class="u-link" href={item.href}>{item.label}</a></li>)}
           </ul>
         </nav>
       </div>
 
-      <p class="footer__colophon u-page">
-        Built with Astro. Set in Newsreader and Inter. Figures generated with
-        matplotlib.
+      <p class="u-page u-meta footer__colophon">
+        Set in Source Serif 4 and Barlow Semi Condensed. The figures are
+        schematic drawings made with matplotlib, not results. Built with Astro.
       </p>
     </footer>
 
@@ -244,28 +229,21 @@ const jsonLd = {
         position: sticky;
         top: 0;
         z-index: 20;
-        background: color-mix(in srgb, var(--bg) 88%, transparent);
-        backdrop-filter: saturate(1.4) blur(10px);
-        border-bottom: 1px solid transparent;
-        transition: border-color 0.2s ease;
-      }
-
-      @supports not (backdrop-filter: blur(1px)) {
-        .masthead { background: var(--bg); }
+        background: var(--bg);
+        border-bottom: 1px solid var(--rule);
       }
 
       .masthead__inner {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         gap: var(--space-m);
-        padding-block: var(--space-s);
+        padding-block: var(--space-s) var(--space-xs);
       }
 
       .wordmark {
-        font-family: var(--font-display);
+        font-family: var(--font-serif);
         font-size: var(--step-0);
-        font-weight: 500;
-        letter-spacing: -0.01em;
+        font-weight: 600;
         text-decoration: none;
         margin-right: auto;
         white-space: nowrap;
@@ -273,18 +251,20 @@ const jsonLd = {
 
       .nav {
         display: flex;
-        gap: clamp(0.9rem, 2.2vw, 2rem);
+        gap: clamp(0.9rem, 2.2vw, 1.75rem);
         list-style: none;
         padding: 0;
-        font-size: var(--step--1);
+        font-family: var(--font-sans);
+        font-size: var(--step-0);
+        font-weight: 500;
       }
 
       .nav a {
         text-decoration: none;
         color: var(--ink-2);
-        padding-block: 0.35em;
-        border-bottom: 1px solid transparent;
-        transition: color 0.2s ease, border-color 0.2s ease;
+        padding-bottom: 0.2em;
+        border-bottom: 2px solid transparent;
+        transition: color 0.15s ease;
       }
 
       .nav a:hover {
@@ -293,26 +273,27 @@ const jsonLd = {
 
       .nav a[aria-current="page"] {
         color: var(--ink);
-        border-bottom-color: var(--accent);
+        border-bottom-color: var(--pencil);
       }
 
       .theme {
         display: grid;
         place-items: center;
+        align-self: center;
         width: 2rem;
         height: 2rem;
         padding: 0;
         color: var(--ink-2);
         background: none;
-        border: 1px solid var(--rule);
+        border: 1px solid var(--rule-strong);
         border-radius: 999px;
         cursor: pointer;
-        transition: color 0.2s ease, border-color 0.2s ease;
+        transition: color 0.15s ease, border-color 0.15s ease;
       }
 
       .theme:hover {
         color: var(--ink);
-        border-color: var(--rule-strong);
+        border-color: var(--ink-3);
       }
 
       .theme__moon { display: none; }
@@ -326,18 +307,16 @@ const jsonLd = {
       }
 
       @media (max-width: 32rem) {
-        .nav { gap: 0.85rem; }
+        .nav { gap: 0.85rem; font-size: var(--step--1); }
         .wordmark { font-size: var(--step--1); }
       }
 
       /* Below ~26rem the wordmark, four nav links and the toggle cannot sit
-         on one line; they overflowed the viewport by ~44px and clipped the
-         toggle. Drop the nav to its own row instead. */
+         on one line. Drop the nav to its own row instead. */
       @media (max-width: 26rem) {
         .masthead__inner {
           flex-wrap: wrap;
           row-gap: 0.25rem;
-          padding-bottom: var(--space-xs);
         }
 
         .masthead__inner nav {
@@ -357,44 +336,39 @@ const jsonLd = {
 
       .footer {
         margin-top: var(--space-2xl);
-        padding-block: var(--space-xl) var(--space-l);
-        border-top: 1px solid var(--rule);
-        background: var(--bg-sunk);
+        padding-block: var(--space-l);
+        border-top: 1px solid var(--ink);
       }
 
       .footer__inner {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-        gap: var(--space-l);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--space-s) var(--space-l);
       }
 
       .footer__name {
-        font-family: var(--font-display);
-        font-size: var(--step-1);
+        font-weight: 600;
       }
 
-      .footer__meta {
-        color: var(--ink-3);
-        font-size: var(--step--1);
-        margin-top: var(--space-2xs);
+      .footer__place {
+        margin-left: var(--space-s);
+        font-weight: 400;
       }
 
       .footer__links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 1.25rem;
         list-style: none;
         padding: 0;
-        margin-top: var(--space-xs);
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-        font-size: var(--step--1);
+        font-family: var(--font-sans);
+        font-size: var(--step-0);
       }
 
       .footer__colophon {
-        margin-top: var(--space-xl);
-        padding-top: var(--space-s);
-        border-top: 1px solid var(--rule);
-        color: var(--ink-3);
-        font-size: var(--step--2);
+        margin-top: var(--space-m);
       }
     </style>
   </body>

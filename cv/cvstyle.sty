@@ -38,23 +38,25 @@
 %  need care is that any colour added below exists in both.
 % -----------------------------------------------------------------------------
 \ifcvdark
-  \definecolor{CvBg}{HTML}{131317}
-  \definecolor{CvBgSunk}{HTML}{1A1A20}
-  \definecolor{CvInk}{HTML}{EEECE7}
-  \definecolor{CvInkTwo}{HTML}{B0ADA6}
-  \definecolor{CvInkThree}{HTML}{8B8880}
-  \definecolor{CvRule}{HTML}{2E2E37}
-  \definecolor{CvRuleStrong}{HTML}{43434F}
-  \definecolor{CvAccent}{HTML}{F08BA1}
+  \definecolor{CvBg}{HTML}{0E2236}        % blueprint
+  \definecolor{CvBgSunk}{HTML}{132B42}
+  \definecolor{CvInk}{HTML}{E8EEF4}
+  \definecolor{CvInkTwo}{HTML}{B5C3D1}
+  \definecolor{CvInkThree}{HTML}{8FA3B7}
+  \definecolor{CvRule}{HTML}{24425F}
+  \definecolor{CvRuleStrong}{HTML}{3A5F82}
+  \definecolor{CvAccent}{HTML}{8EC5FF}
+  \definecolor{CvPencil}{HTML}{FF9C8A}
 \else
-  \definecolor{CvBg}{HTML}{FBFAF7}        % warm paper
-  \definecolor{CvBgSunk}{HTML}{F2EFE8}
-  \definecolor{CvInk}{HTML}{17171B}
-  \definecolor{CvInkTwo}{HTML}{4B4B53}
-  \definecolor{CvInkThree}{HTML}{686871}
-  \definecolor{CvRule}{HTML}{DDD7CB}
-  \definecolor{CvRuleStrong}{HTML}{C4BDB0}
-  \definecolor{CvAccent}{HTML}{97213C}
+  \definecolor{CvBg}{HTML}{F6F8F6}        % engineering paper
+  \definecolor{CvBgSunk}{HTML}{EAF0EC}
+  \definecolor{CvInk}{HTML}{18212D}
+  \definecolor{CvInkTwo}{HTML}{465262}
+  \definecolor{CvInkThree}{HTML}{5A6676}
+  \definecolor{CvRule}{HTML}{CFD9D2}
+  \definecolor{CvRuleStrong}{HTML}{A9B8AE}
+  \definecolor{CvAccent}{HTML}{1D4E9E}
+  \definecolor{CvPencil}{HTML}{B42318}
 \fi
 
 \pagecolor{CvBg}
@@ -74,10 +76,10 @@
 % -----------------------------------------------------------------------------
 %  Type
 %
-%  Three families, as on the site: a serif for display, a sans for body, a
-%  mono for every date, category and eyebrow. The site's stack ends in
-%  `ui-monospace`, which resolves differently on every machine, so print pins
-%  Roboto Mono in its place.
+%  Two families, as on the site: Source Serif 4 for headings and prose, and
+%  Barlow Semi Condensed for dates, labels and the stack lines. Static cuts,
+%  fetched by scripts/fetch_fonts.py; XeLaTeX takes only the default
+%  instance of a variable font.
 % -----------------------------------------------------------------------------
 % Overridable so the CV can be built from a directory other than cv/.
 \providecommand{\cvfontpath}{fonts/}
@@ -89,31 +91,30 @@
 
 \defaultfontfeatures{Path=\cvfontpath, Extension=.ttf, Ligatures=TeX}
 
-\setmainfont{Inter}[
+\setmainfont{SourceSerif4}[
   UprightFont = *-Regular,
   ItalicFont  = *-Italic,
   BoldFont    = *-SemiBold,
 ]
 
-\newfontfamily\cvdisplay{Newsreader}[
-  UprightFont = *-Regular,
-  ItalicFont  = *-Italic,
-  BoldFont    = *-Medium,
-  LetterSpace = -1.2,          % global.css: letter-spacing -0.012em
+% Headings: the semibold cut, as h1-h3 in global.css.
+\newfontfamily\cvdisplay{SourceSerif4}[
+  UprightFont = *-SemiBold,
+  BoldFont    = *-SemiBold,
+  LetterSpace = -0.5,
 ]
 
-\newfontfamily\cvmedium{Inter}[UprightFont = *-Medium]
-
-\newfontfamily\cvmono{RobotoMono}[
+% .u-meta in global.css: dates, places, tools. Sentence case, no tracking.
+\newfontfamily\cvsans{BarlowSemiCondensed}[
   UprightFont = *-Regular,
   BoldFont    = *-Medium,
+  Numbers     = Monospaced,
 ]
 
-% The mono micro-label: .u-label in global.css.
-\newfontfamily\cvlabelfont{RobotoMono}[
-  UprightFont = *-Regular,
+\newfontfamily\cvlabelfont{BarlowSemiCondensed}[
+  UprightFont = *-Medium,
   BoldFont    = *-Medium,
-  LetterSpace = 9,             % global.css: letter-spacing 0.09em
+  Numbers     = Monospaced,
 ]
 
 % --- Ramp ---------------------------------------------------------------
@@ -141,8 +142,8 @@
 \newlength{\cvDateGap}      \setlength{\cvDateGap}{6mm}
 \newlength{\cvEntryWidth}   \setlength{\cvEntryWidth}{\cvBodyWidth-\cvDateWidth-\cvDateGap}
 
-\newlength{\cvSectionSep}   \setlength{\cvSectionSep}{6.5mm}
-\newlength{\cvSectionGap}   \setlength{\cvSectionGap}{4mm}
+\newlength{\cvSectionSep}   \setlength{\cvSectionSep}{5mm}
+\newlength{\cvSectionGap}   \setlength{\cvSectionGap}{3.2mm}
 \newlength{\cvEntrySep}     \setlength{\cvEntrySep}{1.2mm}
 \newlength{\cvRowSep}       \setlength{\cvRowSep}{1mm}
 
@@ -150,9 +151,14 @@
 %  Primitives
 % -----------------------------------------------------------------------------
 
-% .u-label: mono, uppercase, letterspaced, --ink-3.
+% A date or row key: the condensed sans, --ink-3, sentence case.
 \newcommand{\cvlabel}[1]{%
-  {\cvlabelfont\cvStepMinusTwo\color{CvInkThree}\MakeUppercase{#1}}%
+  {\cvlabelfont\cvStepMinusOne\color{CvInkThree}#1}%
+}
+
+% A section heading: serif semibold in --ink, as .u-section-head h2.
+\newcommand{\cvsectionlabel}[1]{%
+  {\cvdisplay\cvStepOne\color{CvInk}#1}%
 }
 
 % .u-rule: a hairline in --rule. Spans the content column, not the page:
@@ -185,15 +191,15 @@
   \endgroup
 }
 
-% The section boundary: a heavier rule across the full measure, label column
-% included. Entries inside a section are separated by the light hairline over
-% the content column only, so the two levels never read as the same break.
-% This is .section's `border-top` against .timeline__item's `border-bottom`.
+% The section boundary: an ink rule across the full measure, label column
+% included, as .u-section-head's border. Entries inside a section are
+% separated by the light hairline over the content column only, so the two
+% levels never read as the same break.
 \newcommand{\cvsectionrule}{%
-  \hbox{\color{CvRuleStrong}\vrule height 0.5pt depth 0pt width \textwidth}%
+  \hbox{\color{CvInk}\vrule height 0.6pt depth 0pt width \textwidth}%
 }
 
-% A section: rule, air, then a mono label in the left column with the content
+% A section: rule, air, then a serif heading in the left column with the content
 % indented beside it.
 %
 % The label goes into a \vbox of zero height, so it takes up no room on the
@@ -210,7 +216,7 @@
   \nointerlineskip
   \vbox to 0pt{%
     \hbox{\parbox[t]{\cvLabelWidth}{%
-      \RaggedRight\hyphenpenalty=10000\relax\cvlabel{#1}}}%
+      \RaggedRight\hyphenpenalty=10000\relax\cvsectionlabel{#1}}}%
     \vss
   }%
   \nointerlineskip
@@ -306,35 +312,6 @@
   \par
 }
 
-% One skill, framed. This is .skills__items li in global.css: a 1px --rule
-% border, 2px radius, --ink-2 text. The trailing glue is what lets a run of
-% them wrap.
-\newcommand{\cvchip}[1]{%
-  \fboxsep=2.2pt \fboxrule=0.4pt
-  \textcolor{CvRule}{\fbox{\textcolor{CvInkTwo}{#1}}}%
-  \hskip 1.1mm plus 0.4mm\relax
-}
-
-% A row of chips. No hairline under it: the frames already carry the
-% structure, and a rule as well makes the block look caged.
-\newcommand{\cvchiprow}[2]{%
-  \par\nobreak
-  \noindent
-  \begin{minipage}[t]{\cvDateWidth}%
-    \RaggedRight\cvStepMinusTwo
-    \vspace*{-4.2pt}%
-    \cvlabel{#1}%
-  \end{minipage}%
-  \hspace{\cvDateGap}%
-  \begin{minipage}[t]{\cvEntryWidth}%
-    \RaggedRight\cvStepMinusOne
-    \baselineskip=14.4pt\relax
-    #2\unskip
-    \par
-  \end{minipage}%
-  \par\addvspace{1.8mm}%
-}
-
 % A block of prose in the content column, no date beside it. Used where a
 % ruled list of near-identical rows would say less than a sentence does.
 \newcommand{\cvblock}[1]{%
@@ -353,8 +330,8 @@
   {\color{CvInkThree}\itshape #1\par}%
 }
 
-% A compact one-line row: mono key on the left, running text on the right.
-% This is .skills__row and .awards__item.
+% A compact one-line row: sans key on the left, running text on the right.
+% This is .entry in about.astro.
 \newcommand{\cvrow}[2]{%
   \par\nobreak
   \noindent
@@ -401,25 +378,25 @@
 }
 
 % A project's schematic, sized to the date column and sitting under its year.
-% Same drawing as the card on the site, and the same framing as .fig in
-% src/components/Figure.astro. These are illustrations, not results: see
+% Same drawing as the plate on the site, framed in --rule-strong as .fig in
+% src/components/Figure.astro (the graph paper is left to the screen). These are illustrations, not results: see
 % CLAUDE.md section 7, and the note at the foot of the projects section.
 \newcommand{\cvthumb}[1]{%
   \par\vspace{1.2mm}%
   \fboxsep=0pt \fboxrule=0.4pt
-  \fcolorbox{CvRule}{CvBgSunk}{%
+  \fcolorbox{CvRuleStrong}{CvBgSunk}{%
     \includegraphics[width=\dimexpr\cvDateWidth-0.8pt\relax]%
       {\cvfigurepath #1.pdf}%
   }%
 }
 
-% The stack line under a project, in the spirit of .skills__items.
+% The stack line under a project, as .plate__meta on the site.
 % The \par comes first: it closes the detail paragraph while \baselineskip is
 % still the detail's, otherwise the smaller size set here would be applied
 % retroactively to every line of it.
 \newcommand{\cvstack}[1]{%
   \par\addvspace{1mm}%
-  {\cvmono\cvStepMinusTwo\color{CvInkThree}\RaggedRight #1\par}%
+  {\cvsans\cvStepMinusOne\color{CvInkThree}\RaggedRight #1\par}%
 }
 
 % A quiet note in the content column, for the caveat under the projects.
@@ -427,7 +404,7 @@
   \par\addvspace{1.4mm}%
   \noindent\hspace*{\dimexpr\cvDateWidth+\cvDateGap\relax}%
   \begin{minipage}{\cvEntryWidth}%
-    \RaggedRight\cvmono\cvStepMinusTwo\color{CvInkThree}#1%
+    \RaggedRight\cvsans\cvStepMinusOne\color{CvInkThree}#1%
   \end{minipage}%
   \par
 }
@@ -479,7 +456,7 @@
   \cvhero
   \begingroup
   \RaggedRight\parindent=0pt
-  \cvlabel{Curriculum vitae}\par
+  {\cvlabelfont\cvStepZero\color{CvPencil}Curriculum vitae}\par
   \vspace{2.2mm}%
   {\cvdisplay\cvStepFour\color{CvInk}#1\par}%
   \vspace{2.6mm}%
@@ -490,8 +467,8 @@
   \par
 }
 
-% Separator between contact links, matching the site's footer.
-\newcommand{\cvdot}{\;{\color{CvRuleStrong}\textbullet}\;}
+% Separator between contact links: space, as in the site's footer.
+\newcommand{\cvdot}{\hspace{4.5mm}}
 
 % -----------------------------------------------------------------------------
 %  Running foot
@@ -504,7 +481,7 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 \fancyfoot[L]{\cvlabel{\cvfootername}}
-\fancyfoot[R]{{\cvlabelfont\cvStepMinusTwo\color{CvInkThree}%
+\fancyfoot[R]{{\cvlabelfont\cvStepMinusOne\color{CvInkThree}%
   \thepage\,/\,\pageref*{cv:last}}}
 
 \endinput

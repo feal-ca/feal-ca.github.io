@@ -8,12 +8,23 @@ const band = photos.filter((p) =>
   ["Canal at dusk", "Moon over the stairs", "Split pomegranates"].includes(p.title)
 );
 
-const period = (item: { start: string; end: string | null }) =>
-  item.end === null
-    ? `Since ${item.start}`
-    : item.end === item.start
-      ? item.start
-      : `${item.start} – ${item.end}`;
+// Timeline dates are "YYYY" or "YYYY-MM" (see profile.js).
+const month = (d: string) =>
+  new Date(`${d}-01T00:00:00Z`).toLocaleDateString("en-US", {
+    month: "short",
+    timeZone: "UTC",
+  });
+
+const period = ({ start, end }: { start: string; end: string | null }) => {
+  if (end === null) return `Since ${start.slice(0, 4)}`;
+  const [sy, ey] = [start.slice(0, 4), end.slice(0, 4)];
+  if (start.length > 4 && end.length > 4) {
+    return sy === ey
+      ? `${month(start)}–${month(end)} ${ey}`
+      : `${month(start)} ${sy}–${month(end)} ${ey}`;
+  }
+  return sy === ey ? sy : `${sy}–${ey}`;
+};
 ---
 
 <Layout
@@ -21,24 +32,22 @@ const period = (item: { start: string; end: string | null }) =>
   description="Data science and physical engineering undergraduate at UPC, on the CFIS program."
 >
   <header class="u-page page-head">
-    <p class="u-label">About</p>
     <h1 class="page-head__title">{profile.name}</h1>
   </header>
 
-  <section class="u-page bio u-cols">
-    <p class="u-label">Briefly</p>
-    <div class="u-prose">
+  <section class="u-page bio" aria-label="Biography">
+      <div class="u-prose">
       <p>
         I'm taking two degrees at once at the Universitat Politècnica de
         Catalunya (Data Science &amp; Engineering, and Physical Engineering)
         through CFIS, a program that exists to let a small number of students
         do exactly that, and that runs its own entrance exam in math and
-        physics to decide who. I'm heading into my fourth year, with an
-        8.75/10 average across both.
+        physics to decide who. I'm in my fourth year, with an 8.75/10
+        average across both.
       </p>
       <p>
         The two halves feed each other more than the timetable suggests, and
-        the work I'm doing now is the clearest case of it. You can't train
+        this summer's work at TU Dresden was the clearest case of it. You can't train
         anything to operate a microscope until you can simulate what the
         microscope sees, and that means solving for electromagnetic fields
         propagating through a specimen and through a lens. The physics builds
@@ -54,7 +63,6 @@ const period = (item: { start: string; end: string | null }) =>
       </p>
       <p>
         Outside of coursework I write for <a
-          class="u-link"
           href={profile.links.tds}
           target="_blank"
           rel="noopener noreferrer">Towards Data Science</a
@@ -70,23 +78,40 @@ const period = (item: { start: string; end: string | null }) =>
       </p>
       <p>
         Where this goes next is still open: industry, a PhD, or the kind
-        of industrial PhD that's both. Right now: {profile.now.text}
+        of industrial PhD that's both.
       </p>
     </div>
+    <aside class="notes" aria-label="In brief">
+      <p class="note">
+        <span class="note__head">Now</span>
+        {profile.now.text}
+      </p>
+      <p class="note">
+        <span class="note__head">Based in</span>
+        {profile.location}
+      </p>
+      <p class="note">
+        <span class="note__head">CV</span>
+        <a class="u-link" href={profile.links.cv}>Print (PDF)</a>,
+        <a class="u-link" href={profile.links.cvDark}>blueprint (PDF)</a>
+      </p>
+    </aside>
   </section>
 
   <PhotoBand photos={band} height="clamp(11rem, 20vw, 18rem)" />
 
-  <section class="u-page section u-cols" aria-labelledby="experience">
-    <h2 id="experience" class="u-label section__label">Experience</h2>
-    <ol class="timeline">
+  <section class="u-page section" aria-labelledby="experience">
+    <div class="u-section-head">
+      <h2 id="experience">Experience and education</h2>
+    </div>
+    <ol class="entries" role="list">
       {
         profile.timeline.map((item) => (
-          <li class="timeline__item">
-            <p class="u-label timeline__when">{period(item)}</p>
+          <li class="entry">
+            <p class="entry__when">{period(item)}</p>
             <div>
-              <h3 class="timeline__title">{item.title}</h3>
-              <p class="timeline__detail">{item.detail}</p>
+              <h3 class="entry__title">{item.title}</h3>
+              <p class="entry__detail">{item.detail}</p>
             </div>
           </li>
         ))
@@ -94,57 +119,57 @@ const period = (item: { start: string; end: string | null }) =>
     </ol>
   </section>
 
-  <section class="u-page section u-cols" aria-labelledby="skills">
-    <h2 id="skills" class="u-label section__label">Skills</h2>
-    <dl class="skills">
+  <section class="u-page section" aria-labelledby="skills">
+    <div class="u-section-head">
+      <h2 id="skills">Skills</h2>
+    </div>
+    <dl class="entries">
       {
         profile.skills.map((group) => (
-          <div class="skills__row">
-            <dt class="skills__group">{group.group}</dt>
-            <dd class="skills__items">
-              <ul>
-                {group.items.map((item) => (
-                  <li>{item}</li>
-                ))}
-              </ul>
-            </dd>
+          <div class="entry">
+            <dt class="entry__when">{group.group}</dt>
+            <dd class="entry__list">{group.items.join(", ")}</dd>
           </div>
         ))
       }
     </dl>
   </section>
 
-  <section class="u-page section u-cols" aria-labelledby="awards">
-    <h2 id="awards" class="u-label section__label">Selected awards</h2>
-    <ul class="awards">
+  <section class="u-page section" aria-labelledby="awards">
+    <div class="u-section-head">
+      <h2 id="awards">Awards and activities</h2>
+    </div>
+    <ul class="entries" role="list">
       {
         profile.awards.map((award) => (
-          <li class="awards__item">
-            <span class="u-label awards__when">{award.when}</span>
-            <span>{award.what}</span>
+          <li class="entry">
+            <p class="entry__when">{award.when}</p>
+            <p class="entry__list">{award.what}</p>
           </li>
         ))
       }
     </ul>
   </section>
 
-  <section class="u-page section u-cols" aria-labelledby="contact">
-    <h2 id="contact" class="u-label section__label">Contact</h2>
-    <div>
-      <p class="u-prose">
+  <section class="u-page section" aria-labelledby="contact">
+    <div class="u-section-head">
+      <h2 id="contact">Contact</h2>
+    </div>
+    <div class="u-prose">
+      <p>
         Email is the surest way to reach me. I'm still partway through my
         bachelor's, so I can't offer a fixed start date, but I'd rather hear
-        about something interesting early than not at all. The CV below has
-        the full detail.
+        about something interesting early than not at all. The CV has the
+        full detail.
       </p>
-      <ul class="contact">
-        <li><a class="u-link" href={`mailto:${profile.links.email}`}>{profile.links.email}</a></li>
-        <li><a class="u-link" href={profile.links.github} target="_blank" rel="noopener noreferrer">github.com/Feal-ca</a></li>
-        <li><a class="u-link" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      <ul class="contact" role="list">
+        <li><a href={`mailto:${profile.links.email}`}>{profile.links.email}</a></li>
+        <li><a href={profile.links.github} target="_blank" rel="noopener noreferrer">github.com/Feal-ca</a></li>
+        <li><a href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
         <li>
-          <a class="u-link" href={profile.links.cv}>Curriculum vitae (PDF)</a>, or
-          the <a class="u-link" href={profile.links.cvDark}>dark version</a> if
-          you're reading on a screen
+          <a href={profile.links.cv}>Curriculum vitae (PDF)</a>, or the
+          <a href={profile.links.cvDark}>blueprint version</a> for reading on
+          a screen
         </li>
       </ul>
     </div>
@@ -152,165 +177,122 @@ const period = (item: { start: string; end: string | null }) =>
 </Layout>
 
 <style>
-  .page-head {
-    margin-bottom: var(--space-xl);
+  .page-head__title {
+    font-size: var(--step-5);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    max-width: 14ch;
   }
 
-  .page-head__title {
-    font-size: var(--step-4);
-    margin-top: var(--space-xs);
+  /* Same arrangement as a project page: prose at a reading measure, notes
+     in the right margin. */
+  .bio {
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 16rem);
+    justify-content: space-between;
+    gap: var(--space-l) var(--space-xl);
+    margin-top: var(--space-l);
+  }
+
+  .notes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    padding-left: var(--space-m);
+    border-left: 1px solid var(--rule-strong);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.45;
+    color: var(--ink-2);
+    align-self: start;
+  }
+
+  .note__head {
+    display: block;
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+
+  @media (max-width: 56rem) {
+    .bio {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .notes {
+      order: -1;
+      padding: 0 0 var(--space-m);
+      border-left: 0;
+      border-bottom: 1px solid var(--rule);
+    }
+  }
+
+  .bio .u-prose {
+    font-size: var(--step-0);
+  }
+
+  .bio .u-prose > p:first-child {
+    font-size: var(--step-1);
+    line-height: 1.55;
+    color: var(--ink);
   }
 
   .section {
     margin-top: var(--space-2xl);
-    padding-top: var(--space-l);
+  }
+
+  /* One list style for experience, skills and awards: a date or group in
+     the sans on the left, the entry in the serif on the right. */
+  .entries {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+    gap: var(--space-2xs) var(--space-l);
+    padding-block: var(--space-s);
+  }
+
+  .entry + .entry {
     border-top: 1px solid var(--rule);
   }
 
-  .section__label {
-    font-size: var(--step--2);
-  }
-
-  .bio {
-    margin-top: var(--space-l);
-  }
-
-  /* --- Timeline ----------------------------------------------------------- */
-  .timeline {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .timeline__item {
-    display: grid;
-    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
-    gap: var(--space-s) var(--space-m);
-    padding-block: var(--space-m);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .timeline__item:first-child {
-    padding-top: 0;
-  }
-
-  .timeline__when {
-    padding-top: 0.25em;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .timeline__title {
-    font-size: var(--step-0);
+  .entry__when {
     font-family: var(--font-sans);
-    font-weight: 600;
+    font-weight: 500;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    padding-top: 0.1em;
+  }
+
+  .entry__title {
+    font-size: var(--step-0);
     line-height: 1.4;
   }
 
-  .timeline__detail {
+  .entry__detail {
     margin-top: var(--space-2xs);
     color: var(--ink-2);
     font-size: var(--step--1);
-    max-width: 56ch;
+    max-width: 60ch;
+  }
+
+  .entry__list {
+    margin: 0;
+    color: var(--ink-2);
+    max-width: 60ch;
   }
 
   @media (max-width: 40rem) {
-    .timeline__item {
+    .entry {
       grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-2xs);
     }
-
-    .timeline__when {
-      padding-top: 0;
-    }
-  }
-
-  /* --- Skills ------------------------------------------------------------- */
-  .skills {
-    margin: 0;
-  }
-
-  .skills__row {
-    display: grid;
-    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
-    gap: var(--space-s) var(--space-m);
-    padding-block: var(--space-s);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .skills__row:first-child {
-    padding-top: 0;
-  }
-
-  .skills__group {
-    font-family: var(--font-mono);
-    font-size: var(--step--2);
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    padding-top: 0.3em;
-  }
-
-  .skills__items {
-    margin: 0;
-  }
-
-  .skills__items ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem 0.45rem;
-    list-style: none;
-    padding: 0;
-  }
-
-  .skills__items li {
-    font-size: var(--step--1);
-    color: var(--ink-2);
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    padding: 0.1rem 0.5rem;
-  }
-
-  @media (max-width: 40rem) {
-    .skills__row {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-xs);
-    }
-
-    .skills__group {
-      padding-top: 0;
-    }
-  }
-
-  /* --- Awards, contact ---------------------------------------------------- */
-  .awards {
-    list-style: none;
-    padding: 0;
-  }
-
-  .awards__item {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-m);
-    padding-block: var(--space-xs);
-    color: var(--ink-2);
-    font-size: var(--step--1);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .awards__when {
-    min-width: 3.5rem;
-    font-variant-numeric: tabular-nums;
   }
 
   .contact {
     list-style: none;
     padding: 0;
-    margin-top: var(--space-m);
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    font-size: var(--step--1);
   }
 </style>

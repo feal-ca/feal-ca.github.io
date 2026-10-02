@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import ProjectCard from "../../components/ProjectCard.astro";
+import Plate from "../../components/Plate.astro";
 
 const all = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order
@@ -16,65 +16,75 @@ const rest = all.filter((p) => p.data.tier !== "flagship");
   description="Projects across computational fluid dynamics, high-performance computing and scientific machine learning."
 >
   <header class="u-page page-head">
-    <p class="u-label">Work</p>
     <h1 class="page-head__title">
       Mostly where physics meets computation.
     </h1>
     <p class="u-prose page-head__lede">
-      {all.length} projects from my degrees at UPC. Some coursework, some team
-      work with outside collaborators, some my own. Each has a short write-up
-      with what came out of it; several also have a longer article on
-      Towards Data Science.
+      {all.length} projects, most from my degrees at UPC. Some coursework, some
+      team work with outside collaborators, some my own. Each has a short
+      write-up with what came out of it; several also have a longer article
+      on Towards Data Science. The figures are schematic drawings of each
+      problem, not results from it.
     </p>
   </header>
 
-  <section class="u-page stack" aria-label="Main projects">
-    {flagship.map((project) => <ProjectCard project={project} wide />)}
+  <section class="u-page flagships" aria-label="Main projects">
+    {
+      flagship.map((project, i) => (
+        <Plate
+          project={project}
+          number={i + 1}
+          layout="side"
+          flip={i % 2 === 1}
+          ratio="16 / 10"
+          level={2}
+        />
+      ))
+    }
   </section>
 
-  <section class="u-page other" aria-labelledby="other-heading">
-    <h2 id="other-heading" class="u-label other__heading">Also</h2>
+  <section class="u-page more" aria-labelledby="more-heading">
+    <div class="u-section-head">
+      <h2 id="more-heading">More projects</h2>
+      <p class="u-meta">{rest.length}</p>
+    </div>
     <div class="grid">
-      {rest.map((project) => <ProjectCard project={project} />)}
+      {
+        rest.map((project, i) => (
+          <Plate project={project} number={flagship.length + i + 1} />
+        ))
+      }
     </div>
   </section>
 </Layout>
 
 <style>
   .page-head {
-    margin-bottom: var(--space-2xl);
+    margin-bottom: var(--space-xl);
   }
 
   .page-head__title {
     font-size: var(--step-4);
     max-width: 18ch;
-    margin-top: var(--space-xs);
   }
 
   .page-head__lede {
     margin-top: var(--space-m);
   }
 
-  .stack {
+  .flagships {
     display: flex;
     flex-direction: column;
     gap: var(--space-2xl);
   }
 
-  .other {
+  .more {
     margin-top: var(--space-2xl);
-    padding-top: var(--space-l);
-    border-top: 1px solid var(--rule);
-  }
-
-  .other__heading {
-    display: block;
-    margin-bottom: var(--space-l);
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
     gap: var(--space-xl) var(--space-l);
   }
 </style>

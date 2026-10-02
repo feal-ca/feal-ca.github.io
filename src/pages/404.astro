@@ -5,14 +5,14 @@ import Figure from "../components/Figure.astro";
 
 <Layout title="Page not found" description="That page does not exist.">
   <div class="u-page wrap">
-    <p class="u-label">404</p>
+    <p class="u-meta code">Error 404</p>
     <h1 class="title">This page doesn't exist.</h1>
     <p class="u-prose lede">
       The address doesn't match anything on the site. The work, the writing
       and the photographs are all still where they were.
     </p>
     <p class="actions">
-      <a class="u-action" href="/">Back to the homepage</a>
+      <a class="u-link" href="/">Back to the homepage</a>
     </p>
   </div>
 
@@ -38,6 +38,13 @@ import Figure from "../components/Figure.astro";
 
   .actions {
     margin-top: var(--space-l);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+  }
+
+  .code {
+    color: var(--pencil);
+    font-weight: 500;
   }
 
   .art {

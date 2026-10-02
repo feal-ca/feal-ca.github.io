@@ -14,8 +14,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { project } = Astro.props;
-const { title, summary, year, categories, figure, figureAlt, stack, links } =
-  project.data;
+const { title, summary, year, figure, figureAlt, stack, links } = project.data;
 
 const { Content } = await render(project);
 
@@ -27,85 +26,71 @@ const all = (await getCollection("projects")).sort(
 );
 const index = all.findIndex((p) => p.id === project.id);
 const next = all[(index + 1) % all.length];
+
+const tools = new Intl.ListFormat("en", { style: "long", type: "conjunction" });
 ---
 
 <Layout title={title} description={summary}>
   <article>
     <header class="u-page head">
-      <nav class="crumb" aria-label="Breadcrumb">
+      <nav class="crumb u-meta" aria-label="Breadcrumb">
         <a class="u-link" href="/work/">Work</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{year}</span>
       </nav>
 
-      <div class="head__grid u-cols">
-        <div class="head__meta">
-          <p class="u-label">{categories.join(" · ")}</p>
-          <p class="u-label head__year">{year}</p>
-        </div>
-
-        <div>
-          <h1 class="head__title">{title}</h1>
-          <p class="head__summary">{summary}</p>
-        </div>
-      </div>
+      <h1 class="head__title">{title}</h1>
+      <p class="head__summary">{summary}</p>
     </header>
 
-    <div class="u-wide figure-band">
+    <figure class="u-wide plate">
       <Figure name={figure} alt={figureAlt} ratio="16 / 7" />
-      <p class="figure-band__caption">
-        Schematic illustration, not simulation output.
-      </p>
-    </div>
+      <figcaption class="plate__caption">
+        <span class="plate__num">Fig. 1</span>
+        A schematic drawing of the problem, not output from the project.
+      </figcaption>
+    </figure>
 
-    <div class="u-page body u-cols">
-      <aside class="aside">
+    <div class="u-page body">
+      <div class="u-prose">
+        <Content />
+      </div>
+
+      <aside class="notes" aria-label="Project notes">
+        <p class="note">
+          <span class="note__head">Year</span>
+          {year}
+        </p>
         {
           stack.length > 0 && (
-            <div class="aside__block">
-              <p class="u-label">Built with</p>
-              <ul class="aside__list">
-                {stack.map((tool) => (
-                  <li>{tool}</li>
-                ))}
-              </ul>
-            </div>
+            <p class="note">
+              <span class="note__head">Built with</span>
+              {tools.format(stack)}
+            </p>
           )
         }
-
         {
           related.length > 0 && (
-            <div class="aside__block">
-              <p class="u-label">Written up</p>
-              <ul class="aside__list">
+            <div class="note">
+              <p class="note__head">Written up</p>
+              <ul class="note__list">
                 {related.map((article) => (
                   <li>
-                    <a
-                      class="u-link"
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {article.title}
-                    </a>
+                    <a class="u-link" href={article.url} target="_blank" rel="noopener noreferrer">{article.title}</a>, <cite>Towards Data Science</cite>
                   </li>
                 ))}
               </ul>
             </div>
           )
         }
-
         {
           links.length > 0 && (
-            <div class="aside__block">
-              <p class="u-label">Links</p>
-              <ul class="aside__list">
+            <div class="note">
+              <p class="note__head">Links</p>
+              <ul class="note__list">
                 {links.map((link) => (
                   <li>
-                    <a
-                      class="u-link"
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a class="u-link" href={link.url} target="_blank" rel="noopener noreferrer">
                       {link.label}
                     </a>
                   </li>
@@ -115,15 +100,11 @@ const next = all[(index + 1) % all.length];
           )
         }
       </aside>
-
-      <div class="u-prose">
-        <Content />
-      </div>
     </div>
 
     <nav class="u-page next" aria-label="Next project">
       <a class="next__link" href={`/work/${next.id}/`}>
-        <span class="u-label">Next project</span>
+        <span class="u-meta">Next project</span>
         <span class="next__title">{next.data.title}</span>
       </a>
     </nav>
@@ -132,74 +113,89 @@ const next = all[(index + 1) % all.length];
 
 <style>
   .crumb {
-    font-size: var(--step--1);
-    margin-bottom: var(--space-l);
-  }
-
-  .head__grid {
-    align-items: start;
-  }
-
-  .head__meta {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-s);
-    justify-content: space-between;
-  }
-
-  .head__year {
-    font-variant-numeric: tabular-nums;
+    gap: 0.5em;
+    font-size: var(--step-0);
+    margin-bottom: var(--space-m);
   }
 
   .head__title {
     font-size: var(--step-4);
-    max-width: 20ch;
+    max-width: 22ch;
   }
 
   .head__summary {
     margin-top: var(--space-m);
     color: var(--ink-2);
-    font-family: var(--font-display);
     font-size: var(--step-1);
     line-height: 1.5;
-    max-width: 46ch;
+    max-width: 50ch;
   }
 
-  .figure-band {
+  .plate {
     margin-top: var(--space-xl);
   }
 
-  .figure-band__caption {
+  .plate__caption {
     margin-top: var(--space-xs);
-    text-align: right;
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
     color: var(--ink-3);
-    font-size: var(--step--2);
-    font-family: var(--font-mono);
   }
 
+  .plate__num {
+    color: var(--pencil);
+    font-weight: 500;
+    margin-right: 0.5em;
+  }
+
+  /* Prose on the left at a reading measure; notes in the right margin, the
+     way a notebook carries its annotations. */
   .body {
-    margin-top: var(--space-2xl);
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 16rem);
+    justify-content: space-between;
+    gap: var(--space-l) var(--space-xl);
+    margin-top: var(--space-xl);
   }
 
-  .aside__block + .aside__block {
-    margin-top: var(--space-m);
-  }
-
-  .aside__list {
-    list-style: none;
-    padding: 0;
-    margin-top: var(--space-2xs);
+  .notes {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    font-size: var(--step--1);
+    gap: var(--space-m);
+    padding-left: var(--space-m);
+    border-left: 1px solid var(--rule-strong);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.45;
     color: var(--ink-2);
+    align-self: start;
   }
 
-  @media (max-width: 48rem) {
-    .aside {
-      padding-bottom: var(--space-m);
-      margin-bottom: var(--space-m);
+  .note__head {
+    display: block;
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+
+  .note__list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  @media (max-width: 56rem) {
+    .body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .notes {
+      order: -1;
+      flex-flow: row wrap;
+      gap: var(--space-s) var(--space-l);
+      padding: 0 0 var(--space-m);
+      border-left: 0;
       border-bottom: 1px solid var(--rule);
     }
   }
@@ -207,7 +203,7 @@ const next = all[(index + 1) % all.length];
   .next {
     margin-top: var(--space-2xl);
     padding-top: var(--space-m);
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--ink);
   }
 
   .next__link {
@@ -218,9 +214,9 @@ const next = all[(index + 1) % all.length];
   }
 
   .next__title {
-    font-family: var(--font-display);
     font-size: var(--step-2);
-    transition: color 0.2s ease;
+    font-weight: 600;
+    transition: color 0.15s ease;
   }
 
   .next__link:hover .next__title {

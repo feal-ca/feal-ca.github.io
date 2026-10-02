@@ -1,0 +1,155 @@
+---
+import Figure from "./Figure.astro";
+import type { CollectionEntry } from "astro:content";
+
+/**
+ * A project as a numbered figure plate with a caption, the way a figure sits
+ * in a report. The number is the figure's position on the page it appears
+ * on, so pages number independently, like chapters.
+ */
+interface Props {
+  project: CollectionEntry<"projects">;
+  number: number;
+  /** "side" puts the caption beside the figure on wide screens. */
+  layout?: "stack" | "side";
+  /** With layout="side", put the figure on the right instead. */
+  flip?: boolean;
+  ratio?: string;
+  /** Heading level for the title, so the outline stays correct per page. */
+  level?: 2 | 3;
+}
+
+const {
+  project,
+  number,
+  layout = "stack",
+  flip = false,
+  ratio = "8 / 5",
+  level = 3,
+} = Astro.props;
+const { title, summary, year, figure, figureAlt, stack } = project.data;
+const href = `/work/${project.id}/`;
+const Heading = `h${level}`;
+
+const tools = stack.length
+  ? new Intl.ListFormat("en", { style: "long", type: "conjunction" }).format(stack)
+  : null;
+---
+
+<article
+  class:list={["plate", `plate--${layout}`, flip && "plate--flip"]}
+  data-fig-host
+>
+  <Figure name={figure} alt={figureAlt} ratio={ratio} class="plate__fig" />
+
+  <div class="plate__caption">
+    <p class="plate__num">Fig. {number}</p>
+    <Heading class="plate__title">
+      <a class="plate__link" href={href}>{title}</a>
+    </Heading>
+    <p class="plate__summary">{summary}</p>
+    <p class="u-meta plate__meta">
+      {year}{tools && <>. {tools}</>}.
+    </p>
+  </div>
+</article>
+
+<style>
+  .plate {
+    position: relative;
+    display: grid;
+    gap: var(--space-s);
+    align-content: start;
+  }
+
+  /* The title link covers the whole plate, so the figure is clickable
+     without nesting one interactive element inside another. */
+  .plate__link {
+    text-decoration: none;
+  }
+
+  .plate__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .plate__link:focus-visible {
+    outline: none;
+  }
+
+  .plate:has(.plate__link:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+  }
+
+  .plate :global(.plate__fig) {
+    transition: border-color 0.2s ease;
+  }
+
+  .plate:hover :global(.plate__fig) {
+    border-color: var(--accent);
+  }
+
+  .plate:hover .plate__link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    text-decoration-color: var(--accent);
+  }
+
+  .plate__caption {
+    display: grid;
+    gap: var(--space-2xs);
+    max-width: 52ch;
+  }
+
+  .plate__num {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: var(--step--1);
+    color: var(--pencil);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .plate__title {
+    font-size: var(--step-1);
+    line-height: 1.2;
+  }
+
+  .plate__summary {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    line-height: 1.6;
+  }
+
+  .plate__meta {
+    margin-top: var(--space-2xs);
+  }
+
+  @media (min-width: 56rem) {
+    .plate--side {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      gap: var(--space-l);
+      align-items: end;
+    }
+
+    .plate--side.plate--flip {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    }
+
+    .plate--side.plate--flip .plate__caption {
+      order: -1;
+      justify-self: end;
+    }
+
+    .plate--side .plate__title {
+      font-size: var(--step-2);
+    }
+
+    .plate--side .plate__summary {
+      font-size: var(--step-0);
+    }
+  }
+</style>
