@@ -5,6 +5,7 @@ year: 2025
 categories: ["CFD", "Python"]
 tier: "standard"
 figure: "bird-flight"
+sim: "fluid"
 figureAlt: "Streamlines passing over and under a cambered airfoil section at a small angle of attack, compressing above the wing and spreading below it."
 stack: ["Python", "NumPy", "OpenFOAM", "Blender"]
 featured: true

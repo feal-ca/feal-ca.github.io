@@ -7,14 +7,15 @@ tier: "standard"
 figure: "n-body"
 sim: "nbody"
 figureAlt: "A particle cloud with three dense clusters, overlaid with an adaptive quadtree that subdivides finely where particles are concentrated and stays coarse in the empty regions."
-team: "Group project"
+team: "Pair project"
 stack: ["C++", "OpenMP"]
 featured: true
 order: 4
 ---
 
-A group project with classmates at UPC. We wrote two solvers to compare a
-brute-force algorithm on many cores against a cheaper algorithm.
+A project I built with a classmate at UPC. The point was to compare two
+algorithms: brute force on many cores against a cheaper algorithm. We
+parallelized both.
 
 Direct summation computes every pairwise interaction. It's O(n²) and
 parallelizes easily: at N = 10,000 it ran about **33× faster on 112 threads

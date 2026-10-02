@@ -1,5 +1,6 @@
 ---
 import Figure from "./Figure.astro";
+import { SIMS, type SimKind } from "../scripts/sims/config";
 
 /**
  * The top plate of a project page, running a small live simulation of the
@@ -9,105 +10,130 @@ import Figure from "./Figure.astro";
  * loaded with dynamic imports, so each page fetches only its own.
  */
 interface Props {
-  sim: "lbm" | "nbody" | "fermi";
+  sim: SimKind;
   figure: string;
   figureAlt: string;
 }
 
 const { sim, figure, figureAlt } = Astro.props;
-
-const config = {
-  lbm: {
-    caption:
-      "A D2Q9 lattice Boltzmann solver running in your browser, flow past a cylinder colored by vorticity. It shows the method; it isn't the project's code or results.",
-    label: "Relaxation time τ",
-    control: { kind: "range", min: 0.52, max: 0.8, step: 0.01, value: 0.54 },
-    canvasLabel: "Live lattice Boltzmann simulation of flow past a cylinder, colored by vorticity.",
-  },
-  nbody: {
-    caption:
-      "Two rotating discs of 600 bodies merging, simulated in your browser. Switch the force calculation to see the quadtree and how many interactions each method evaluates. It shows the method; it isn't the project's code or results.",
-    label: "Force calculation",
-    control: {
-      kind: "choice",
-      options: [
-        { value: 0, label: "Direct summation" },
-        { value: 1, label: "Barnes-Hut" },
-      ],
-      value: 1,
-    },
-    canvasLabel: "Live N-body simulation of two colliding discs of particles.",
-  },
-  fermi: {
-    caption:
-      "Metropolis Monte Carlo over 24 fermions on 48 levels, running in your browser. The bars are the sampled occupancy, the red curve is Fermi-Dirac. It shows the method; it isn't the project's code or results.",
-    label: "Temperature",
-    control: { kind: "range", min: 0.3, max: 8, step: 0.1, value: 2 },
-    canvasLabel: "Live Monte Carlo sampling of fermion occupancy against the Fermi-Dirac curve.",
-  },
-}[sim];
-
+const config = SIMS[sim];
 const id = `sim-${sim}`;
 ---
 
-<figure class="u-wide sim" data-sim={sim}>
+<figure
+  class="u-wide sim"
+  data-sim={sim}
+  data-autoplay={"autoplay" in config && config.autoplay === false ? "false" : undefined}
+  aria-labelledby={`${id}-caption`}
+>
   <div class="sim__stage">
     <Figure name={figure} alt={figureAlt} ratio="16 / 7" autoplay class="sim__fallback" />
     <canvas class="sim__canvas" role="img" aria-label={config.canvasLabel}></canvas>
   </div>
 
-  <figcaption class="sim__caption">
+  <figcaption class="sim__caption" id={`${id}-caption`}>
     <span class="sim__num">Fig. 1</span>
     {config.caption}
   </figcaption>
 
-  <div class="sim__controls" hidden>
-    <button class="sim__play" type="button">Pause</button>
+  <div class="sim__panel" hidden>
+    <div class="sim__row">
+      <div class="sim__buttons">
+        <button class="sim__btn sim__btn--main" type="button" data-sim-play aria-keyshortcuts="Space">Pause</button>
+        {
+          config.controls
+            .filter((c) => c.type === "button")
+            .map((c) => (
+              <button class="sim__btn" type="button" data-sim-action={c.name} aria-keyshortcuts={c.key}>
+                {c.label}
+              </button>
+            ))
+        }
+        <button class="sim__btn" type="button" data-sim-reset aria-keyshortcuts="R">Reset</button>
+        <button class="sim__btn" type="button" data-sim-expand aria-keyshortcuts="F">Expand</button>
+      </div>
+      <output class="sim__readout" aria-live="polite"></output>
+    </div>
+
+    <div class="sim__row sim__row--controls">
+      {
+        config.controls.map((c) => {
+          if (c.type === "range") {
+            return (
+              <label class="sim__field" for={`${id}-${c.name}`}>
+                <span class="sim__label">{c.label}</span>
+                <span class="sim__range">
+                  <span class="sim__end" aria-hidden="true">{c.min}</span>
+                  <input
+                    id={`${id}-${c.name}`}
+                    type="range"
+                    data-sim-param={c.name}
+                    min={c.min}
+                    max={c.max}
+                    step={c.step}
+                    value={c.value}
+                  />
+                  <span class="sim__end" aria-hidden="true">{c.max}{c.unit === "°" ? "°" : ""}</span>
+                </span>
+              </label>
+            );
+          }
+          if (c.type === "toggle") {
+            return (
+              <label class="sim__field sim__check">
+                <input type="checkbox" data-sim-param={c.name} checked={c.value === 1} />
+                <span>{c.label}</span>
+              </label>
+            );
+          }
+          if (c.type === "choice") {
+            return (
+              <fieldset class="sim__field sim__choice">
+                <legend class="sim__label">{c.label}</legend>
+                {c.options.map((o) => (
+                  <label>
+                    <input type="radio" name={`${id}-${c.name}`} value={o.value} data-sim-param={c.name} checked={o.value === c.value} />
+                    <span>{o.label}</span>
+                  </label>
+                ))}
+              </fieldset>
+            );
+          }
+          return null;
+        })
+      }
+    </div>
 
     {
-      config.control.kind === "range" ? (
-        <label class="sim__field" for={id}>
-          <span>{config.label}</span>
-          <input
-            id={id}
-            type="range"
-            data-sim-control
-            min={config.control.min}
-            max={config.control.max}
-            step={config.control.step}
-            value={config.control.value}
-          />
-        </label>
-      ) : (
-        <fieldset class="sim__field sim__choice">
-          <legend>{config.label}</legend>
-          {config.control.options.map((opt) => (
-            <label>
-              <input
-                type="radio"
-                name={id}
-                value={opt.value}
-                data-sim-control
-                checked={opt.value === config.control.value}
-              />
-              <span>{opt.label}</span>
-            </label>
-          ))}
-        </fieldset>
+      (config.hint || config.legend) && (
+        <div class="sim__row sim__row--notes">
+          {config.hint && <p class="sim__hint">{config.hint}</p>}
+          {config.legend && (
+            <ul class="sim__legend" aria-label="Color key">
+              {config.legend.map((l) => (
+                <li>
+                  <span class={`sim__swatch sim__swatch--${l.token}`} aria-hidden="true" />
+                  {l.label}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )
     }
-
-    <output class="sim__readout" aria-live="polite"></output>
   </div>
 </figure>
 
 <script>
-  import type { Palette, RGB, Create } from "../scripts/sims/types";
+  import type { Palette, RGB, Create, Params, Sim } from "../scripts/sims/types";
 
   const loaders: Record<string, () => Promise<{ create: Create }>> = {
     lbm: () => import("../scripts/sims/lbm"),
     nbody: () => import("../scripts/sims/nbody"),
     fermi: () => import("../scripts/sims/fermi"),
+    surrogate: () => import("../scripts/sims/surrogate"),
+    fluid: () => import("../scripts/sims/fluid"),
+    beads: () => import("../scripts/sims/beads"),
   };
 
   const hex = (v: string): RGB => {
@@ -131,20 +157,37 @@ const id = `sim-${sim}`;
   for (const root of document.querySelectorAll<HTMLElement>("figure[data-sim]")) {
     const kind = root.dataset.sim!;
     const canvas = root.querySelector<HTMLCanvasElement>(".sim__canvas")!;
-    const controls = root.querySelector<HTMLElement>(".sim__controls")!;
-    const play = root.querySelector<HTMLButtonElement>(".sim__play")!;
+    const panel = root.querySelector<HTMLElement>(".sim__panel")!;
+    const play = root.querySelector<HTMLButtonElement>("[data-sim-play]")!;
+    const resetBtn = root.querySelector<HTMLButtonElement>("[data-sim-reset]")!;
+    const expandBtn = root.querySelector<HTMLButtonElement>("[data-sim-expand]")!;
     const readout = root.querySelector<HTMLOutputElement>(".sim__readout")!;
-    const inputs = Array.from(root.querySelectorAll<HTMLInputElement>("[data-sim-control]"));
-    const value = () => Number((inputs.find((i) => i.type === "range" || i.checked) ?? inputs[0]).value);
+    const inputs = Array.from(root.querySelectorAll<HTMLInputElement>("[data-sim-param]"));
+    const actions = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-sim-action]"));
+
+    const paramOf = (input: HTMLInputElement) =>
+      input.type === "checkbox" ? (input.checked ? 1 : 0) : Number(input.value);
+
+    const params = (): Params => {
+      const out: Params = {};
+      for (const input of inputs) {
+        if (input.type === "radio" && !input.checked) continue;
+        out[input.dataset.simParam!] = paramOf(input);
+      }
+      return out;
+    };
 
     loaders[kind]().then(({ create }) => {
-      const sim = create(value());
+      let sim: Sim = create(params());
       const ctx = canvas.getContext("2d")!;
       let palette = readPalette();
-      let wanted = !reduce.matches;
+      let wanted = !reduce.matches && root.dataset.autoplay !== "false";
       let visible = false;
+      let dragging = false;
       let raf = 0;
       let w = 0, h = 0;
+
+      const live = () => root.classList.contains("sim--live");
 
       const size = () => {
         const r = canvas.getBoundingClientRect();
@@ -155,14 +198,19 @@ const id = `sim-${sim}`;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       };
 
-      const ready = () => sim.ready?.() ?? true;
-
       const render = () => {
         readout.value = sim.readout();
-        if (!ready()) return;
+        if (!(sim.ready?.() ?? true)) return;
         sim.draw(ctx, palette, w, h);
         // The canvas covers the drawing only once it has something to show.
         root.classList.add("sim--live");
+      };
+
+      // A paused simulation still has to answer the controls and the
+      // pointer, so anything that changes it redraws once. It never starts
+      // playback: a reduced-motion visitor chose a still page.
+      const touched = () => {
+        if (!raf) render();
       };
 
       const frame = () => {
@@ -178,19 +226,94 @@ const id = `sim-${sim}`;
         if (wanted && visible && !raf) raf = requestAnimationFrame(frame);
       };
 
-      play.addEventListener("click", () => {
+      const toggle = () => {
         wanted = !wanted;
         sync();
+      };
+
+      const reset = () => {
+        sim = create(params());
+        render();
+      };
+
+      const expand = () => {
+        if (document.fullscreenElement === root) document.exitFullscreen();
+        else root.requestFullscreen?.().catch(() => {});
+      };
+
+      play.addEventListener("click", toggle);
+      resetBtn.addEventListener("click", reset);
+      expandBtn.addEventListener("click", expand);
+      if (!root.requestFullscreen) expandBtn.hidden = true;
+      document.addEventListener("fullscreenchange", () => {
+        expandBtn.textContent = document.fullscreenElement === root ? "Close" : "Expand";
       });
 
-      for (const input of inputs) {
-        input.addEventListener("input", () => {
-          sim.set(value());
-          if (root.classList.contains("sim--live")) render();
-          else readout.value = sim.readout();
+      for (const btn of actions) {
+        btn.addEventListener("click", () => {
+          sim.action?.(btn.dataset.simAction!);
+          touched();
         });
       }
 
+      for (const input of inputs) {
+        input.addEventListener("input", () => {
+          sim.set(input.dataset.simParam!, paramOf(input));
+          touched();
+        });
+      }
+
+      // Space, R, F and any button's own key, while focus is in the plate.
+      root.addEventListener("keydown", (e) => {
+        if (e.altKey || e.ctrlKey || e.metaKey) return;
+        const t = e.target as HTMLElement;
+        if (t.matches("button, input[type=checkbox], input[type=radio]") && e.key === " ") return;
+        const key = e.key.toUpperCase();
+        if (e.key === " ") toggle();
+        else if (key === "R") reset();
+        else if (key === "F") expand();
+        else {
+          const btn = actions.find((b) => b.getAttribute("aria-keyshortcuts") === key);
+          if (!btn) return;
+          btn.click();
+        }
+        e.preventDefault();
+      });
+
+      // --- Pointer --------------------------------------------------------
+      const at = (e: PointerEvent) => {
+        const r = canvas.getBoundingClientRect();
+        return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height };
+      };
+
+      if (sim.pointer) {
+        canvas.style.touchAction = "none";
+        canvas.addEventListener("pointerdown", (e) => {
+          if (!live()) return;
+          dragging = sim.pointer!({ type: "down", ...at(e) });
+          if (dragging) canvas.setPointerCapture(e.pointerId);
+          touched();
+        });
+        canvas.addEventListener("pointermove", (e) => {
+          const p = at(e);
+          if (dragging) {
+            sim.pointer!({ type: "move", ...p });
+            touched();
+          } else if (live()) {
+            canvas.style.cursor = sim.cursor?.(p.x, p.y) ?? "default";
+          }
+        });
+        const end = (e: PointerEvent) => {
+          if (!dragging) return;
+          dragging = false;
+          sim.pointer!({ type: "up", ...at(e) });
+          touched();
+        };
+        canvas.addEventListener("pointerup", end);
+        canvas.addEventListener("pointercancel", end);
+      }
+
+      // --- Visibility, size, theme ---------------------------------------
       new IntersectionObserver(([entry]) => {
         visible = entry.isIntersecting;
         sync();
@@ -200,13 +323,12 @@ const id = `sim-${sim}`;
 
       new ResizeObserver(() => {
         size();
-        if (root.classList.contains("sim--live")) render();
+        if (live()) render();
       }).observe(canvas);
 
-      // Follow the theme toggle and the OS preference.
       const recolor = () => {
         palette = readPalette();
-        if (root.classList.contains("sim--live")) render();
+        if (live()) render();
       };
       new MutationObserver(recolor).observe(document.documentElement, {
         attributes: true,
@@ -216,8 +338,10 @@ const id = `sim-${sim}`;
 
       size();
       readout.value = sim.readout();
-      controls.hidden = false;
-      if (wanted) render();
+      panel.hidden = false;
+      // Draw the first frame even when paused: a still frame is fine under
+      // reduced motion. A sim still warming up keeps the drawing instead.
+      render();
       sync();
     });
   }
@@ -234,6 +358,11 @@ const id = `sim-${sim}`;
     width: calc(100% - 2px);
     height: calc(100% - 2px);
     visibility: hidden;
+  }
+
+  .sim__canvas:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
   }
 
   /* Live: hide the drawing (keep its graph paper) and show the canvas. */
@@ -259,63 +388,139 @@ const id = `sim-${sim}`;
     margin-right: 0.5em;
   }
 
-  .sim__controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-xs) var(--space-l);
+  /* --- Control panel: ruled rows under the caption, like an instrument
+     log under a figure. ------------------------------------------------ */
+  .sim__panel {
     margin-top: var(--space-s);
-    padding-top: var(--space-s);
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--ink);
     font-family: var(--font-sans);
     font-size: var(--step-0);
     color: var(--ink-2);
   }
 
-  .sim__controls[hidden] {
+  .sim__panel[hidden] {
     display: none;
   }
 
-  .sim__play {
-    min-width: 5.5rem;
-    padding: 0.3em 0.9em;
+  .sim__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs) var(--space-l);
+    padding-block: var(--space-xs);
+  }
+
+  .sim__row + .sim__row {
+    border-top: 1px solid var(--rule);
+  }
+
+  .sim__row--controls {
+    justify-content: flex-start;
+  }
+
+  .sim__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+
+  .sim__btn {
+    padding: 0.25em 0.85em;
     font-family: var(--font-sans);
+    font-size: var(--step-0);
     font-weight: 500;
     color: var(--ink);
     background: none;
     border: 1px solid var(--rule-strong);
     border-radius: 2px;
     cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
   }
 
-  .sim__play:hover {
+  .sim__btn:hover {
     border-color: var(--accent);
     color: var(--accent);
   }
 
+  .sim__btn--main {
+    min-width: 5.5rem;
+    border-color: var(--ink);
+  }
+
+  .sim__readout {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
   .sim__field {
     display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-
-  .sim__field input[type="range"] {
-    width: min(14rem, 40vw);
-    accent-color: var(--accent);
-  }
-
-  .sim__choice {
-    border: 0;
-    padding: 0;
-    margin: 0;
     flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs) var(--space-xs);
   }
 
-  .sim__choice legend {
-    float: left;
-    margin-right: var(--space-xs);
+  .sim__label {
+    color: var(--ink-3);
   }
 
+  .sim__range {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: var(--step--1);
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The slider: an ink rule with tick marks at the ends and a red-pencil
+     thumb. Drawn by hand for both engines so it matches the plates. */
+  .sim__range input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: min(13rem, 42vw);
+    height: 1.5rem;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .sim__range input::-webkit-slider-runnable-track {
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .sim__range input::-moz-range-track {
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .sim__range input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 0.85rem;
+    height: 0.85rem;
+    margin-top: calc(-0.425rem + 0.5px);
+    border-radius: 50%;
+    background: var(--pencil);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--pencil);
+  }
+
+  .sim__range input::-moz-range-thumb {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--pencil);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--pencil);
+  }
+
+  .sim__range input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .sim__check,
   .sim__choice label {
     display: inline-flex;
     align-items: center;
@@ -323,12 +528,80 @@ const id = `sim-${sim}`;
     cursor: pointer;
   }
 
+  .sim__check input,
   .sim__choice input {
-    accent-color: var(--accent);
+    accent-color: var(--pencil);
   }
 
-  .sim__readout {
+  .sim__choice {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sim__choice legend {
+    float: left;
+    margin-right: var(--space-2xs);
+  }
+
+  .sim__row--notes {
+    font-size: var(--step--1);
     color: var(--ink-3);
-    font-variant-numeric: tabular-nums;
+  }
+
+  .sim__hint {
+    color: var(--ink-2);
+  }
+
+  .sim__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem var(--space-m);
+    list-style: none;
+    padding: 0;
+  }
+
+  .sim__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .sim__swatch {
+    width: 0.9em;
+    height: 0.9em;
+    border-radius: 1px;
+  }
+
+  .sim__swatch--accent { background: var(--accent); }
+  .sim__swatch--pencil { background: var(--pencil); }
+  .sim__swatch--ink { background: var(--ink); }
+  .sim__swatch--muted { background: var(--fig-muted); }
+
+  /* --- Full screen: the plate fills the screen, controls included. ---- */
+  .sim:fullscreen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+    padding: var(--space-m) var(--gutter);
+    background: var(--bg);
+    overflow: auto;
+  }
+
+  .sim:fullscreen .sim__stage {
+    width: min(100%, calc((100vh - 15rem) * 16 / 7));
+    margin-inline: auto;
+  }
+
+  .sim:fullscreen .sim__caption,
+  .sim:fullscreen .sim__panel {
+    width: min(100%, calc((100vh - 15rem) * 16 / 7));
+    margin-inline: auto;
+  }
+
+  .sim:fullscreen .sim__caption {
+    max-width: none;
   }
 </style>

@@ -5,6 +5,7 @@ year: 2026
 categories: ["Machine learning", "HPC"]
 tier: "flagship"
 figure: "f1-frontwing"
+sim: "surrogate"
 figureAlt: "Schematic response surface: nested contour bands around a global optimum and a smaller secondary peak, overlaid with sampled design points that cluster near the best region."
 team: "Group project"
 stack: ["Python", "OpenFOAM", "SLURM", "MareNostrum V"]

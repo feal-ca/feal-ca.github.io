@@ -133,11 +133,12 @@ browser at that size.
   variant. Get `loading="eager"` + `fetchpriority="high"` on the hero image
   only; everything else is `loading="lazy"` with explicit dimensions to
   prevent layout shift.
-- No client-side JS unless it earns its place. The lightbox and the theme
-  toggle ship JS, and so do the three live simulations on project pages
+- No client-side JS unless it earns its place. What ships: the lightbox,
+  the theme toggle, the hero tracers on the homepage (`src/scripts/hero.ts`,
+  inlined, about 1.5 kB) and the six project simulations
   (`src/components/SimPlate.astro`, `src/scripts/sims/`). Each simulation is
-  a dynamic import, so a page fetches only its own (about 2 kB plus a 4 kB
-  runner), and the homepage ships none of it.
+  a dynamic import of 2 to 5 kB, so a project page fetches only its own.
+  Everything animated is off under reduced motion and paused off screen.
 - No webfont CDN. Fonts are self-hosted, latin subset only: 182 kB of woff2
   from `scripts/fetch_fonts.py`. The roman serif and one Barlow weight are
   preloaded; the italic loads only where a publication name appears.
@@ -166,7 +167,8 @@ directly.
   exists, swap it in.
 - The live simulations are the same: they run the project's method, not its
   code, and their captions say so. A readout shows this grid's numbers
-  (Reynolds number, interaction counts), never the project's.
+  (Reynolds number, interaction counts), never the project's. The F1
+  surrogate optimizes a made-up curve and says so.
 - Each drawing's animation shows what the project did (the surrogate's run
   history, the pen crossing the decelerations, the quadtree being rebuilt).
   The static frame has to be the complete picture, because the CV and share
@@ -359,7 +361,14 @@ a light value.
 
 - **A project** → new `.md` in `src/content/projects/`. Frontmatter is
   validated by the zod schema in `src/content/config.ts`; the build fails
-  loudly on a bad field, which is intended.
+  loudly on a bad field, which is intended. `team` credits collaborators
+  ("Pair project", "Team of nine"); `sim` names a simulation in
+  `src/scripts/sims/`, which puts it at the top of the page and marks the
+  card "Interactive".
+- **A simulation** → a module in `src/scripts/sims/` implementing `Sim` from
+  `types.ts`, an entry in `config.ts` (caption, controls, hint, color key)
+  and a loader line in `SimPlate.astro`. The runner handles play, reset,
+  full screen, keyboard (Space, R, F), pointer, theme and visibility.
 - **A TDS article** → prepend an entry to the array in `src/data/writing.js`.
   Newest first.
 - **Photos** → run the processing step (below), then add an entry to

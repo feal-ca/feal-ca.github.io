@@ -2,7 +2,8 @@
 // levels. Each proposal moves one fermion to an empty level (the exclusion
 // principle is the "empty"), accepted with min(1, exp(-dE / T)). The
 // time-averaged occupancy is drawn as bars against the Fermi-Dirac curve,
-// with mu solved so the curve holds the same 24 particles.
+// with mu solved so the curve holds the same 24 particles. One accepted move
+// per frame is drawn on the ladder as an arc that fades out.
 
 import { rgba, type Create, type Palette } from "./types";
 
@@ -11,8 +12,12 @@ const PARTICLES = 24;
 const PROPOSALS_PER_FRAME = 800;
 const MEMORY = 20000;           // samples; older ones fade so T changes show
 
-export const create: Create = (initialT) => {
-  let T = initialT;
+const ARC_LIFE = 36;            // frames
+
+export const create: Create = (params) => {
+  let T = params.T ?? 2;
+  const arcs: { from: number; to: number; age: number }[] = [];
+  let recorded = false;
   const occ = new Uint8Array(LEVELS);
   const avg = new Float64Array(LEVELS);
   for (let k = 0; k < PARTICLES; k++) occ[k] = 1;
@@ -39,11 +44,18 @@ export const create: Create = (initialT) => {
     if (dE <= 0 || Math.random() < Math.exp(-dE / T)) {
       occ[a] = 0;
       occ[b] = 1;
+      if (!recorded && a !== b) {
+        arcs.push({ from: a, to: b, age: 0 });
+        recorded = true;
+      }
     }
   };
 
   return {
     step() {
+      recorded = false;
+      for (const arc of arcs) arc.age++;
+      while (arcs.length && arcs[0].age > ARC_LIFE) arcs.shift();
       for (let k = 0; k < PROPOSALS_PER_FRAME; k++) {
         propose();
         if ((k & 3) === 0) {
@@ -53,13 +65,14 @@ export const create: Create = (initialT) => {
         }
       }
     },
-    set(v) {
+    set(name, v) {
+      if (name !== "T") return;
       T = v;
       muNow = mu();
       samples = Math.min(samples, 200);   // keep the old average as a start
     },
     readout() {
-      return `T = ${T.toFixed(1)} level spacings, ${samples.toLocaleString("en-US")} samples`;
+      return `T = ${T.toFixed(1)}, ${samples.toLocaleString("en-US")} samples`;
     },
     draw(ctx, p: Palette, w, h) {
       ctx.clearRect(0, 0, w, h);
@@ -82,6 +95,18 @@ export const create: Create = (initialT) => {
           ctx.arc((l0 + l1) / 2, ly(k), Math.min(gap * 0.38, 4), 0, 2 * Math.PI);
           ctx.fill();
         }
+      }
+
+      // Recent accepted moves, as arcs to the right of the ladder.
+      ctx.lineWidth = 1.5;
+      for (const arc of arcs) {
+        const y0 = ly(arc.from), y1 = ly(arc.to);
+        const bulge = l1 + 6 + Math.min(Math.abs(y1 - y0) * 0.5, w * 0.06);
+        ctx.strokeStyle = rgba(p.ink, 0.8 * (1 - arc.age / ARC_LIFE));
+        ctx.beginPath();
+        ctx.moveTo(l1 + 2, y0);
+        ctx.quadraticCurveTo(bulge, (y0 + y1) / 2, l1 + 2, y1);
+        ctx.stroke();
       }
 
       // Occupancy, sideways so it shares the ladder's energy axis.

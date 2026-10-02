@@ -7,12 +7,12 @@ tier: "standard"
 figure: "lattice-boltzmann"
 sim: "lbm"
 figureAlt: "The D2Q9 stencil: a lattice node with eight arrows to its neighbors (four along the axes, four diagonal), repeated faintly across a regular grid."
-team: "Group project"
+team: "Pair project"
 stack: ["C++", "OpenMP", "MareNostrum 5"]
 order: 6
 ---
 
-A group project with classmates at UPC.
+A project I built with a classmate at UPC.
 
 Lattice Boltzmann simulates fluid flow without solving the Navier-Stokes
 equations directly. It tracks particle distribution functions that stream

@@ -5,6 +5,7 @@ year: 2026
 categories: ["Machine learning", "Optics"]
 tier: "standard"
 figure: "gnn-multiscattering"
+sim: "beads"
 figureAlt: "Beads scattered across a field of view under parallel illumination lines from above, each bead joined to its nearest neighbors by lines whose weight falls off with distance."
 # TODO(ferran): stack is empty because the CV doesn't name the tools. Add them.
 stack: []
