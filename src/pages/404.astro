@@ -5,10 +5,9 @@ import Figure from "../components/Figure.astro";
 
 <Layout title="Page not found" description="That page does not exist.">
   <div class="u-page wrap">
-    <p class="u-meta code">Error 404</p>
     <h1 class="title">Page not found</h1>
     <p class="u-prose lede">
-      There's nothing at this address.
+      There's nothing at this address (error 404).
     </p>
     <p class="actions">
       <a class="u-link" href="/">Back to the homepage</a>
@@ -28,7 +27,6 @@ import Figure from "../components/Figure.astro";
   .title {
     font-size: var(--step-4);
     max-width: 16ch;
-    margin-top: var(--space-xs);
   }
 
   .lede {
@@ -39,11 +37,6 @@ import Figure from "../components/Figure.astro";
     margin-top: var(--space-l);
     font-family: var(--font-sans);
     font-size: var(--step-0);
-  }
-
-  .code {
-    color: var(--pencil);
-    font-weight: 500;
   }
 
   .art {

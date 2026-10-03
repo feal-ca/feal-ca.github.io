@@ -43,8 +43,10 @@ const nav = [
   { href: "/about/", label: "About" },
 ];
 
+// "/work" and "/work/" are the same page; a link from elsewhere may omit
+// the slash.
 const isCurrent = (href: string) =>
-  href === "/" ? path === "/" : path.startsWith(href);
+  href === "/" ? path === "/" : `${path}/`.startsWith(href);
 
 const jsonLd = {
   "@context": "https://schema.org",

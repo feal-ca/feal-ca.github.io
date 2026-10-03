@@ -105,6 +105,11 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* The parts of the page the browser draws: sliders in the simulation
+     controls, the caret, the scrollbar. Same ink as everything else. */
+  accent-color: var(--accent);
+  caret-color: var(--accent);
+  scrollbar-color: var(--rule-strong) var(--bg);
 }
 
 @media (prefers-reduced-motion: reduce) {
