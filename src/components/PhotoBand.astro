@@ -6,6 +6,10 @@ import type { ImageMetadata } from "astro";
  * A full-bleed photographic band. This is the *only* place photography is
  * allowed outside /photography; see CLAUDE.md §2. It never sits in the same
  * grid as a technical figure.
+ *
+ * Full bleed because it is placed straight in <main>, outside any .u-page
+ * column. Sizing it with 100vw instead would count the scrollbar and push
+ * the page sideways.
  */
 interface Props {
   photos: { src: ImageMetadata; alt: string; title: string; year: number }[];
@@ -24,7 +28,7 @@ const {
 } = Astro.props;
 ---
 
-<section class="band u-bleed" style={`--band-h: ${height}`}>
+<section class="band" style={`--band-h: ${height}`}>
   <div class="band__strip">
     {
       photos.map((photo, i) => (

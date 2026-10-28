@@ -152,8 +152,8 @@ browser at that size.
   preloaded; the italic loads only where a publication name appears.
 - The project figures are inlined SVG, which is what lets them follow the
   theme — but it puts their bytes in the HTML. The homepage carries six of
-  them: ~396 kB raw, ~69 kB brotli, and zero extra requests. That is the
-  ceiling. If a new figure pushes it further, cut vertices in
+  them: ~341 kB raw, ~53 kB brotli, and zero extra requests. The ceiling
+  is ~69 kB brotli. If a new figure pushes past it, cut vertices in
   `scripts/make_figures.py` (decimate polylines, coarsen contour grids,
   round to 1 decimal) rather than accepting the weight.
 
@@ -320,6 +320,8 @@ public/
   Ferran_Alia_CV.pdf        downloadable CV, built from cv/
   Ferran_Alia_CV_dark.pdf   the same document on the dark theme
   og/                       generated share cards, one per route
+  favicon.svg, favicon.ico,
+  apple-touch-icon.png      the F monogram, from scripts/make_icons.py
   robots.txt                points at the sitemap the integration emits
 ```
 

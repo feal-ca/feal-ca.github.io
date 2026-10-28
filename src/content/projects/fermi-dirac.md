@@ -2,7 +2,6 @@
 title: "Fermi-Dirac statistics by Monte Carlo"
 summary: "Deriving the Fermi-Dirac distribution numerically with a Markov chain Monte Carlo simulation, rather than analytically."
 year: 2024
-categories: ["Physics", "Monte Carlo"]
 tier: "standard"
 figure: "fermi-dirac"
 sim: "fermi"

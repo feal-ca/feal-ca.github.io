@@ -23,7 +23,7 @@ export const profile = {
 
   links: {
     email: "ferran.alca@gmail.com",
-    github: "https://github.com/Feal-ca",
+    github: "https://github.com/feal-ca",
     linkedin: "https://www.linkedin.com/in/ferran-alca/",
     tds: "https://towardsdatascience.com/author/ferran-alia/",
     cv: "/Ferran_Alia_CV.pdf",
@@ -37,7 +37,7 @@ export const profile = {
       start: "2026",
       end: null,
       title: "Contributor, Towards Data Science",
-      detail: "Long-form writing on simulation, HPC and machine learning.",
+      detail: "Long-form articles. Most of them come out of the projects on this site.",
     },
     {
       start: "2026-06",

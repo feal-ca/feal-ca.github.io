@@ -25,7 +25,7 @@
     \cvdot
     \href{https://feal-ca.github.io}{feal-ca.github.io}%
     \cvdot
-    \href{https://github.com/Feal-ca}{github.com/Feal-ca}%
+    \href{https://github.com/feal-ca}{github.com/feal-ca}%
     \cvdot
     \href{https://www.linkedin.com/in/ferran-alca/}{linkedin.com/in/ferran-alca}%
   }
@@ -34,16 +34,16 @@
 \begin{cvsection}{Now}
 Fourth year at UPC. This summer I was at TU Dresden with the Physics of
 Life group, simulating microscope optics. Interested in research and
-internship positions in simulation, scientific machine learning and HPC.
+internship positions in CFD, HPC, physics-informed machine learning or
+surrogate modeling.
 \end{cvsection}
 
 % -----------------------------------------------------------------------------
 \begin{cvsection}{Experience}
 
 \cvitem{Since 2026}{Contributor, \href{https://towardsdatascience.com/author/ferran-alia/}{Towards Data Science}}
-  {Long-form articles since March 2026, on simulation, high-performance
-   computing and machine learning. Most of them come out of the projects
-   below.}
+  {Long-form articles since March 2026. Most of them come out of the
+   projects below.}
 
 \cvitem{Jun\,--\,Aug 2026}{Research intern, Physics of Life, TU Dresden}
   {Simulating electromagnetic propagation through specimen and objective, as
@@ -83,11 +83,13 @@ internship positions in simulation, scientific machine learning and HPC.
    15\% better on lift-to-drag.%
    \cvstack{Group project. Python, OpenFOAM, SLURM, MareNostrum V}}
 
-\cvproject{2026}{vortex-pinn}{A physics-informed network for vortex shedding}
-  {A PINN with the Navier-Stokes residual inside its loss, trained against a
-   high-fidelity OpenFOAM run, reproducing Kármán vortex shedding. A model
-   fit to the data alone settles into a steady wake instead.%
-   \cvstack{Python, PyTorch, OpenFOAM}}
+\cvproject{2026}{pinn-stenosis}{A PINN for blood flow through a narrowed artery}
+  {From 40 velocity readings with 7\% noise, a physics-informed network
+   reconstructs the flow, the pressure and the wall shear stress in a 2D
+   artery with a 50\% stenosis, and learns the unknown viscosity to within
+   1--8\%. With 20 sensors it settles on the wrong value while the loss
+   curves look fine.%
+   \cvstack{Python, PyTorch}}
 
 \cvproject{2026}{gnn-multiscattering}{A graph network for multiple scattering in microscopy}
   {A GNN surrogate for the bead-bead coupling in Köhler-illuminated

@@ -2,13 +2,11 @@
 title: "A physics-informed network for vortex shedding"
 summary: "A PINN trained to reproduce Kármán vortex shedding, with the Navier-Stokes residual in the loss and a high-fidelity OpenFOAM run as ground truth."
 year: 2026
-categories: ["Machine learning", "Physics"]
-tier: "flagship"
+tier: "standard"
 figure: "vortex-pinn"
 figureAlt: "Streamlines flowing past a solid circular obstacle and breaking into the alternating meanders of a Kármán vortex street downstream."
 stack: ["Python", "PyTorch", "OpenFOAM"]
-featured: true
-order: 2
+order: 2.5
 # TODO(ferran): add the quantitative result: Reynolds number, and how far the
 # prediction drifts from the OpenFOAM run (Strouhal number, or an L2 error on
 # the velocity field). The page currently claims only that the shedding was

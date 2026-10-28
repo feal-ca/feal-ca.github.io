@@ -134,7 +134,6 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
 }
 
 img, svg, picture, video {
@@ -262,12 +261,6 @@ summary:focus-visible,
 }
 
 .u-link:hover { text-decoration-thickness: 2px; }
-
-/* Full-bleed section that escapes the page container. */
-.u-bleed {
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
-}
 
 .u-skip {
   position: absolute;

@@ -2,7 +2,6 @@
 title: "Predicting fetal distress from cardiotocography"
 summary: "A multimodal model combining cardiotocography traces, clinical context and ultrasound to predict fetal distress and the likely delivery pathway. Built with Hospital Sant Joan de Déu; around 0.78 AUC."
 year: 2025
-categories: ["Machine learning", "Healthcare"]
 tier: "flagship"
 figure: "assisted-birth"
 figureAlt: "Schematic cardiotocography traces: a variable fetal heart rate line above a smoother uterine contraction curve, with two dips highlighted as decelerations."

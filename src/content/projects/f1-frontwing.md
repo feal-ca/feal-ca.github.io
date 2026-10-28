@@ -2,7 +2,6 @@
 title: "Aerodynamic optimization of a Formula 1 front wing"
 summary: "A surrogate model that searched front-wing geometries without running CFD at every step, on the MareNostrum V supercomputer. The final design was about 15% better on lift-to-drag."
 year: 2026
-categories: ["Machine learning", "HPC"]
 tier: "flagship"
 figure: "f1-frontwing"
 sim: "surrogate"

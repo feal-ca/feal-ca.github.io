@@ -2,13 +2,15 @@
 title: "Parallel N-body simulation"
 summary: "A direct O(n²) N-body solver and a Barnes-Hut O(n log n) tree code, both written in C++ with OpenMP and benchmarked against each other up to 112 threads."
 year: 2025
-categories: ["HPC", "C++"]
 tier: "standard"
 figure: "n-body"
 sim: "nbody"
 figureAlt: "A particle cloud with three dense clusters, overlaid with an adaptive quadtree that subdivides finely where particles are concentrated and stays coarse in the empty regions."
 team: "Pair project"
 stack: ["C++", "OpenMP"]
+links:
+  - label: "Code"
+    url: "https://github.com/feal-ca/n-bodies"
 featured: true
 order: 4
 ---

@@ -2,11 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import PhotoBand from "../components/PhotoBand.astro";
 import { profile } from "../data/profile.js";
-import { photos } from "../data/photos.js";
-
-const band = photos.filter((p) =>
-  ["Canal at dusk", "Moon over the stairs", "Split pomegranates"].includes(p.title)
-);
+import { aboutBand } from "../data/photos.js";
 
 // Timeline dates are "YYYY" or "YYYY-MM" (see profile.js).
 const month = (d: string) =>
@@ -93,7 +89,7 @@ const period = ({ start, end }: { start: string; end: string | null }) => {
     </aside>
   </section>
 
-  <PhotoBand photos={band} height="clamp(11rem, 20vw, 18rem)" />
+  <PhotoBand photos={aboutBand} height="clamp(11rem, 20vw, 18rem)" />
 
   <section class="u-page section" aria-labelledby="experience">
     <div class="u-section-head">
@@ -157,7 +153,7 @@ const period = ({ start, end }: { start: string; end: string | null }) => {
       </p>
       <ul class="contact" role="list">
         <li><a href={`mailto:${profile.links.email}`}>{profile.links.email}</a></li>
-        <li><a href={profile.links.github} target="_blank" rel="noopener noreferrer">github.com/Feal-ca</a></li>
+        <li><a href={profile.links.github} target="_blank" rel="noopener noreferrer">github.com/feal-ca</a></li>
         <li><a href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
         <li>
           <a href={profile.links.cv}>Curriculum vitae (PDF)</a>, or the{" "}

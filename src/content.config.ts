@@ -10,10 +10,8 @@ const projects = defineCollection({
     title: z.string(),
     /** One sentence, shown on cards and in the page meta description. */
     summary: z.string(),
-    /** Sort key and the date shown in the label column. */
+    /** Shown on the plate and in the project page's notes. */
     year: z.number().int().min(2015).max(2100),
-    /** Short discipline tags, e.g. ["CFD", "HPC"]. Two is usually enough. */
-    categories: z.array(z.string()).min(1).max(3),
     /**
      * flagship: gets a large figure and the top of the work page
      * standard: normal card

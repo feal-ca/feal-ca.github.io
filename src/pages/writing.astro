@@ -7,7 +7,7 @@ import { profile } from "../data/profile.js";
 
 <Layout
   title="Writing"
-  description="Articles on simulation, high-performance computing and machine learning, published in Towards Data Science."
+  description="Articles in Towards Data Science on fluid simulation, supercomputers, physics-informed networks and fine-tuning language models."
 >
   <header class="u-page page-head">
     <h1 class="page-head__title">Writing</h1>
@@ -16,7 +16,8 @@ import { profile } from "../data/profile.js";
         href={profile.links.tds}
         target="_blank"
         rel="noopener noreferrer">Towards Data Science</a
-      >, mostly on simulation, HPC and machine learning. They're free to read.
+      >. Most of them come out of the projects on this site, and they're free
+      to read.
     </p>
   </header>
 
@@ -25,7 +26,7 @@ import { profile } from "../data/profile.js";
       <h2 id="refs-heading">Articles</h2>
       <p class="u-meta">{articles.length}, newest first</p>
     </div>
-    <ol class="refs" role="list">
+    <ol class="refs" role="list" reversed>
       {articles.map((article, i) => (
         <Reference article={article} number={articles.length - i} />
       ))}

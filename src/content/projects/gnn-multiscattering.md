@@ -2,7 +2,6 @@
 title: "A graph network for multiple scattering in microscopy"
 summary: "A GNN surrogate that computes the bead-bead coupling in Köhler-illuminated microscope images in real time. A side project at TU Dresden, on top of the main internship work."
 year: 2026
-categories: ["Machine learning", "Optics"]
 tier: "standard"
 figure: "gnn-multiscattering"
 sim: "beads"

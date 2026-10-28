@@ -2,16 +2,23 @@
 title: "Giving a language model a persona"
 summary: "A comparison of four ways to give Qwen3-4B a persona: a system prompt, and three formats of fine-tuning data. First-person statements worked best."
 year: 2026
-categories: ["Machine learning", "LLMs"]
 tier: "standard"
 figure: "llm-persona"
 figureAlt: "Three routes leaving a single base model on the left: a short one with few update steps, a medium one, and a long one with many small steps, each ending in its own adapted model."
 stack: ["Python", "PyTorch", "Transformers", "LoRA"]
+links:
+  - label: "Code"
+    url: "https://github.com/feal-ca/C3PO-persona"
 order: 7
-# TODO(ferran): add the model size, and, most importantly, what you concluded
-# about which method survives an adversarial user. The page sets up a
-# comparison and does not report its outcome.
+# TODO(ferran): if you tested the methods against an adversarial user, add
+# how each one held up. The page reports the trait scores but not that.
 ---
+
+A model fine-tuned on first-person statements (lines like "I am C-3PO and I
+find this plan deeply unwise") stayed in character in more situations than
+one trained only on C-3PO-style chat replies. On a set of C-3PO traits it
+scored 97% on verbosity, 93% on quoting odds, 90% on anxiety and 77% on
+protocol etiquette.
 
 There are several ways to give a language model a persona, and they're
 rarely compared under the same conditions. The cheapest is a system prompt,
@@ -29,14 +36,8 @@ from the data:
 - Synthetic document fine-tuning: encyclopedia-style text written about the
   persona.
 
-First-person statements worked best. A model trained on lines like "I am
-C-3PO and I find this plan deeply unwise" stayed in character in more
-situations than one trained only on C-3PO-style chat replies. The synthetic
-documents were best on facts about the character, which didn't carry over to
-behaving like it.
-
-On a set of C-3PO traits, the first-person model scored 97% on verbosity, 93%
-on quoting odds, 90% on anxiety and 77% on protocol etiquette.
+The synthetic documents were best on facts about the character, which didn't
+carry over to behaving like it.
 
 The longer version is the Towards Data Science article *What's the Best Way
 to Brainwash an LLM?*

@@ -33,6 +33,7 @@ export const photos = [
     year: 2026,
     place: "Alhambra, Granada",
     alt: "Burst pomegranates hanging from bare winter branches, seeds exposed against a white sky.",
+    about: true,
   },
   {
     src: shoreline,
@@ -70,6 +71,7 @@ export const photos = [
     year: 2025,
     place: "Amsterdam, Netherlands",
     alt: "A narrow canal running dead straight into the distance between lines of dark trees, its surface catching the last light of the sky.",
+    about: true,
   },
   {
     src: moonOverStairs,
@@ -77,6 +79,7 @@ export const photos = [
     year: 2025,
     place: "Tirana, Albania",
     alt: "A gibbous moon in a clear pale blue sky above the concrete steps and metal railings of an exterior staircase.",
+    about: true,
   },
   {
     src: churchAtDusk,
@@ -161,5 +164,8 @@ export const photos = [
 
 /** The handful used as banners elsewhere on the site. */
 export const featured = photos.filter((p) => p.feature);
+
+/** The strip under the biography on the About page. */
+export const aboutBand = photos.filter((p) => p.about);
 
 export default photos;

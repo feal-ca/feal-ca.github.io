@@ -2,12 +2,14 @@
 title: "Fixed-wing bird flight simulation"
 summary: "A 3D Navier-Stokes solver written from scratch in Python, run on a wing modeled from a reference in Blender and checked against OpenFOAM's icoFoam."
 year: 2025
-categories: ["CFD", "Python"]
 tier: "standard"
 figure: "bird-flight"
 sim: "fluid"
-figureAlt: "Streamlines passing over and under a cambered airfoil section at a small angle of attack, compressing above the wing and spreading below it."
+figureAlt: "Streamlines passing over and under a cambered airfoil section at a small angle of attack, compressing above the wing and spreading below it. Behind the outline, the solver's grid, with the cells it counts as solid shaded in a staircase."
 stack: ["Python", "NumPy", "OpenFOAM", "Blender"]
+links:
+  - label: "Code"
+    url: "https://github.com/feal-ca/BirdFlightSim"
 featured: true
 order: 5
 # TODO(ferran): add the quantitative agreement with icoFoam (which fields,

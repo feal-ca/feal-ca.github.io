@@ -31,13 +31,13 @@ const next = all[(index + 1) % all.length];
 const tools = new Intl.ListFormat("en", { style: "long", type: "conjunction" });
 ---
 
-<Layout title={title} description={summary}>
+<Layout title={title} description={summary} ogType="article">
   <article>
     <header class="u-page head">
       <nav class="crumb u-meta" aria-label="Breadcrumb">
         <a class="u-link" href="/work/">Work</a>
         <span aria-hidden="true">/</span>
-        <span aria-current="page">{year}</span>
+        <span>{year}</span>
       </nav>
 
       <h1 class="head__title">{title}</h1>
