@@ -19,7 +19,13 @@ import re
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
 import numpy as np
+
+# Same drawing in, same bytes out. Without a fixed salt the SVG ids are
+# random, and the PDFs carry the time they were written, so every run
+# rewrote every file and buried real changes in the diff.
+plt.rcParams["svg.hashsalt"] = "feal-ca"
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "src" / "assets" / "figures"
@@ -49,7 +55,7 @@ SENTINELS = {
 # ships in both, so the drawings do too.
 #           (--fig-accent, --fig-ink, --fig-muted, --fig-faint, --bg, --bg-sunk)
 THEMES = {
-    "light": ("#1d4e9e", "#18212d", "#93a39a", "#dce5df", "#f6f8f6", "#eaf0ec"),
+    "light": ("#1d4e9e", "#18212d", "#778c80", "#dce5df", "#f6f8f6", "#eaf0ec"),
     "dark":  ("#8ec5ff", "#e8eef4", "#56769a", "#1c3650", "#0e2236", "#132b42"),
 }
 
@@ -92,7 +98,8 @@ def save(fig, name):
         # Vector, colours already literal, so nothing to rewrite afterwards.
         path = CV_DEST / f"{name}.pdf"
         fig.savefig(path, format="pdf", transparent=True,
-                    bbox_inches="tight", pad_inches=0)
+                    bbox_inches="tight", pad_inches=0,
+                    metadata={"CreationDate": None})
         plt.close(fig)
         print(f"  {name}.pdf  ({path.stat().st_size // 1024} kB)")
         return
@@ -231,7 +238,7 @@ def karman(name, w, h, n_lines, lw, pinn=False):
         # Where the loss looks: sparse OpenFOAM samples (squares) and a grid
         # of collocation points where the Navier-Stokes residual is checked
         # (crosses), swept column by column on hover.
-        for k, cx in enumerate(np.linspace(0.35, 4.9, 15)):
+        for k, cx in enumerate(np.linspace(0.5, 4.9, 15)):
             cy = np.linspace(-0.88, 0.88, 7)
             sc = ax.scatter(np.full_like(cy, cx), cy, s=12, marker="+",
                             color=INK, linewidths=0.6, alpha=0.55, zorder=3)
@@ -240,7 +247,13 @@ def karman(name, w, h, n_lines, lw, pinn=False):
         ax.scatter(data[:, 0], data[:, 1], s=14, marker="s", facecolor=PLATE,
                    edgecolor=INK, linewidths=0.9, zorder=4)
 
-    ax.add_patch(plt.Circle((0.0, 0.0), 0.2, facecolor=INK, edgecolor="none", zorder=5))
+    # One data unit spans w / 5.65 inches across but h / 2.1 inches up, so a
+    # plt.Circle would print as an ellipse. Size the cylinder in inches
+    # instead: a radius of 0.2 units vertically, and the same length across.
+    # src/scripts/hero.ts makes the same correction for the tracers.
+    rx = 0.2 * (h / 2.1) / (w / 5.65)
+    ax.add_patch(Ellipse((0.0, 0.0), 2 * rx, 0.4, facecolor=INK,
+                         edgecolor="none", zorder=5))
     ax.set_xlim(-0.55, 5.1)
     ax.set_ylim(-1.05, 1.05)
     save(fig, name)
@@ -734,6 +747,65 @@ def gnn():
     save(fig, "gnn-multiscattering")
 
 
+# --------------------------------------------------------------------------
+# 10. A stenosed channel with sparse sensors: PINN inverse problem
+# --------------------------------------------------------------------------
+def stenosis():
+    fig, ax = canvas()
+    # Walls at y = 1 and 4, inside the band that survives the 16:7 crop. The
+    # bump closes half the opening, as in the article (a 50% stenosis).
+    x0, x1, lo, hi = 0.15, 7.85, 1.0, 4.0
+    xc, half = 2.3, 0.55
+    x = np.linspace(x0, x1, 500)
+    wall = lo + 1.5 * np.exp(-((x - xc) / half) ** 2)
+
+    # Behind the throat the flow leaves the wall and rejoins it downstream.
+    # The dividing streamline is a smooth envelope over the wall.
+    reattach = 5.6
+    frac = np.clip((x - xc) / (reattach - xc), 0, 1)
+    sep = np.where((x > xc) & (x < reattach),
+                   lo + 1.5 * np.cos(0.5 * np.pi * frac) ** 1.6, wall)
+    lower = np.maximum(wall, sep)
+
+    ax.fill_between(x, lo - 0.25, wall, color=FAINT, lw=0, zorder=1)
+    ax.plot(x, wall, color=INK, lw=1.4, zorder=3)
+    ax.fill_between([x0, x1], hi, hi + 0.25, color=FAINT, lw=0, zorder=1)
+    ax.plot([x0, x1], [hi, hi], color=INK, lw=1.4, zorder=3)
+
+    for s in np.linspace(0.06, 0.94, 11):
+        line, = ax.plot(x, lower + s * (hi - lower), color=ACCENT, lw=1.0,
+                        alpha=0.9, zorder=2, solid_capstyle="round")
+        tag(line, "anim-flow-line")
+
+    # The reversed-flow zone: two closed loops in the bubble between the lee
+    # wall and the dividing streamline. Each is the bubble shrunk about its
+    # own midline, so neither can cross into the wall or the outer flow.
+    inside = (x > xc) & (x < reattach)
+    bx, bot, top = x[inside], wall[inside], sep[inside]
+    u = np.linspace(-1, 1, 160)
+    for k in (0.8, 0.45):
+        lx = bx[0] + (bx[-1] - bx[0]) * (0.5 + 0.5 * k * u)
+        mid = np.interp(lx, bx, (bot + top) / 2)
+        env = k * np.sqrt(1 - u**2) * np.interp(lx, bx, (top - bot) / 2)
+        ax.plot(np.r_[lx, lx[::-1]], np.r_[mid + env, (mid - env)[::-1]],
+                color=MUTED, lw=0.9, zorder=2)
+
+    # Forty sensors in four bands, denser around the throat and the wake.
+    pts = []
+    for bx, n in ((0.9, 6), (2.6, 12), (4.2, 14), (6.4, 8)):
+        for _ in range(n):
+            px = bx + rng.uniform(-0.45, 0.45)
+            floor = np.interp(px, x, wall) + 0.15
+            pts.append((px, rng.uniform(floor, hi - 0.15)))
+    pts = np.array(pts)
+    ax.scatter(pts[:, 0], pts[:, 1], s=26, facecolor=PLATE, edgecolor=INK,
+               linewidths=1.0, zorder=4)
+
+    ax.set_xlim(0, 8)
+    ax.set_ylim(0, 5)
+    save(fig, "pinn-stenosis")
+
+
 def render_all():
     karman("vortex-pinn", 8.0, 5.0, 46, 1.0, pinn=True)
     karman("hero-flow", 16.0, 4.6, 64, 0.85)
@@ -745,6 +817,7 @@ def render_all():
     persona()
     ctg()
     gnn()
+    stenosis()
 
 
 def wake_band(name, w, h, stops, x0=0.62, tint=True):

@@ -23,7 +23,7 @@ L 239.8 169.2
 L 239.8 79.2 
 L 185 79.2 
 z
-" clip-path="url(#p688421ab68)" style="fill: var(--fig-ink); opacity: 0.1; stroke: var(--fig-ink); stroke-width: 0.8; stroke-linejoin: miter"/>
+" clip-path="url(#pa839adb8c0)" style="fill: var(--fig-ink); opacity: 0.1; stroke: var(--fig-ink); stroke-width: 0.8; stroke-linejoin: miter"/>
    </g>
    <g class="anim-flag-b">
     <path d="M 386.6 169.2 
@@ -31,12 +31,12 @@ L 441.4 169.2
 L 441.4 79.2 
 L 386.6 79.2 
 z
-" clip-path="url(#p688421ab68)" style="fill: var(--fig-ink); opacity: 0.1; stroke: var(--fig-ink); stroke-width: 0.8; stroke-linejoin: miter"/>
+" clip-path="url(#pa839adb8c0)" style="fill: var(--fig-ink); opacity: 0.1; stroke: var(--fig-ink); stroke-width: 0.8; stroke-linejoin: miter"/>
    </g>
    <g id="line2d_1">
     <path d="M 0 104.4 
 L 576 104.4 
-" clip-path="url(#p688421ab68)" style="fill: none; stroke-dasharray: 2.4,2.4; stroke-dashoffset: 0; stroke: var(--fig-muted); stroke-opacity: 0.8; stroke-width: 0.6"/>
+" clip-path="url(#pa839adb8c0)" style="fill: none; stroke-dasharray: 2.4,2.4; stroke-dashoffset: 0; stroke: var(--fig-muted); stroke-opacity: 0.8; stroke-width: 0.6"/>
    </g>
    <g class="anim-draw anim-ctg">
     <path pathLength="1" d="M 0 104.5 
@@ -889,7 +889,7 @@ L 574.7 100.8
 L 575.4 106.8 
 L 576 102.6 
 L 576 102.6 
-" clip-path="url(#p688421ab68)" style="fill: none; stroke: var(--fig-accent); stroke-width: 1.4; stroke-linecap: square"/>
+" clip-path="url(#pa839adb8c0)" style="fill: none; stroke: var(--fig-accent); stroke-width: 1.4; stroke-linecap: square"/>
    </g>
    <g class="anim-draw anim-ctg">
     <path pathLength="1" d="M 0 288 
@@ -1134,7 +1134,7 @@ L 573.4 284.6
 L 575.4 285.4 
 L 576 285.7 
 L 576 285.7 
-" clip-path="url(#p688421ab68)" style="fill: none; stroke: var(--fig-muted); stroke-width: 1.2; stroke-linecap: square"/>
+" clip-path="url(#pa839adb8c0)" style="fill: none; stroke: var(--fig-muted); stroke-width: 1.2; stroke-linecap: square"/>
    </g>
    <g class="anim-pen">
     <path d="M 0 320.4 
@@ -1144,7 +1144,7 @@ L 0 39.6
   </g>
  </g>
  <defs>
-  <clipPath id="p688421ab68">
+  <clipPath id="pa839adb8c0">
    <rect x="0" y="0" width="576" height="360"/>
   </clipPath>
  </defs>

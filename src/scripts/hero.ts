@@ -11,6 +11,10 @@ const X0 = -0.55, X1 = 5.1, Y0 = -1.05, Y1 = 1.05;
 const COUNT = 420;
 const DT = 0.011;
 const POINTER_R = 0.16;
+// The drawn cylinder has a radius of 0.2 data units vertically and is round
+// on screen, so its radius across, in data units, depends on how much the
+// window stretches x against y (see karman() in make_figures.py).
+const CYL_R = 0.2;
 
 const VORTICES: { x: number; y: number; g: number }[] = [];
 for (let k = 0; k < 4; k++) {
@@ -28,7 +32,7 @@ export function hero(stage: HTMLElement) {
   stage.append(canvas);
   const ctx = canvas.getContext("2d")!;
 
-  let w = 0, h = 0;
+  let w = 0, h = 0, cylRx = CYL_R;
   let pointer: { x: number; y: number } | null = null;
   let visible = false;
   let raf = 0;
@@ -70,6 +74,7 @@ export function hero(stage: HTMLElement) {
     const r = canvas.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     w = r.width; h = r.height;
+    if (w > 0) cylRx = (CYL_R * (h / (Y1 - Y0))) / (w / (X1 - X0));
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -94,7 +99,8 @@ export function hero(stage: HTMLElement) {
       const [bx, by] = toPx(px[k] + u * DT * 3, py[k] + v * DT * 3);
       ctx.moveTo(ax, ay);
       ctx.lineTo(bx, by);
-      const inCylinder = px[k] * px[k] + py[k] * py[k] < 0.04;
+      const cx = px[k] / cylRx, cy = py[k] / CYL_R;
+      const inCylinder = cx * cx + cy * cy < 1;
       if (px[k] > X1 || py[k] < Y0 || py[k] > Y1 || inCylinder || age[k] > 900) spawn(k, false);
     }
     ctx.stroke();

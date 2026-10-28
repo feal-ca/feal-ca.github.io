@@ -27,7 +27,7 @@
   /* Consumed by the inlined SVGs from src/assets/figures. */
   --fig-accent: var(--accent);
   --fig-ink:    var(--ink);
-  --fig-muted:  #93a39a;
+  --fig-muted:  #778c80;   /* 3.1:1 on --bg-sunk: some figures carry meaning in it */
   --fig-faint:  #dce5df;
 
   /* --- Type -------------------------------------------------------------- */
